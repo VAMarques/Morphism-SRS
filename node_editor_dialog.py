@@ -145,10 +145,10 @@ def insert_tag_into_editor(editor: QTextEdit, open_tag: str, close_tag: str, def
 def prompt_insert_image(editor: QTextEdit, parent: QWidget):
     file_path, _ = QFileDialog.getOpenFileName(parent, "Select Image File", "", "Images (*.png *.jpg *.jpeg *.gif *.svg *.webp)")
     if file_path:
-        abs_path = os.path.abspath(file_path).replace("\\", "/")
-        file_url = f"file:///{abs_path}"
+        file_url = QUrl.fromLocalFile(os.path.abspath(file_path)).toString()
         img_tag = f'<img src="{file_url}" style="max-width:100%; border-radius:8px; margin:8px 0;" />'
         editor.textCursor().insertText(img_tag)
+
 
 def prompt_insert_table(editor: QTextEdit):
     table_snippet = (

@@ -10,22 +10,23 @@ QToolTip {
     border-radius: 6px;
     padding: 6px 10px;
     font-size: 12px;
-    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, "BlinkMacSystemFont", "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, "Ubuntu", "DejaVu Sans", "Liberation Sans", sans-serif;
 }
 
 /* Global Window & Widget Styling */
 QMainWindow, QDialog {
     background-color: #0b0f19;
     color: #f8fafc;
-    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, "BlinkMacSystemFont", "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, "Ubuntu", "DejaVu Sans", "Liberation Sans", sans-serif;
 }
 
 
 QWidget {
     background-color: transparent;
     color: #f8fafc;
-    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, "BlinkMacSystemFont", "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, "Ubuntu", "DejaVu Sans", "Liberation Sans", sans-serif;
 }
+
 
 /* ToolBar & Header Styling */
 QToolBar {

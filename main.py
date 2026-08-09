@@ -620,8 +620,10 @@ if __name__ == "__main__":
 
     app = QApplication(sys.argv)
     apply_global_dark_theme(app)
-    if os.path.exists("icon.ico"):
-        app.setWindowIcon(QIcon("icon.ico"))
+    icon_file = "icon.png" if os.path.exists("icon.png") else ("icon.ico" if os.path.exists("icon.ico") else None)
+    if icon_file:
+        app.setWindowIcon(QIcon(icon_file))
+
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
