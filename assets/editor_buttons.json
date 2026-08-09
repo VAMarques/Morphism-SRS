@@ -1,0 +1,103 @@
+[
+  {
+    "id": "bold",
+    "label": "<b>B</b>",
+    "tooltip": "Bold <b>...</b> (Shortcut: Ctrl+B)",
+    "type": "interval",
+    "left": "<b>",
+    "right": "</b>",
+    "default_text": "bold text",
+    "shortcut": "Ctrl+B"
+  },
+  {
+    "id": "italic",
+    "label": "<i>I</i>",
+    "tooltip": "Italic <i>...</i> (Shortcut: Ctrl+I)",
+    "type": "interval",
+    "left": "<i>",
+    "right": "</i>",
+    "default_text": "italic text",
+    "shortcut": "Ctrl+I"
+  },
+  {
+    "id": "underline",
+    "label": "<u>U</u>",
+    "tooltip": "Underline <u>...</u> (Shortcut: Ctrl+U)",
+    "type": "interval",
+    "left": "<u>",
+    "right": "</u>",
+    "default_text": "underlined text",
+    "shortcut": "Ctrl+U"
+  },
+  {
+    "id": "code",
+    "label": "Code",
+    "tooltip": "Code snippet <code>...</code> (Shortcut: Ctrl+Shift+C)",
+    "type": "interval",
+    "left": "<code>",
+    "right": "</code>",
+    "default_text": "code",
+    "shortcut": "Ctrl+Shift+C"
+  },
+  {
+    "id": "color_blue",
+    "label": "<font color='#60a5fa'>🎨 Color</font>",
+    "tooltip": "Blue Accent <span style='color:#60a5fa;'>...</span>",
+    "type": "interval",
+    "left": "<span style=\"color: #60a5fa;\">",
+    "right": "</span>",
+    "default_text": "colored text"
+  },
+  {
+    "id": "line_break",
+    "label": "&lt;br&gt;",
+    "tooltip": "Insert Line Break <br> (Shortcut: Ctrl+Return)",
+    "type": "single",
+    "content": "<br>\n",
+    "shortcut": "Ctrl+Return"
+  },
+  {
+    "id": "image",
+    "label": "🖼 Image",
+    "tooltip": "Insert HTML Image <img src='...'>",
+    "type": "action",
+    "action": "prompt_image"
+  },
+  {
+    "id": "table",
+    "label": "📊 Table",
+    "tooltip": "Insert HTML Table <table>",
+    "type": "action",
+    "action": "prompt_table"
+  },
+  {
+    "id": "frak",
+    "label": "𝔅",
+    "tooltip": "Fraktur \\mathfrak{#1} (Shortcut: Ctrl+K, Ctrl+Alt+F)",
+    "type": "interval",
+    "left": "\\mathfrak{",
+    "right": "}",
+    "default_text": "B",
+    "shortcut": "Ctrl+K, Ctrl+Alt+F"
+  },
+  {
+    "id": "mathbb",
+    "label": "ℝ",
+    "tooltip": "Mathbb \\mathbb{#1} (Shortcut: Ctrl+K, Ctrl+Alt+B)",
+    "type": "interval",
+    "left": "\\mathbb{",
+    "right": "}",
+    "default_text": "R",
+    "shortcut": "Ctrl+K, Ctrl+Alt+B"
+  },
+  {
+    "id": "set",
+    "label": "{x∈A:φ(x)}",
+    "tooltip": "Mathbb \\mathbb{#1} (Shortcut: Ctrl+K, Ctrl+Alt+B)",
+    "type": "interval",
+    "left": "\\Set{",
+    "right": "}",
+    "default_text": "x \\in A : \\varphi(x)",
+    "shortcut": "Ctrl+K, Shift+S"
+  }
+]

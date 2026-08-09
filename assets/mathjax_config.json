@@ -1,0 +1,27 @@
+{
+  "inlineMath": [["$", "$"], ["\\(", "\\)"]],
+  "displayMath": [["$$", "$$"], ["\\[", "\\]"]],
+  "processEscapes": true,
+  "packages": {"[+]": ["color", "ams"]},
+  "macros": {
+    "pd": "{\\partial}",
+    "v": "{\\mathbf}",
+    "norm": ["{\\left\\|#1\\right\\|}", 1],
+    "abs": ["{\\left|#1\\right|}", 1],
+    "inner": ["{\\left\\langle #1, #2 \\right\\rangle}", 2],
+    "ph": "{\\textcolor{#60a5fa}{\\varphi}}",
+    "ps": "{\\textcolor{#60a5fa}{\\psi}}",
+    "ch": "{\\textcolor{#60a5fa}{\\chi}}",
+    "ta": "{\\textcolor{#60a5fa}{\\tau}}",
+    "gm": "{\\textcolor{#60a5fa}{\\gamma}}",
+    "al": "{\\textcolor{#60a5fa}{\\alpha}}",
+    "be": "{\\textcolor{#60a5fa}{\\beta}}",
+    "eps": "{\\varepsilon}",
+    "True": "{\\mathsf{T}}",
+    "False": "{\\mathsf{F}}",
+    "lthen": "{\\Rightarrow}",
+    "liff": "{\\Leftrightarrow}",
+    "lxor": "{\\veebar}",
+    "biota": "{℩}"
+  }
+}

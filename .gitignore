@@ -1,0 +1,26 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local user test files / temporary scratch
+scratch/
+
+# MathJax downloaded bundle
+assets/tex-chtml.js
+
+# OS generated files
+.DS_Store
+Thumbs.db
