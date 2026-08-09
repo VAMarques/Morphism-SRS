@@ -8,7 +8,7 @@
 
 - **Graph Explorer**: Visualize courses as interactive directed acyclic graphs (DAGs) of prerequisite concepts and notes.
 - **FSRS-Powered Scheduling**: State-of-the-art Free Spaced Repetition Scheduler (FSRS 4.5/5) memory decay modeling.
-- **Partial Retention Joint Probability Model**: Evaluates joint retention $P(\bigcap A_i) = \prod R_i(t) \le \text{desired\_retention}$ across prerequisite nodes to optimize review sessions.
+- **Partial Retention Joint Probability Model**: Evaluates joint retention $P(\bigcap A\_i) = \prod R\_i(t) \le \text{desired\\_retention}$ across prerequisite nodes to optimize review sessions.
 - **100% Offline MathJax 3 LaTeX Rendering**: Renders beautiful TeX formulas (`$...$`, `$$...$$`, `\(...\)`, `\[...\]`) completely offline.
 - **Proof Sequences & Intraday Reviews**: Supports single-step and full-sequence proof step reviews with intraday interval tracking.
 - **Retrievability Info Plotter**: Interactive Chart.js retrievability decay curves ($R(t)$) with multi-scale zoom (24 Hours, 48 Hours, 7 Days, 30 Days, 90 Days).
