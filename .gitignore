@@ -17,9 +17,17 @@ env/
 
 # Local user test files / temporary scratch
 scratch/
+to_import/
+to_export/
+scheduling/
+docs/
+Courses/
+unused/
 
-# MathJax downloaded bundle
+# Bundles
 assets/tex-chtml.js
+assets/tex-svg.js
+assets/chart.js
 
 # OS generated files
 .DS_Store
