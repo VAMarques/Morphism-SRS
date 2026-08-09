@@ -240,10 +240,18 @@ def import_course_json(filepath: str, dest_folder: str = "") -> Course:
     """Import a course JSON file into the Courses directory."""
     with open(filepath, "r", encoding="utf-8") as f:
         data = json.load(f)
+
     name = data.get("name", os.path.splitext(os.path.basename(filepath))[0])
-    course = Course(name, folder_path=dest_folder)
-    save_course(course)
-    return load_course(name, dest_folder)
+    data["name"] = name
+    if dest_folder:
+        data["folder_path"] = dest_folder
+
+    course_path = get_course_file_path(name, dest_folder or data.get("folder_path", ""))
+    with open(course_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+
+    return load_course(name, dest_folder or data.get("folder_path", ""))
+
 
 def export_course_json(course: Course, dest_filepath: str):
     """Export a course data structure to an external file without user-specific FSRS scheduling or due dates."""

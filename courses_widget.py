@@ -353,11 +353,19 @@ class CoursesWidget(QWidget):
         filepath, _ = QFileDialog.getOpenFileName(self, "Import Course JSON", "", "JSON Files (*.json)")
         if filepath:
             try:
-                course = course_storage.import_course_json(filepath)
+                dest_folder = ""
+                items = self.tree.selectedItems()
+                if items:
+                    item_data = items[0].data(0, Qt.UserRole)
+                    if item_data:
+                        dest_folder = item_data.get("folder_path", "")
+
+                course = course_storage.import_course_json(filepath, dest_folder=dest_folder)
                 self.refresh_tree(course.name)
                 self.course_activated.emit(course.name, course.folder_path)
             except Exception as e:
                 QMessageBox.critical(self, "Import Error", f"Failed to import course: {e}")
+
 
     def _export_course(self):
         items = self.tree.selectedItems()
