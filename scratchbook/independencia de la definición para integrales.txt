@@ -1,0 +1,41 @@
+<h2>independencia de la definición para integrales</h2>
+<p>Sea $f \in \mathscr B(X)$. Entonces si $f$ es integrable en terminos de divisiones, tambien lo es bajo particiones.
+<hr>
+
+$\implies$ Si $\forall \eps>0 \exists P=(x_i)_{i=0}^n$ tal que$$
+U(P,f) - L(P,f) < \eps
+$$
+Definimos $$P^\square=G \cup H =\set{\set{x_i}}_{i=0}^n \cup \set{(x_{i-1},x_i)}_{i=1}^n$$
+En ese caso: $\set{x_{i-1}}, (x_{i-1}, x_i) \subseteq [x_{i-1}, x_i]$ y por lo tanto $m_{H_i}, m_{G_i} \ge m_i$ y viceversa, Luego\begin{align}
+U(P^\square, f) - L(P^\square, f) &=\sum_{I \in P^\square}(M_I-m_I)\alpha(I) \\
+&=\sum_{i =1}^n (M_{H_i}-m_{H_i})\alpha(x_{i-1},x_i) + \sum_{i=0}^n(f(x_i)-f(x_i))\alpha\set{x_i} \\
+&\le \sum_{i =1}^n (M_i-m_i)\Delta\alpha_i < \eps
+\end{align}
+Por lo tanto es integrable.
+Sabemos que
+\begin{align}
+\alpha(s)-\alpha(s^-)>0
+&\implies f(s)=f(s^-) \\
+\alpha(s^+)-\alpha(s)>0
+&\implies f(s^+)=f(s)
+\end{align}
+
+Crearemos una nueva División $P'$ que aproveche esto. En el primer caso, añadimos para $\delta>0$, $y_i = x_i - \delta < x_i$, y en el segundo, $x_i< x_i+\delta = z_i$, para esos casos, $y_i, z_i \leadsto x_i$, y por continuidad lateral, $\inf_{[y_i, x_i]}f(x) \leadsto f(x_i)$ etc. Luego por ejemplo,
+\begin{align}
+m_{i}^-\Delta \alpha_i^- &\leadsto f(x_i)\alpha\set{x_i} \\
+m_{i}^+\Delta \alpha_i^+ &\leadsto f(x_i)\alpha\set{x_i} \\
+m_{i}^-\Delta \alpha_i^-+m_{i}^+\Delta \alpha_i^+ &\leadsto f(x_i)\alpha\set{x_i}
+\end{align}
+para el caso 1,2 y ambos al mismo tiempo. Por el otro lado, los lados clasicos, donde esta vez tendremos
+\begin{align}
+\inf_{[x_{i-1}, y_i]} f(s)(\alpha(y_i)-\alpha(x_{i-1})) &\leadsto m_{H_i}\alpha(x_{i-1,}, x_i) \\
+\inf_{[z_{i-1}, x_i]} f(s)(\alpha(x_i)-\alpha(z_{i-1})) &\leadsto m_{H_i}\alpha(x_{i-1,}, x_i) \\
+\inf_{[z_{i-1}, y_i]} f(s)(\alpha(y_i)-\alpha(z_{i-1})) &\leadsto m_{H_i}\alpha(x_{i-1,}, x_i)
+\end{align}
+Para cada caso, asi$$
+\lim_{\delta \downarrow 0} L(P', f) = L(P^\square, f)
+$$
+Pero $L(P',f) \le I \le U(P',f)$ asi tenemos
+$$
+L(P^\square, f) \le I \le U(P^\square, f)$$
+Por lo tanto las integrales son iguales.

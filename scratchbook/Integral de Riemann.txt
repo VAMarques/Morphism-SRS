@@ -1,0 +1,11 @@
+<h2>Integral de Riemann</h2>
+<p>$$f\in \mathscr B(I) \mathbb R \vec x$$</p>
+<br>
+$\underline{\int_a^b} f\ \mathrm d\alpha = \overline{\int_a^b} f\ \mathrm d\alpha$
+
+
+<li>Para un punto $I = \{a\}$: $$\alpha(I) = \lim_{x\to a^+} \alpha(x) - \lim_{x\to a^-} \alpha(x)$$</li>
+<li>Para intervalo abierto $I = (a,b)$: $$\alpha(I) = \lim_{x\to b^-} \alpha(x) - \lim_{x\to a^+} \alpha(x)$$</li>
+<hr>
+
+$$\|P\|_\# = \sup (x_i-x_{i-1})$$

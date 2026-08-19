@@ -1,0 +1,110 @@
+Supongamos $f\in\mathscr B([a,b])$es integrable por particiones
+y además
+\begin{align}
+\alpha(s)-\alpha(s^-)>0
+&\implies f(s)=f(s^-) \\
+\alpha(s^+)-\alpha(s)>0
+&\implies f(s^+)=f(s)
+\end{align}
+Sea $P^\square=G \cup H =\set{\set{x_i}}_{i=0}^n \cup \set{(x_{i-1},x_i)}_{i=1}^n$ tal que
+\[
+U(P^\square,f)-L(P^\square,f)<\varepsilon.
+\]
+Para cada $x_i$, si
+$
+\alpha(x_i)-\alpha(x_i^-)>0
+$
+tomamos $y_i< x_i$. Por continuidad lateral $
+\inf_{[y_i,x_i]}f,\ \sup_{[y_i,x_i]}f
+\leadsto f(x_i).
+$
+Análogamente, si $
+\alpha(x_i^+)-\alpha(x_i)>0,
+$
+tomamos $z_i>x_i$, y
+$
+\inf_{[x_i,z_i]}f,\ \sup_{[x_i,z_i]}f
+\leadsto f(x_i).
+$
+Así, las masas de los pequeños intervalos convergen a las masas de los singletons:
+\begin{aligned}
+\Delta\alpha_i^-
+&=\alpha(x_i)-\alpha(y_i)
+\leadsto
+\alpha(x_i)-\alpha(x_i^-)\\
+\Delta\alpha_i^+
+&=\alpha(z_i)-\alpha(x_i)
+\leadsto
+\alpha(x_i^+)-\alpha(x_i)
+\end{aligned}
+Por tanto,
+\begin{aligned}
+m_i^-\Delta\alpha_i^-&\leadsto
+f(x_i)\bigl[\alpha(x_i)-\alpha(x_i^-)\bigr]\\
+m_i^+\Delta\alpha_i^+&\leadsto
+f(x_i)\bigl[\alpha(x_i^+)-\alpha(x_i)\bigr]
+\end{aligned}
+y sumando,
+\[
+m_i^-\Delta\alpha_i^-+
+m_i^+\Delta\alpha_i^+
+\leadsto
+f(x_i)\alpha({x_i}).
+\]
+Los intervalos restantes convergen a los intervalos abiertos:
+\[
+\inf_{[z_{i-1},y_i]}f
+\bigl[\alpha(y_i)-\alpha(z_{i-1})\bigr]
+\leadsto
+m_{H_i}\alpha((x_{i-1},x_i)),
+\]
+y análogamente para los supremos.
+Luego, para una sucesión de divisiones clásicas $P'_\delta$,
+\[
+\lim_{\delta\downarrow0}L(P'_\delta,f)
+=L(P^\square,f),
+\]
+\[
+\lim_{\delta\downarrow0}U(P'_\delta,f)
+=U(P^\square,f).
+\]
+Y como
+\[
+L(P'_\delta,f)\le U(P'_\delta,f),
+\]
+Más directamente, si definimos
+
+$$
+I^-=\sup_P L(P,f),
+\qquad
+I^+=\inf_P U(P,f),
+$$
+
+entonces, para todo $\delta$,
+
+$$
+L(P'_\delta,f)\leq I^+\leq I^- \leq U(P'_\delta,f).
+$$
+
+Tomando $\delta\downarrow0$,
+
+$$
+L(P^\square,f)\leq I^+\leq I^-\leq U(P^\square,f).
+$$
+
+Por lo tanto,
+
+$$
+I^+-I^-
+\leq
+U(P^\square,f)-L(P^\square,f)
+<\varepsilon.
+$$
+
+Como $\varepsilon>0$ es arbitrario,
+
+$$
+I^+=I^-.
+$$
+
+Luego $f\in\mathscr R_\alpha([a,b])$ y las integrales coinciden.

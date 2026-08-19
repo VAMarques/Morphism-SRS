@@ -1,0 +1,79 @@
+<h1>Delta Divergencia</h1>
+
+
+Sea $g(x,y,z)$ una <b>función escalar arbitraria</b> y sea $\vec{V}$ un <b>campo vectorial cualquiera</b>.
+La regla del producto diferencial establece que:
+
+
+$$\nabla \cdot (g \vec{V}) = g(\nabla \cdot \vec{V}) + \nabla g \cdot \vec{V}$$
+
+Integramos sobre una pequeña esfera $B_\varepsilon$ (de radio $\varepsilon$) centrada en el origen.
+
+Definimos nuestro campo: $\vec{V} = \frac{\hat{r}}{r^2}$.
+La integral que queremos resolver es:
+
+
+$$I = \int_{B_\varepsilon} f(x,y,z) \left[ \nabla \cdot \frac{\hat{r}}{r^2} \right] dV$$
+
+Sustituyendo $g$ por $f$ en la identidad, el integrando se transforma:
+
+
+$$I = \int_{B_\varepsilon} \Big[ \nabla \cdot (f \vec{V}) - \nabla f \cdot \vec{V} \Big] dV$$
+
+Separamos esto en dos integrales distintas:
+
+$$I = \underbrace{\int_{B_\varepsilon} \Big[ \nabla \cdot \left(f(x,y,z) \frac{\hat{r}}{r^2}\right) dV}_{\text{Integral 1}} - \underbrace{\int_{B_\varepsilon} \nabla f \cdot \frac{\hat{r}}{r^2} dV}_{\text{Integral 2}}$$
+
+<h3>Resolviendo la Integral 1 (Donde actúa el Teorema)</h3>
+
+$$\text{Integral 1} = \int_{B_\varepsilon} \Big[ \nabla \cdot \left(f(x,y,z) \frac{\hat{r}}{r^2}\right) dV$$
+
+Aquí aplicamos el Teorema de la Divergencia de Gauss. Este nos permite transformar la integral de volumen en una integral sobre la *superficie* de la esferita, que llamaremos $S_\varepsilon$:
+
+
+$$\text{Integral 1} = \oint_{S_\varepsilon} f(x,y,z) \frac{\hat{r}}{r^2} \cdot d\vec{S}$$
+
+Evaluemos las piezas exclusivamente sobre la cáscara de esta esfera ($r = \varepsilon$):<br>
+
+<ul>
+<li>El producto punto: $\vec{V} \cdot d\vec{S} = \left(\frac{\hat{r}}{\varepsilon^2}\right) \cdot \Big(\hat{r} (\varepsilon^2 d\Omega)\Big) = d\Omega$ (los $\varepsilon^2$ se aniquilan mutuamente).</li>
+</ul>
+
+Sustituyendo en la integral, obtenemos algo hermosamente simple:
+
+
+$$\text{Integral 1} = \oint_{S_\varepsilon} f(x,y,z) \, d\Omega$$
+
+Como estamos tomando el límite cuando la esfera colapsa hacia el origen ($\varepsilon \to 0$), la función $f$ en la superficie de la esfera está obligada a converger al valor en el centro: $f(0,0,0)$. Al ser una constante, sale de la integral:
+
+
+$$\lim_{\varepsilon \to 0} \text{Integral 1} = f(0,0,0) \oint_{S_\varepsilon} d\Omega = f(0,0,0) (4\pi)$$
+
+<h3>Resolviendo la Integral 2 (La que desaparece)</h3>
+
+$$\text{Integral 2} = \int_{B_\varepsilon} \nabla f \cdot \vec{V} dV$$
+
+Esta se queda como integral de volumen. Veamos sus componentes:
+<ul>
+<li>El campo: $\vec{V} = \frac{\hat{r}}{r^2}$.</li>
+<li>El diferencial de volumen esférico: $dV = r^2 dr d\Omega$.</li>
+<li>El producto dentro de la integral: $\vec{V} dV = \left(\frac{\hat{r}}{r^2}\right) (r^2 dr d\Omega) = \hat{r} \, dr \, d\Omega$.</li>
+</ul>
+¡La singularidad $\frac{1}{r^2}$ fue cancelada por la geometría del volumen $r^2$! La integral queda:
+
+
+$$\text{Integral 2} = \int_{B_\varepsilon} (\nabla f \cdot \hat{r}) \, dr \, d\Omega$$
+
+El radio $r$ se integra desde $0$ hasta $\varepsilon$. Como ya no hay denominadores que exploten (el integrando es suave), y la longitud del intervalo de integración se encoge a cero ($\varepsilon \to 0$), el valor completo de la integral se vuelve cero:
+
+
+$$\lim_{\varepsilon \to 0} \text{Integral 2} = 0$$
+
+<h3>Conclusión Final</h3>
+
+Volviendo a nuestra resta del Paso 3:
+
+
+$$I = \text{Integral 1} - \text{Integral 2}$$
+
+$$\int_{B_\varepsilon} f(x,y,z) \left[ \nabla \cdot \left(\frac{\hat{r}}{r^2}\right) \right] dV = 4\pi f(0,0,0) - 0 = 4\pi f(0,0,0)$$

@@ -17,7 +17,9 @@ from graph_view import GraphWidget
 from review_view import ReviewWidget
 from node_editor_dialog import NodeEditorDialog
 from retrievability_plot_dialog import RetrievabilityPlotDialog
+from scratchbook_dialog import ScratchbookDialog
 from courses_widget import CoursesWidget
+
 from stats_widget import StatsWidget
 import course_storage
 from styles import DARK_THEME_QSS
@@ -187,6 +189,16 @@ class MainWindow(QMainWindow):
         self.tab_bar.currentChanged.connect(self._on_ledger_tab_changed)
 
         ledger_bar.addWidget(self.tab_bar)
+
+        btn_scratch = QPushButton("✏️ Scratch")
+        btn_scratch.setCursor(Qt.PointingHandCursor)
+        btn_scratch.setStyleSheet(
+            "font-size: 13px; font-weight: bold; color: #f8fafc; background-color: #1e293b; "
+            "padding: 6px 14px; border-radius: 6px; border: 1px solid #334155;"
+        )
+        btn_scratch.clicked.connect(self._open_scratchbook_dialog)
+        ledger_bar.addWidget(btn_scratch)
+
         ledger_bar.addStretch()
 
         self.lbl_active_course_badge = QLabel(f"Active: {self.current_course.name}")
@@ -194,6 +206,7 @@ class MainWindow(QMainWindow):
         ledger_bar.addWidget(self.lbl_active_course_badge)
 
         main_layout.addLayout(ledger_bar)
+
 
         # 2. Main Stacked Router View Pages
         self.stack = QStackedWidget()
@@ -419,7 +432,21 @@ class MainWindow(QMainWindow):
         self.tab_bar.setCurrentIndex(2)  # Switch to Review Tab
         self._next_review_card()
 
+    def _open_scratchbook_dialog(self):
+        """Open standalone non-modal Scratchbook window allowing simultaneous side-by-side editing."""
+        if not hasattr(self, "scratchbook_window") or self.scratchbook_window is None or not self.scratchbook_window.isVisible():
+            self.scratchbook_window = ScratchbookDialog(self)
+            self.scratchbook_window.setWindowModality(Qt.NonModal)
+            self.scratchbook_window.show()
+        else:
+            self.scratchbook_window.show()
+            self.scratchbook_window.raise_()
+            self.scratchbook_window.activateWindow()
+
+
     def _next_review_card(self):
+
+
         if not self.current_review_queue:
             self.review_view.show_empty_session()
             self.current_review_note = None
@@ -520,19 +547,35 @@ class MainWindow(QMainWindow):
         title, ok = QInputDialog.getText(self, "New Note Node", "Enter Note Title:")
         if ok and title.strip():
             new_note = NoteNode(title=title.strip(), x=0, y=0)
-
-            dialog = NodeEditorDialog(new_note, self)
-            if dialog.exec():
-                self.notes.append(new_note)
-                self.graph_view.load_graph(self.notes, self.edges)
-                self.save_data(silent=True)
-
-    def _edit_note_dialog(self, note: NoteNode):
-        """Edit an existing note."""
-        dialog = NodeEditorDialog(note, self)
-        if dialog.exec():
+            self.notes.append(new_note)
             self.graph_view.load_graph(self.notes, self.edges)
             self.save_data(silent=True)
+            self._edit_note_dialog(new_note)
+
+    def _edit_note_dialog(self, note: NoteNode):
+        """Edit an existing note in a standalone non-modal window."""
+        if not hasattr(self, "active_note_editors"):
+            self.active_note_editors = {}
+
+        if note.note_id in self.active_note_editors and self.active_note_editors[note.note_id].isVisible():
+            self.active_note_editors[note.note_id].show()
+            self.active_note_editors[note.note_id].raise_()
+            self.active_note_editors[note.note_id].activateWindow()
+            return
+
+        dialog = NodeEditorDialog(note, self)
+        dialog.setWindowModality(Qt.NonModal)
+
+        def on_saved():
+            self.graph_view.load_graph(self.notes, self.edges)
+            self.save_data(silent=True)
+
+        dialog.accepted.connect(on_saved)
+        self.active_note_editors[note.note_id] = dialog
+        dialog.show()
+        dialog.raise_()
+        dialog.activateWindow()
+
 
     def _open_note_info_dialog(self, note: NoteNode):
         """Open retrievability plot info dialog for a specific note."""

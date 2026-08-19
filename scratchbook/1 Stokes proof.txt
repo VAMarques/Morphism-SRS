@@ -1,0 +1,131 @@
+<h2>1 Stokes proof</h2>
+Sea $F = (P(x,y,z), Q(x,y,z), R(x,y,z)) $ y sea $S$ una superficie parametrizada por $f:D \subseteq \mathbb R^2 \to S \subseteq \mathbb R^3$ suave.
+
+<hr>
+Si
+\[
+f(u,v)=
+\bigl(x(u,v),y(u,v),z(u,v)\bigr).
+\]
+
+Entonces
+
+\[
+Df_{(u,v)} =
+\begin{pmatrix}
+x_u & x_v\\
+y_u & y_v\\
+z_u & z_v
+\end{pmatrix}
+\]
+Luego
+\[
+\mathbf F\circ f
+=
+
+(P\circ f,Q\circ f,R\circ f)
+\]
+
+Podemos considerar:
+\[
+\d\mathbf r
+ =
+Df
+\begin{pmatrix}
+du\\
+dv
+\end{pmatrix}
+\]
+
+Luego
+
+\[
+\mathbf F\cdot d\mathbf r
+=
+
+(\mathbf F\circ f)
+Df
+\begin{pmatrix}
+du\\
+dv
+\end{pmatrix}.
+\]
+
+Sean
+\[
+(A,B)
+=
+
+(\mathbf F\circ f)Df.
+\]
+
+La integral se vuelve:
+\[
+\oint_{\partial S}\mathbf F\cdot \d\mathbf r
+=
+
+\oint_{\partial S}
+A\,\d u+B\,\d v = \iint_S
+\left(
+\frac{\partial B}{\partial u}
+-
+\frac{\partial A}{\partial v}
+\right)
+\,\d u\wedge\d v
+\]
+
+Solo necesitamos entonces:
+
+\[
+\mathrm D_u B - \mathrm D_v A
+\]
+<hr>
+Tenemos$$
+A = \sum_{i=1}^3 (F \circ f)_{(i)}\mathrm D_1f^{(i)}
+$$
+
+$$
+\frac{\partial A}{\partial v} = \sum_{i=1}^3 \frac{\partial (F \circ f)^{(i)}}{\partial v}\mathrm D_1f^{(i)} + (F \circ f)_{(i)}\mathrm D_{2,1}f^{(i)}
+$$
+Del mismo modo$$
+B = \sum_{i=1}^3 (F \circ f)_{(i)}\mathrm D_2f^{(i)}
+$$
+Entonces$$
+\frac{\partial B}{\partial u} = \sum_{i=1}^3 \frac{\partial (F \circ f)^{(i)}}{\partial u}\mathrm D_2f^{(i)} + (F \circ f)_{(i)}\mathrm D_{1,2}f^{(i)}
+$$
+Luego\begin{align}
+\frac{\partial B}{\partial u} - \frac{\partial A}{\partial v}
+&= \sum_{i=1}^3 \frac{\partial (F \circ f)^{(i)}}{\partial u}\mathrm D_2f^{(i)} -
+\frac{\partial (F \circ f)^{(i)}}{\partial v}\mathrm D_1f^{(i)} \\
+&= \sum_{i=1}^3 \sum_{j=1}^3 \frac{\partial F^{(i)}}{\partial f^{(j)}}\mathrm D_1f^{(j)}\mathrm D_2f^{(i)} -
+\sum_{i=1}^3 \sum_{j=1}^3 \frac{\partial F^{(i)}}{\partial f^{(j)}}\mathrm D_2f^{(j)}\mathrm D_1f^{(i)} \\
+&= D_2f_{(u,v)} \mathrm D F_{f(u,v)} D_1 f_{(u,v)} -  D_1f_{(u,v)} \mathrm D F_{f(u,v)}  D_2 f_{(u,v)}
+\end{align}
+<hr>
+$\vec a^{\top}A\vec b = \sum_{i,j} a_i A_{ij}b_j$,
+Luego\begin{align}
+\vec a^{\top}A\vec b - \vec b^{\top}A\vec a &= \sum_{i,j} A_{ij}(a_ib_j - a_jb_i) \\
+&= \sum_{1\le i< j \le 3} (A_{ij}-A_{ji})(a_ib_j - a_jb_i) \\
+&= \begin{pmatrix} A_{23} - A_{32} \\ A_{31} - A_{13} \\ A_{12} - A_{21}\end{pmatrix} \cdot \begin{pmatrix} a_2b_3 - a_3b_2 \\ a_3b_1 - a_1b_3 \\ a_1b_2 - a_2b_1 \end{pmatrix} \\
+&= 2\operatorname{Alt}(A)(\vec a, \vec b) = \operatorname{Axl} A \cdot \vec b \times \vec a
+\end{align}
+(Axl depende de la orientación elegida). Para nuestro caso, tenemos que, si $F=(P,Q,R)$ Entonces:$$
+\operatorname{Axl}(\mathrm D F_{f(u,v)}) = \begin{pmatrix} \frac{\partial R}{\partial y} - \frac{\partial Q}{\partial z} \\ \frac{\partial P}{\partial z} - \frac{\partial R}{\partial x} \\ \frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\end{pmatrix} = \nabla \times F_{f(u,v)}
+$$
+Asi que:
+$$
+D_2f_{(u,v)} \mathrm D F_{f(u,v)} D_1 f_{(u,v)} -  D_1f_{(u,v)} \mathrm D F_{f(u,v)}  D_2 f_{(u,v)} = \nabla \times F_{f(u,v)} \cdot D_1 f_{(u,v)} \times D_2f_{(u,v)}
+$$
+Entonces finalmente concluimos:\[
+\oint_{\partial S}\mathbf F\cdot \d\mathbf r
+=
+\iint_S
+\nabla \times F_{f(u,v)} \cdot D_1 f_{(u,v)} \times D_2f_{(u,v)}
+\,\d u\wedge\d v
+\]
+Pero $\d \mathbf S = D_1 f_{(u,v)} \times D_2f_{(u,v)}\,\d u\wedge\d v$, tenemos:\[
+\oint_{\partial S}\mathbf F\cdot \d\mathbf r
+=
+\iint_S
+\nabla \times F \cdot \d \mathbf S
+\]

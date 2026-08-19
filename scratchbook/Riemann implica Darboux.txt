@@ -1,0 +1,15 @@
+<h2>Riemann implica Darboux</h2>
+Si $f \in \mathscr B(X)$ es Riemann integrable (clasica) entonces $\underline{\int_a^b} f\ \mathrm d \alpha = \overline{\int_a^b} f\ \mathrm d \alpha$
+<hr>
+
+Suponemos que $\exists I\in \mathbb R \ \forall \eps>0 \ \exists \delta>0$ tal que si $\|P\|< \delta$ entonces para cualquier elección:\[
+|I - S(P,f)| < \eps/4
+\]
+Elegimos etiquetas tales que $M_i \ge f(t_i) > M_i - \delta$ y $m_i + \delta > f(s_i) \ge m_i$ con $\delta < \frac{\alpha(X)}{4}\eps$, luego:\begin{align}
+S(P,f, C_1) - S(P,f, C_2) &= \sum_{I \in P}(f(t_i)-f(s_i))\alpha(I) \\
+& > \sum_{I \in P}(M_i - \delta -m_i - \delta)\alpha(I) \\
+& = U(P,f) - L(P,f) -2\delta\alpha(X) \\
+\end{align}
+Luego$$
+U(P,f) - L(P,f) < \eps/2 + \eps/2 < \eps
+$$

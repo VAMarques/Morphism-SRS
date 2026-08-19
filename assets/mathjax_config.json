@@ -4,8 +4,6 @@
   "processEscapes": true,
   "packages": {"[+]": ["color", "ams"]},
   "macros": {
-    "pd": "{\\partial}",
-    "v": "{\\mathbf}",
     "norm": ["{\\left\\|#1\\right\\|}", 1],
     "abs": ["{\\left|#1\\right|}", 1],
     "inner": ["{\\left\\langle #1, #2 \\right\\rangle}", 2],
@@ -22,6 +20,7 @@
     "lthen": "{\\Rightarrow}",
     "liff": "{\\Leftrightarrow}",
     "lxor": "{\\veebar}",
-    "biota": "{℩}"
+    "biota": "{℩}",
+    "d": "\\mathbin{\\!}\\mathrm{d}"
   }
 }

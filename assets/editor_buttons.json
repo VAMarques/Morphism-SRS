@@ -57,6 +57,24 @@
     "shortcut": "Ctrl+Return"
   },
   {
+    "id": "list",
+    "label": "&lt;ul&gt;",
+    "tooltip": "Listing <ul>...</ul>",
+    "type": "interval",
+    "left": "<ul>",
+    "right": "</ul>",
+    "default_text": "ul"
+  },
+  {
+    "id": "listitem",
+    "label": "&lt;li&gt;",
+    "tooltip": "list item <li>...</li>",
+    "type": "interval",
+    "left": "<li>",
+    "right": "</li>",
+    "default_text": "li"
+  },
+  {
     "id": "image",
     "label": "🖼 Image",
     "tooltip": "Insert HTML Image <img src='...'>",

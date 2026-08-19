@@ -1,0 +1,1 @@
+Single dollar inline math: $f(x) = x^2 + 2x + 1$ and macro.

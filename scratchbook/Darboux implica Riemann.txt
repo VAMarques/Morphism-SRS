@@ -1,0 +1,22 @@
+<h2>Darboux implica Riemann</h2>
+
+Si $I = \underline{\int_a^b} f = \overline{\int_a^b} f$ entonces $f \in \mathscr B(X)$ es Riemann integrable (clasica)
+<hr>
+
+$\implies$ Asumimos que $f$ es Darboux integrable, entonces se tiene que $\forall \eps > 0 \ \exists P=(x_i)_{i=0}^n$ una partición tal que\[
+U(P,f) - L(P,f) < \eps/2 
+\]
+Sea $P'=(y_k)_{k=0}^{n'}$ una partición con $$\|P'\| < \min\left(\inf \Delta x_i, \frac{\eps/2}{(M-m)(n-1)} \right)$$
+
+Entonces para $1 \le k \le n'$ con $n'$ la cantidad de puntos en la partición $P'$ pueden suceder solo dos situaciónes:
+$$J = \set{k: \exists i \in \set{1,\cdots, n}.\ [y_{k-1}, y_k] \subseteq [x_{i-1}, x_i]}$$
+$$G= P' \setminus J = \set{k: \exists i \in \set{1,\cdots, n}.\ x_i \in (y_{k-1}, y_k)}$$
+Donde $|G| \le n-1$,
+y designamos $P^*=(z_j)_{j=0}^{n^*}$ el refinamiento mutuo.
+Ahora:\begin{align}
+|I-S(P',f)| & \le |I-S(P^*,f)| + |S(P^*,f)-S(P',f)| \\
+& \le |I-S(P,f)| + (M- m)\sum_{k \in G}\Delta y_k \\
+& < \eps
+\end{align}
+
+La demostración puede generalizarse

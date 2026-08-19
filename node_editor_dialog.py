@@ -258,11 +258,28 @@ class NodeEditorDialog(QDialog):
         self.setWindowTitle(f"Edit Note: {note.title}")
         # Allow Window Maximization, Minimization & Resizing
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint | Qt.WindowMinimizeButtonHint)
+        self.setWindowModality(Qt.NonModal)
         self.setMinimumSize(820, 600)
         self.resize(1120, 820)
         
         self._setup_ui()
         self._load_cards_list()
+
+    def _open_scratchbook_from_editor(self):
+        """Open or raise the Scratchbook window directly from the Note Editor."""
+        if self.parent() and hasattr(self.parent(), "_open_scratchbook_dialog"):
+            self.parent()._open_scratchbook_dialog()
+        else:
+            from scratchbook_dialog import ScratchbookDialog
+            if not hasattr(self, "_scratchbook_dlg") or self._scratchbook_dlg is None or not self._scratchbook_dlg.isVisible():
+                self._scratchbook_dlg = ScratchbookDialog(self)
+                self._scratchbook_dlg.setWindowModality(Qt.NonModal)
+                self._scratchbook_dlg.show()
+            else:
+                self._scratchbook_dlg.show()
+                self._scratchbook_dlg.raise_()
+                self._scratchbook_dlg.activateWindow()
+
 
     def _setup_ui(self):
         dialog_layout = QVBoxLayout(self)
@@ -286,12 +303,20 @@ class NodeEditorDialog(QDialog):
         header_layout.addWidget(QLabel("Architecture:"))
         self.combo_note_type = QComboBox()
         self.combo_note_type.addItem("Standard Note (Joint Retention)", "standard")
-        self.combo_note_type.addItem("Serial Sequence (Full Multi-Step)", "serial_sequence")
-        self.combo_note_type.addItem("Serial Sequence (Single Step Review)", "serial_sequence_single")
+        self.combo_note_type.addItem("Serial Sequence Note (All Steps)", "serial_sequence")
+        self.combo_note_type.addItem("Serial Sequence Note (Single Step)", "serial_sequence_single")
+        
         idx = self.combo_note_type.findData(self.note.note_type)
         if idx >= 0:
             self.combo_note_type.setCurrentIndex(idx)
         header_layout.addWidget(self.combo_note_type, stretch=1)
+
+        self.btn_scratchbook = QPushButton("✏️ Scratchbook")
+        self.btn_scratchbook.setCursor(Qt.PointingHandCursor)
+        self.btn_scratchbook.setStyleSheet("background-color: #1e293b; color: #38bdf8; font-weight: bold; border: 1px solid #334155; border-radius: 6px; padding: 4px 10px;")
+        self.btn_scratchbook.clicked.connect(self._open_scratchbook_from_editor)
+        header_layout.addWidget(self.btn_scratchbook)
+
 
         header_layout.addWidget(QLabel("Target R:"))
         self.spin_desired_r = QDoubleSpinBox()
