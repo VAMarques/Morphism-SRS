@@ -1,26 +1,30 @@
 (function () {
     "use strict";
 
+    var _typesetQueue = Promise.resolve();
+
     function typesetElements(elements) {
         if (!window.MathJax) {
             return;
         }
-        var doTypeset = function () {
+        _typesetQueue = _typesetQueue.catch(function () {}).then(function () {
+            return window.MathJax.startup && window.MathJax.startup.promise;
+        }).then(function () {
             if (window.MathJax.typesetClear) {
                 window.MathJax.typesetClear(elements);
             }
             if (window.MathJax.typesetPromise) {
-                window.MathJax.typesetPromise(elements).catch(function (err) {
+                return window.MathJax.typesetPromise(elements).catch(function (err) {
                     console.error("Preview MathJax error:", err);
                 });
             }
-        };
-        if (window.MathJax.startup && window.MathJax.startup.promise) {
-            window.MathJax.startup.promise.then(doTypeset);
-        } else {
-            doTypeset();
-        }
+        });
     }
+
+    window.addEventListener("morphism-mathjax-ready", function () {
+        var root = document.getElementById("preview-root");
+        if (root) typesetElements([root]);
+    });
 
     window.MorphismPreview = {
         renderCardPreview: function (payload) {

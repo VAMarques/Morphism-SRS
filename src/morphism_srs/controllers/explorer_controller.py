@@ -43,11 +43,11 @@ class ExplorerController:
         if not new_positions or old_positions == new_positions:
             return
         with UnitOfWork(self.conn):
-            self.note_repo.update_positions_bulk(new_positions)
+            self.note_repo.update_positions_bulk(new_positions, course_id=course_id)
 
         def _undo() -> None:
             with UnitOfWork(self.conn):
-                self.note_repo.update_positions_bulk(old_positions)
+                self.note_repo.update_positions_bulk(old_positions, course_id=course_id)
             self.event_bus.notes_updated.emit(course_id)
 
         self.undo_stack.push(

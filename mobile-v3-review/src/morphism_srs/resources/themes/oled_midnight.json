@@ -1,0 +1,33 @@
+{
+  "name": "OLED Midnight",
+  "id": "oled_midnight",
+  "is_dark": true,
+  "tokens": {
+    "bg_canvas": "#000000",
+    "bg_primary": "#08080c",
+    "bg_secondary": "#040406",
+    "bg_surface_0": "#14141f",
+    "bg_surface_1": "#1f1f30",
+    "bg_surface_2": "#2d2d44",
+    "text_primary": "#eef2ff",
+    "text_secondary": "#cbd5e1",
+    "text_muted": "#94a3b8",
+    "accent_primary": "#60a5fa",
+    "accent_primary_hover": "#93c5fd",
+    "accent_secondary": "#c084fc",
+    "semantic_success": "#4ade80",
+    "semantic_warning": "#facc15",
+    "semantic_danger": "#f87171",
+    "semantic_info": "#38bdf8",
+    "border_subtle": "#1f1f30",
+    "border_focus": "#60a5fa",
+    "node_due_border": "#f87171",
+    "node_learned_border": "#4ade80",
+    "node_new_border": "#475569",
+    "font_ui": "Segoe UI, Inter, system-ui, sans-serif",
+    "font_mono": "Cascadia Code, JetBrains Mono, Consolas, monospace",
+    "radius_sm": "6px",
+    "radius_md": "10px",
+    "radius_lg": "14px"
+  }
+}

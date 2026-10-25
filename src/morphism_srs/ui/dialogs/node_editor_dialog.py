@@ -180,7 +180,7 @@ class NodeEditorDialog(QDialog):
         self.retention_spin = QDoubleSpinBox(content_container)
         self.retention_spin.setRange(0.70, 0.99)
         self.retention_spin.setSingleStep(0.01)
-        self.retention_spin.setValue(self.note.desired_retention or 0.90)
+        self.retention_spin.setValue(self.note.desired_retention or 0.80)
         header_row1.addWidget(self.retention_spin)
 
         scratch_btn = QPushButton("✏️ Scratchbook", content_container)
@@ -510,8 +510,8 @@ class NodeEditorDialog(QDialog):
         payload = {
             "step_index": idx,
             "card_title": c.title or f"Card {idx + 1}",
-            "front_html": sanitize_math_html(c.front_html),
-            "back_html": sanitize_math_html(c.back_html),
+            "front_html": c.front_html,
+            "back_html": c.back_html,
         }
         self.web_view.page().runJavaScript(
             f"if (window.MorphismPreview && window.MorphismPreview.renderCardPreview) "
@@ -528,8 +528,6 @@ class NodeEditorDialog(QDialog):
         for idx, c in enumerate(self.note.cards):
             c.step_order = idx
             c.title = c.title.strip() or f"Card {idx + 1}"
-            c.front_html = sanitize_math_html(c.front_html)
-            c.back_html = sanitize_math_html(c.back_html)
             c.hint_html = ""
 
         self.note.title = title

@@ -1,6 +1,10 @@
 (function () {
     "use strict";
 
+    if (window.Chart && window.Chart.defaults) {
+        window.Chart.defaults.animation = false;
+    }
+
     var forecastChart = null;
     var ratingsChart = null;
     var decayChart = null;

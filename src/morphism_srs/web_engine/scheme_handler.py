@@ -79,6 +79,12 @@ class MorphismSchemeHandler(QWebEngineUrlSchemeHandler):
                 "startup": {"typeset": False},
             }
             js_payload = f"window.MathJax = {json.dumps(mathjax_obj, ensure_ascii=False)};\n"
+            js_payload += """window.MathJax.startup.ready = function () {
+                MathJax.startup.defaultReady();
+                MathJax.startup.promise.then(function () {
+                    window.dispatchEvent(new Event('morphism-mathjax-ready'));
+                });
+            };"""
             buf = QBuffer(parent=job)
             buf.setData(QByteArray(js_payload.encode("utf-8")))
             buf.open(QIODevice.OpenModeFlag.ReadOnly)

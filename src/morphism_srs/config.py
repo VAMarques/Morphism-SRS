@@ -92,7 +92,7 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     "active_course_id": None,
     "window_width_ratio": 0.85,
     "window_height_ratio": 0.85,
-    "default_desired_retention": 0.90,
+    "default_desired_retention": 0.80,
     "enable_auto_backups": True,
     "max_backups": 10,
 }

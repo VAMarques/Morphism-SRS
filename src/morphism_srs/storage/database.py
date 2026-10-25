@@ -39,12 +39,25 @@ class DatabaseManager:
         conn.execute("PRAGMA cache_size = -64000;")
 
     def initialize(self) -> None:
-        """Executes schema_v2.sql and seeds default tags if not yet seeded."""
+        """Executes schema_v2.sql, runs migrations, and seeds default tags if not yet seeded."""
         conn = self.connection
         if self.schema_path.exists():
             ddl = self.schema_path.read_text(encoding="utf-8")
             conn.executescript(ddl)
             self._apply_pragmas(conn)
+
+        # Migrate course_notes if empty but notes exist
+        try:
+            row = conn.execute("SELECT COUNT(*) AS cnt FROM course_notes;").fetchone()
+            if row and row["cnt"] == 0:
+                conn.execute(
+                    """
+                    INSERT OR IGNORE INTO course_notes (course_id, note_id, pos_x, pos_y, is_pinned)
+                    SELECT course_id, id, pos_x, pos_y, is_pinned FROM notes WHERE course_id IS NOT NULL;
+                    """
+                )
+        except Exception:
+            pass
 
         if self.tags_csv_path and self.tags_csv_path.exists():
             self._seed_default_tags(conn, self.tags_csv_path)

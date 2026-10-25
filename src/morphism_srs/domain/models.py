@@ -32,7 +32,7 @@ class CourseModel:
     folder_id: int | None = None
     description: str = ""
     color_hex: str = "#89b4fa"
-    desired_retention: float = 0.90
+    desired_retention: float = 0.80
     display_order: int = 0
     is_archived: bool = False
     created_at: str = field(default_factory=_now_iso)
@@ -82,7 +82,7 @@ class CardModel:
 class NoteModel:
     id: int | None = None
     uuid: str = field(default_factory=generate_uuid)
-    course_id: int = 0
+    course_id: int | None = None
     external_key: str | None = None
     title: str = ""
     premise_html: str = ""

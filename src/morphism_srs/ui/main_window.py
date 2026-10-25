@@ -51,9 +51,11 @@ class MainWindow(QMainWindow):
         self.app_version = version or getattr(config, "version", "0.2.2")
         self.setWindowTitle(f"Morphism SRS Prototype 2 (v{self.app_version}) — Mathematical Knowledge Graph & Spaced Repetition")
 
-        icon_path = config.paths.icons_dir / "icon.png"
-        if icon_path.exists():
-            self.setWindowIcon(QIcon(str(icon_path)))
+        ico_path = config.paths.icons_dir / "icon.ico"
+        png_path = config.paths.icons_dir / "icon.png"
+        target_icon = ico_path if ico_path.exists() else png_path
+        if target_icon.exists():
+            self.setWindowIcon(QIcon(str(target_icon)))
 
         apply_relative_geometry(
             self,

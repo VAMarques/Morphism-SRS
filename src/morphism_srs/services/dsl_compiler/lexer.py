@@ -39,6 +39,7 @@ class DSLLexer:
     MODE_KW_RE = re.compile(r'^\s*MODE\s+(\S+)\s*$', re.IGNORECASE)
     TAGS_KW_RE = re.compile(r'^\s*TAGS\s+(.+?)\s*$', re.IGNORECASE)
     RETENTION_KW_RE = re.compile(r'^\s*RETENTION\s+([0-9.]+)\s*$', re.IGNORECASE)
+    UUID_KW_RE = re.compile(r'^\s*UUID\s+(\S+)\s*$', re.IGNORECASE)
     POS_KW_RE = re.compile(r'^\s*POS\s+(.+?)\s*$', re.IGNORECASE)
     CARD_KW_RE = re.compile(r'^\s*CARD(?:\s+(\d+))?(?:\s+(.+?))?\s*$', re.IGNORECASE)
     SECTION_KW_RE = re.compile(r'^\s*(FRONT|BACK)\s*$', re.IGNORECASE)
@@ -158,6 +159,19 @@ class DSLLexer:
                 )
                 continue
 
+            m_uuid = self.UUID_KW_RE.match(line)
+            if m_uuid:
+                tokens.append(
+                    DSLToken(
+                        kind="PROPERTY",
+                        line_num=idx,
+                        raw=line,
+                        key="uuid",
+                        value=m_uuid.group(1).strip(),
+                    )
+                )
+                continue
+
             m_pos = self.POS_KW_RE.match(line)
             if m_pos:
                 tokens.append(
@@ -217,6 +231,7 @@ class DSLLexer:
                     "tags",
                     "deps",
                     "retention",
+                    "uuid",
                     "pos",
                     "folder",
                     "color",

@@ -1,0 +1,276 @@
+# ============================================================================
+# Morphism SRS (.mdsl) — Guion Hito 2: Bloque 1 (Víctor Marques)
+# Tarjetas de Memorización Oral con Imágenes de Referencia de Diapositivas
+# ============================================================================
+
+COURSE "Guion Hito 2 — Bloque 1 (Victor Marques)"
+FOLDER "Presentacion/SummaPartners"
+
+# ----------------------------------------------------------------------------
+# Diapositiva 00: Portada Institucional y Saludo
+# ----------------------------------------------------------------------------
+NEW NOTE "Diapositiva 00 — Portada y Apertura"
+MODE serial
+TAGS presentacion_oral, hito_2, portada, apertura
+
+CARD 1 "Líneas de Apertura y Presentación del Proyecto"
+FRONT
+<img src="media/diapositiva_00_portada.png">
+<p style="text-align: center; color: var(--text-muted, #a6adc8); font-size: 0.9em;">
+  <i>Al proyectar la portada, ¿cuáles son tus líneas exactas de saludo e introducción del proyecto?</i>
+</p>
+BACK
+<div style="font-size: 1.05em; line-height: 1.6;">
+  <p>
+    Buenas tardes. Somos Víctor Marques, Matías Valenzuela y Sebastián Venegas. Presentamos el Sistema de Asistencia para la Preparación de Evaluaciones de Desempeño en SummaPartners: una arquitectura desacoplada que transforma evidencia de proyectos en borradores trazables y auditados, resguardando la confidencialidad corporativa.
+  </p>
+</div>
+
+# ----------------------------------------------------------------------------
+# Diapositiva 01 / 12: Portada y ciclo de evaluación
+# ----------------------------------------------------------------------------
+NEW NOTE "Diapositiva 01 — De las Observaciones a la Evaluacion Formal"
+MODE serial
+TAGS presentacion_oral, hito_2, diapositiva_1, ciclo_evaluacion
+
+CARD 1 "Discurso Completo: Ciclo de Evaluación y Mentor"
+FRONT
+<img src="media/diapositiva_01_ciclo.png">
+<p style="text-align: center; color: var(--text-muted, #a6adc8); font-size: 0.9em;">
+  <b>Diapositiva 01 / 12:</b> <i>De las observaciones a la evaluación formal (1:30–1:40 min)</i><br>
+  ¿Qué debes decir al exponer esta lámina (mentor, ciclo trimestral, Project Hub, solución y transición)?
+</p>
+BACK
+<div style="font-size: 1.05em; line-height: 1.6;">
+  <p>
+    En la firma, cada profesional cuenta con un mentor que acompaña su desarrollo y consolida su evaluación formal. Este rol no corresponde necesariamente a la jefatura directa: su responsabilidad es integrar las distintas perspectivas sobre el desempeño y orientar el desarrollo profesional.
+  </p>
+  <p>
+    El proceso se organiza en ciclos trimestrales y valora competencias según las expectativas de cada cargo. Durante los proyectos, los profesionales registran observaciones en Project Hub, la plataforma interna de asignaciones y feedback. Quienes trabajaron con la persona aportan evaluaciones preliminares desde distintas perspectivas. Al cierre del ciclo, el mentor reúne esas preliminares y la autoevaluación para proponer comentarios, notas y acciones de desarrollo. Después se realiza la calibración, una revisión conjunta para alinear los criterios de evaluación.
+  </p>
+  <p>
+    Nuestra solución asiste la preparación de ese borrador y conserva las fuentes para que el responsable pueda contrastar sus conclusiones. La propuesta conecta la conducta observada, el criterio del cargo y la valoración sugerida.
+  </p>
+  <p style="border-left: 3px solid #89b4fa; padding-left: 10px; margin-top: 12px; font-weight: bold; color: #89b4fa;">
+    Transición: «Veamos qué hace difícil esa síntesis y cómo abordamos el problema.»
+  </p>
+</div>
+
+CARD 2 "Frase de Transición a Diapositiva 2"
+FRONT
+<img src="media/diapositiva_01_ciclo.png">
+<p style="text-align: center; color: var(--text-muted, #a6adc8); font-size: 0.9em;">
+  <i>¿Cuál es la frase exacta para cerrar la Diapositiva 1 y dar paso a la Diapositiva 2?</i>
+</p>
+BACK
+<div style="font-size: 1.15em; font-weight: bold; text-align: center; padding: 16px; border: 1px dashed #89b4fa; border-radius: 8px;">
+  «Veamos qué hace difícil esa síntesis y cómo abordamos el problema.»
+</div>
+
+# ----------------------------------------------------------------------------
+# Diapositiva 02 / 12: Problema de síntesis y evolución de la solución
+# ----------------------------------------------------------------------------
+NEW NOTE "Diapositiva 02 — Sintetizar Exige Conservar el Fundamento"
+MODE serial
+TAGS presentacion_oral, hito_2, diapositiva_2, problematica
+
+CARD 1 "Discurso Completo: Problema de Síntesis y Evolución"
+FRONT
+<img src="media/diapositiva_02_problema.png">
+<p style="text-align: center; color: var(--text-muted, #a6adc8); font-size: 0.9em;">
+  <b>Diapositiva 02 / 12:</b> <i>Sintetizar exige conservar el fundamento (1:30–1:40 min)</i><br>
+  ¿Qué debes decir al exponer esta lámina (dificultad de síntesis, sesgos, pipeline integrado y transición)?
+</p>
+BACK
+<div style="font-size: 1.05em; line-height: 1.6;">
+  <p>
+    Preparar una evaluación exige reunir antecedentes dispersos, comprobar a quién corresponden y distinguir lo observado de lo esperado para el cargo. La cobertura es desigual: algunas competencias acumulan observaciones y otras apenas tienen información. Una redacción convincente puede ocultar esa diferencia.
+  </p>
+  <p>
+    Bajo presión de tiempo, los episodios más recientes o fáciles de recordar pueden dominar el juicio. También aparecen errores de atribución: adjudicar acciones de terceros al evaluado o convertir una expectativa del cargo en un logro que nadie documentó. El problema afecta la fundamentación y la utilidad formativa del comentario.
+  </p>
+  <p>
+    Desde la fase de diseño conceptual y exploración inicial avanzamos hacia un pipeline integrado. Incorporamos feedback continuo actualizado, implementamos generación con controles locales y revisión automática, y organizamos la referencia histórica como contraste del comentario formal. La arquitectura actual permite inspeccionar el borrador junto con las citas y las objeciones pendientes.
+  </p>
+  <p>
+    Estos cambios convierten la trazabilidad en una propiedad del proceso: cada afirmación debe poder contrastarse con antecedentes autorizados. La ausencia de observaciones y las discrepancias entre perspectivas deben quedar visibles en la propuesta.
+  </p>
+  <p style="border-left: 3px solid #89b4fa; padding-left: 10px; margin-top: 12px; font-weight: bold; color: #89b4fa;">
+    Transición: «Con ese diagnóstico, definimos qué debe entregar el sistema y quién conserva la decisión.»
+  </p>
+</div>
+
+CARD 2 "Frase de Transición a Diapositiva 3"
+FRONT
+<img src="media/diapositiva_02_problema.png">
+<p style="text-align: center; color: var(--text-muted, #a6adc8); font-size: 0.9em;">
+  <i>¿Cuál es la frase exacta para cerrar la Diapositiva 2 y dar paso a la Diapositiva 3?</i>
+</p>
+BACK
+<div style="font-size: 1.15em; font-weight: bold; text-align: center; padding: 16px; border: 1px dashed #89b4fa; border-radius: 8px;">
+  «Con ese diagnóstico, definimos qué debe entregar el sistema y quién conserva la decisión.»
+</div>
+
+# ----------------------------------------------------------------------------
+# Diapositiva 03 / 12: Objetivos y alcance del sistema
+# ----------------------------------------------------------------------------
+NEW NOTE "Diapositiva 03 — Entregamos un Borrador Editable y Trazable"
+MODE serial
+TAGS presentacion_oral, hito_2, diapositiva_3, objetivos, alcance
+
+CARD 1 "Discurso Completo: Objetivos y Alcance del Sistema"
+FRONT
+<img src="media/diapositiva_03_objetivos.png">
+<p style="text-align: center; color: var(--text-muted, #a6adc8); font-size: 0.9em;">
+  <b>Diapositiva 03 / 12:</b> <i>Entregamos un borrador editable y trazable (1:30–1:40 min)</i><br>
+  ¿Qué debes decir al exponer esta lámina (objetivo organizacional, Ciencia de Datos, solicitud a borrador y transición)?
+</p>
+BACK
+<div style="font-size: 1.05em; line-height: 1.6;">
+  <p>
+    El objetivo organizacional es reducir el esfuerzo de preparación de las evaluaciones para dedicar más tiempo al análisis y a la conversación de desarrollo. La solución busca concentrar ese esfuerzo en interpretar los antecedentes, fundamentar el juicio y definir prioridades de desarrollo profesional.
+  </p>
+  <p>
+    Nuestro objetivo de Ciencia de Datos es seleccionar evidencia autorizada, relacionarla con las expectativas del cargo y generar propuestas estructuradas que incluyan comentarios, notas sugeridas y referencias verificables. La calidad de esa transformación depende de representar las perspectivas disponibles y conservar la relación entre cada conclusión y su respaldo.
+  </p>
+  <p>
+    El alcance comienza con una solicitud que identifica persona evaluada, evaluador, trimestre y modalidad. A partir de ella, el sistema prepara las fuentes pertinentes y produce un borrador organizado por competencia. Cada comentario articula las conductas observadas con el nivel de responsabilidad esperado para el cargo, mientras la síntesis global integra la lectura del periodo.
+  </p>
+  <p>
+    El resultado permite al evaluador consultar el fundamento de la propuesta, ajustar su redacción y preparar la conversación de desempeño. La evaluación final, la calibración y las decisiones de carrera forman parte del proceso de revisión de la organización.
+  </p>
+  <p style="border-left: 3px solid #89b4fa; padding-left: 10px; margin-top: 12px; font-weight: bold; color: #89b4fa;">
+    Transición: «Ahora explicaremos cómo preparamos las fuentes que alimentan ese motor.»
+  </p>
+</div>
+
+CARD 2 "Frase de Transición a Diapositiva 4"
+FRONT
+<img src="media/diapositiva_03_objetivos.png">
+<p style="text-align: center; color: var(--text-muted, #a6adc8); font-size: 0.9em;">
+  <i>¿Cuál es la frase exacta para cerrar la Diapositiva 3 y dar paso a la Diapositiva 4?</i>
+</p>
+BACK
+<div style="font-size: 1.15em; font-weight: bold; text-align: center; padding: 16px; border: 1px dashed #89b4fa; border-radius: 8px;">
+  «Ahora explicaremos cómo preparamos las fuentes que alimentan ese motor.»
+</div>
+
+# ----------------------------------------------------------------------------
+# Diapositiva 04 / 12: Fuentes e higiene local de la evidencia
+# ----------------------------------------------------------------------------
+NEW NOTE "Diapositiva 04 — Cada Fuente Cumple una Funcion Distinta"
+MODE serial
+TAGS presentacion_oral, hito_2, diapositiva_4, fuentes_datos
+
+CARD 1 "Discurso Completo: Fuentes, Higiene Local y Pase al Bloque 2"
+FRONT
+<img src="media/diapositiva_04_fuentes.png">
+<p style="text-align: center; color: var(--text-muted, #a6adc8); font-size: 0.9em;">
+  <b>Diapositiva 04 / 12:</b> <i>Cada fuente cumple una función distinta (1:30–1:40 min)</i><br>
+  ¿Qué debes decir al exponer esta lámina (las fuentes, preparación local, análisis del catálogo y pase a Matías)?
+</p>
+BACK
+<div style="font-size: 1.05em; line-height: 1.6;">
+  <p>
+    Consultamos las fuentes corporativas mediante una API autenticada de solo lectura. El feedback liberado aporta observaciones de proyectos; la autoevaluación recoge la perspectiva personal; y las preliminares enviadas aportan miradas de otros profesionales. La expectativa del cargo define el criterio de comparación. La evaluación formal anterior aporta una referencia histórica de contraste, identificada por periodo y separada de los antecedentes actuales.
+  </p>
+  <p>
+    La preparación conserva la función de cada fuente y su procedencia. Relacionamos las observaciones con la persona, el trimestre y la versión del instrumento que corresponde a su cargo. Así organizamos un expediente coherente con las competencias que se deben evaluar.
+  </p>
+  <p>
+    El procesamiento ocurre localmente: normalizamos los registros, eliminamos duplicados y seudonimizamos identidades antes del envío al proveedor. La selección semántica relaciona las observaciones con las competencias por su contenido. Cuando corresponde a una categoría más amplia, conserva el fragmento como contexto de la macrodimensión, el grupo de competencias relacionadas. Esta preparación reúne el contexto que recibirá el modelo y conserva los vínculos con los registros originales.
+  </p>
+  <p>
+    El análisis de datos identificó una historia breve de feedback continuo y cambios en el catálogo de competencias. Estas características orientaron la selección del periodo, la separación de fuentes y la construcción del conjunto de evaluación.
+  </p>
+  <p style="border-left: 3px solid #a6e3a1; padding-left: 10px; margin-top: 12px; font-weight: bold; color: #a6e3a1;">
+    Cierre Bloque 1 (Pase a Matías): «Matías explicará cómo estos antecedentes recorren el pipeline de generación y validación.»
+  </p>
+</div>
+
+CARD 2 "Frase de Cierre y Pase a Matías Valenzuela"
+FRONT
+<img src="media/diapositiva_04_fuentes.png">
+<p style="text-align: center; color: var(--text-muted, #a6adc8); font-size: 0.9em;">
+  <i>¿Cuál es la frase exacta con la que Víctor cierra el Bloque 1 y le da el pase a Matías Valenzuela?</i>
+</p>
+BACK
+<div style="font-size: 1.15em; font-weight: bold; text-align: center; padding: 16px; border: 1px dashed #a6e3a1; border-radius: 8px;">
+  «Matías explicará cómo estos antecedentes recorren el pipeline de generación y validación.»
+</div>
+
+# ----------------------------------------------------------------------------
+# Secuencia Continua de Oratoria (Modo Serial: Cadena de Pasos con Diapositivas)
+# ----------------------------------------------------------------------------
+NEW NOTE "Secuencia de Oratoria — Bloque 1 (Victor Marques)"
+MODE serial
+TAGS presentacion_oral, hito_2, oratoria_secuencial
+
+CARD 1 "Paso 1: Portada (Saludo y Presentación)"
+FRONT
+<img src="media/diapositiva_00_portada.png">
+<p style="text-align: center; color: var(--text-muted, #a6adc8); font-size: 0.9em;">
+  <b>Paso 1:</b> Recita el saludo inicial y la presentación del proyecto.
+</p>
+BACK
+Buenas tardes. Somos Víctor Marques, Matías Valenzuela y Sebastián Venegas. Presentamos el Sistema de Asistencia para la Preparación de Evaluaciones de Desempeño en SummaPartners: una arquitectura desacoplada que transforma evidencia de proyectos en borradores trazables y auditados, resguardando la confidencialidad corporativa.
+
+CARD 2 "Paso 2: Diapositiva 01 / 12 (Ciclo y Mentor)"
+FRONT
+<img src="media/diapositiva_01_ciclo.png">
+<p style="text-align: center; color: var(--text-muted, #a6adc8); font-size: 0.9em;">
+  <b>Paso 2:</b> Recita tus líneas de la Diapositiva 01 y la frase de transición a la lámina 2.
+</p>
+BACK
+En la firma, cada profesional cuenta con un mentor que acompaña su desarrollo y consolida su evaluación formal. Este rol no corresponde necesariamente a la jefatura directa: su responsabilidad es integrar las distintas perspectivas sobre el desempeño y orientar el desarrollo profesional.<br><br>
+El proceso se organiza en ciclos trimestrales y valora competencias según las expectativas de cada cargo. Durante los proyectos, los profesionales registran observaciones en Project Hub, la plataforma interna de asignaciones y feedback. Quienes trabajaron con la persona aportan evaluaciones preliminares desde distintas perspectivas. Al cierre del ciclo, el mentor reúne esas preliminares y la autoevaluación para proponer comentarios, notas y acciones de desarrollo. Después se realiza la calibración, una revisión conjunta para alinear los criterios de evaluación.<br><br>
+Nuestra solución asiste la preparación de ese borrador y conserva las fuentes para que el responsable pueda contrastar sus conclusiones. La propuesta conecta la conducta observada, el criterio del cargo y la valoración sugerida.<br><br>
+<b>Transición:</b> <i>«Veamos qué hace difícil esa síntesis y cómo abordamos el problema.»</i>
+
+CARD 3 "Paso 3: Diapositiva 02 / 12 (Problema de Síntesis)"
+FRONT
+<img src="media/diapositiva_02_problema.png">
+<p style="text-align: center; color: var(--text-muted, #a6adc8); font-size: 0.9em;">
+  <b>Paso 3:</b> Recita tus líneas de la Diapositiva 02 y la transición a la lámina 3.
+</p>
+BACK
+Preparar una evaluación exige reunir antecedentes dispersos, comprobar a quién corresponden y distinguir lo observado de lo esperado para el cargo. La cobertura es desigual: algunas competencias acumulan observaciones y otras apenas tienen información. Una redacción convincente puede ocultar esa diferencia.<br><br>
+Bajo presión de tiempo, los episodios más recientes o fáciles de recordar pueden dominar el juicio. También aparecen errores de atribución: adjudicar acciones de terceros al evaluado o convertir una expectativa del cargo en un logro que nadie documentó. El problema afecta la fundamentación y la utilidad formativa del comentario.<br><br>
+Desde la fase de diseño conceptual y exploración inicial avanzamos hacia un pipeline integrado. Incorporamos feedback continuo actualizado, implementamos generación con controles locales y revisión automática, y organizamos la referencia histórica como contraste del comentario formal. La arquitectura actual permite inspeccionar el borrador junto con las citas y las objeciones pendientes.<br><br>
+Estos cambios convierten la trazabilidad en una propiedad del proceso: cada afirmación debe poder contrastarse con antecedentes autorizados. La ausencia de observaciones y las discrepancias entre perspectivas deben quedar visibles en la propuesta.<br><br>
+<b>Transición:</b> <i>«Con ese diagnóstico, definimos qué debe entregar el sistema y quién conserva la decisión.»</i>
+
+CARD 4 "Paso 4: Diapositiva 03 / 12 (Objetivos y Alcance)"
+FRONT
+<img src="media/diapositiva_03_objetivos.png">
+<p style="text-align: center; color: var(--text-muted, #a6adc8); font-size: 0.9em;">
+  <b>Paso 4:</b> Recita tus líneas de la Diapositiva 03 y la transición a la lámina 4.
+</p>
+BACK
+El objetivo organizacional es reducir el esfuerzo de preparación de las evaluaciones para dedicar más tiempo al análisis y a la conversación de desarrollo. La solución busca concentrar ese esfuerzo en interpretar los antecedentes, fundamentar el juicio y definir prioridades de desarrollo profesional.<br><br>
+Nuestro objetivo de Ciencia de Datos es seleccionar evidencia autorizada, relacionarla con las expectativas del cargo y generar propuestas estructuradas que incluyan comentarios, notas sugeridas y referencias verificables. La calidad de esa transformación depende de representar las perspectivas disponibles y conservar la relación entre cada conclusión y su respaldo.<br><br>
+El alcance comienza con una solicitud que identifica persona evaluada, evaluador, trimestre y modalidad. A partir de ella, el sistema prepara las fuentes pertinentes y produce un borrador organizado por competencia. Cada comentario articula las conductas observadas con el nivel de responsabilidad esperado para el cargo, mientras la síntesis global integra la lectura del periodo.<br><br>
+El resultado permite al evaluador consultar el fundamento de la propuesta, ajustar su redacción y preparar la conversación de desempeño. La evaluación final, la calibración y las decisiones de carrera forman parte del proceso de revisión de la organización.<br><br>
+<b>Transición:</b> <i>«Ahora explicaremos cómo preparamos las fuentes que alimentan ese motor.»</i>
+
+CARD 5 "Paso 5: Diapositiva 04 / 12 (Fuentes y Pase al Bloque 2)"
+FRONT
+<img src="media/diapositiva_04_fuentes.png">
+<p style="text-align: center; color: var(--text-muted, #a6adc8); font-size: 0.9em;">
+  <b>Paso 5:</b> Recita tus líneas de la Diapositiva 04 y el pase final a Matías Valenzuela.
+</p>
+BACK
+Consultamos las fuentes corporativas mediante una API autenticada de solo lectura. El feedback liberado aporta observaciones de proyectos; la autoevaluación recoge la perspectiva personal; y las preliminares enviadas aportan miradas de otros profesionales. La expectativa del cargo define el criterio de comparación. La evaluación formal anterior aporta una referencia histórica de contraste, identificada por periodo y separada de los antecedentes actuales.<br><br>
+La preparación conserva la función de cada fuente y su procedencia. Relacionamos las observaciones con la persona, el trimestre y la versión del instrumento que corresponde a su cargo. Así organizamos un expediente coherente con las competencias que se deben evaluar.<br><br>
+El procesamiento ocurre localmente: normalizamos los registros, eliminamos duplicados y seudonimizamos identidades antes del envío al proveedor. La selección semántica relaciona las observaciones con las competencias por su contenido. Cuando corresponde a una categoría más amplia, conserva el fragmento como contexto de la macrodimensión, el grupo de competencias relacionadas. Esta preparación reúne el contexto que recibirá el modelo y conserva los vínculos con los registros originales.<br><br>
+El análisis de datos identificó una historia breve de feedback continuo y cambios en el catálogo de competencias. Estas características orientaron la selección del periodo, la separación de fuentes y la construcción del conjunto de evaluación.<br><br>
+<b>Pase al Bloque 2:</b> <i>«Matías explicará cómo estos antecedentes recorren el pipeline de generación y validación.»</i>
+
+# ============================================================================
+# Enlaces de Pre-requisito en el Grafo (DAG)
+# ============================================================================
+LINK "Diapositiva 00 — Portada y Apertura" -> "Diapositiva 01 — De las Observaciones a la Evaluacion Formal"
+LINK "Diapositiva 01 — De las Observaciones a la Evaluacion Formal" -> "Diapositiva 02 — Sintetizar Exige Conservar el Fundamento"
+LINK "Diapositiva 02 — Sintetizar Exige Conservar el Fundamento" -> "Diapositiva 03 — Entregamos un Borrador Editable y Trazable"
+LINK "Diapositiva 03 — Entregamos un Borrador Editable y Trazable" -> "Diapositiva 04 — Cada Fuente Cumple una Funcion Distinta"
+LINK "Diapositiva 04 — Cada Fuente Cumple una Funcion Distinta" -> "Secuencia de Oratoria — Bloque 1 (Victor Marques)"

@@ -20,6 +20,7 @@ class DSLCardNode:
 class DSLNoteNode:
     external_key: str
     title: str = ""
+    uuid: str | None = None
     mode: str = "standard"
     tags: list[str] = field(default_factory=list)
     deps: list[str] = field(default_factory=list)
@@ -86,7 +87,7 @@ class DSLParser:
         def _flush_card() -> None:
             nonlocal current_card
             if current_note is not None and current_card is not None:
-                if current_card.front.strip() or current_card.back.strip():
+                if current_card.front.strip() or current_card.back.strip() or current_card.title:
                     current_card.step_order = len(current_note.cards)
                     if not current_card.title:
                         current_card.title = f"Card {current_card.step_order + 1}"
@@ -110,11 +111,19 @@ class DSLParser:
                 elif tok.key == "folder":
                     ast.folder_path = self._unquote(tok.value)
                 elif tok.key == "new_note":
-                    note_title = self._unquote(tok.value) or f"Note {len(ast.notes) + 1}"
+                    m_uuid = re.search(r'^(.*?)\s+UUID\s+([a-fA-F0-9\-]+)\s*$', tok.value, re.IGNORECASE)
+                    if m_uuid:
+                        raw_title = m_uuid.group(1).strip()
+                        note_uuid = m_uuid.group(2).strip().lower()
+                    else:
+                        raw_title = tok.value.strip()
+                        note_uuid = None
+                    note_title = self._unquote(raw_title) or f"Note {len(ast.notes) + 1}"
                     ext_key = note_title
                     current_note = DSLNoteNode(
                         external_key=ext_key,
                         title=note_title,
+                        uuid=note_uuid,
                         line_num=tok.line_num,
                     )
                     ast.notes.append(current_note)
@@ -191,7 +200,9 @@ class DSLParser:
                     current_card.back = self._unquote(v)
                     active_field = "back"
                 elif not in_body:
-                    if k == "title":
+                    if k == "uuid":
+                        current_note.uuid = self._unquote(v).strip().lower()
+                    elif k == "title":
                         current_note.title = self._unquote(v)
                     elif k == "mode":
                         raw_mode = self._unquote(v).lower()

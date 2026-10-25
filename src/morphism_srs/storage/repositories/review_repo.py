@@ -162,8 +162,9 @@ class ReviewRepository:
                 params.extend(clean_tags)
 
         if only_due_or_new:
-            clauses.append("(cs.state = 0 OR cs.due_at <= ?)")
-            params.append(cutoff_iso)
+            learn_ahead_iso = (now_dt + timedelta(minutes=20) + timedelta(days=max(0, ahead_days))).isoformat()
+            clauses.append("(cs.state = 0 OR (cs.state IN (1, 3) AND cs.due_at <= ?) OR cs.due_at <= ?)")
+            params.extend([learn_ahead_iso, cutoff_iso])
 
         if failed_within_days is not None and failed_within_days > 0:
             since_iso = (now_dt - timedelta(days=failed_within_days)).isoformat()

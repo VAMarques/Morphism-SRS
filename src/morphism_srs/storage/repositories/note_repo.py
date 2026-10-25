@@ -20,7 +20,7 @@ class NoteRepository:
         return NoteModel(
             id=int(row["id"]),
             uuid=str(row["uuid"]),
-            course_id=int(row["course_id"]),
+            course_id=int(row["course_id"]) if row["course_id"] is not None else None,
             external_key=str(row["external_key"]) if row["external_key"] is not None else None,
             title=str(row["title"]),
             premise_html=str(row["premise_html"]),
@@ -68,8 +68,19 @@ class NoteRepository:
 
     def list_by_course(self, course_id: int, include_children: bool = True) -> list[NoteModel]:
         rows = self.conn.execute(
-            "SELECT * FROM notes WHERE course_id = ? ORDER BY id ASC;",
-            (course_id,),
+            """
+            SELECT DISTINCT n.id, n.uuid, ? AS course_id, n.external_key,
+                   n.title, n.premise_html,
+                   CASE WHEN cn.pos_x IS NOT NULL AND (cn.pos_x != 0.0 OR cn.pos_y != 0.0) THEN cn.pos_x ELSE n.pos_x END AS pos_x,
+                   CASE WHEN cn.pos_y IS NOT NULL AND (cn.pos_x != 0.0 OR cn.pos_y != 0.0) THEN cn.pos_y ELSE n.pos_y END AS pos_y,
+                   n.review_mode, n.desired_retention, COALESCE(cn.is_pinned, n.is_pinned) AS is_pinned,
+                   n.created_at, n.updated_at
+            FROM notes n
+            LEFT JOIN course_notes cn ON cn.note_id = n.id AND cn.course_id = ?
+            WHERE cn.course_id = ? OR (n.course_id = ? AND NOT EXISTS (SELECT 1 FROM course_notes cn2 WHERE cn2.note_id = n.id))
+            ORDER BY n.id ASC;
+            """,
+            (course_id, course_id, course_id, course_id),
         ).fetchall()
         notes = [self._row_to_note(r) for r in rows]
         if not include_children or not notes:
@@ -141,6 +152,14 @@ class NoteRepository:
             ),
         )
         note.id = int(cur.lastrowid)
+        if note.course_id is not None:
+            self.conn.execute(
+                """
+                INSERT OR IGNORE INTO course_notes (course_id, note_id, pos_x, pos_y, is_pinned)
+                VALUES (?, ?, ?, ?, ?);
+                """,
+                (note.course_id, note.id, note.pos_x, note.pos_y, 1 if note.is_pinned else 0),
+            )
         if note.tags:
             self.set_tags_for_note(note.id, note.tags)
         for idx, card in enumerate(note.cards):
@@ -191,14 +210,32 @@ class NoteRepository:
                 else:
                     self.card_repo.create(card)
 
-    def update_position(self, note_id: int, pos_x: float, pos_y: float) -> None:
+    def update_position(self, note_id: int, pos_x: float, pos_y: float, course_id: int | None = None) -> None:
         now = datetime.now(timezone.utc).isoformat()
         self.conn.execute(
             "UPDATE notes SET pos_x = ?, pos_y = ?, updated_at = ? WHERE id = ?;",
             (pos_x, pos_y, now, note_id),
         )
+        if course_id is not None:
+            self.conn.execute(
+                """
+                INSERT INTO course_notes (course_id, note_id, pos_x, pos_y, is_pinned)
+                VALUES (?, ?, ?, ?, 0)
+                ON CONFLICT (course_id, note_id) DO UPDATE SET pos_x = excluded.pos_x, pos_y = excluded.pos_y;
+                """,
+                (course_id, note_id, pos_x, pos_y),
+            )
+        else:
+            self.conn.execute(
+                """
+                UPDATE course_notes
+                SET pos_x = ?, pos_y = ?
+                WHERE note_id = ?;
+                """,
+                (pos_x, pos_y, note_id),
+            )
 
-    def update_positions_bulk(self, positions: dict[int, tuple[float, float]]) -> None:
+    def update_positions_bulk(self, positions: dict[int, tuple[float, float]], course_id: int | None = None) -> None:
         if not positions:
             return
         now = datetime.now(timezone.utc).isoformat()
@@ -207,6 +244,98 @@ class NoteRepository:
             "UPDATE notes SET pos_x = ?, pos_y = ?, updated_at = ? WHERE id = ?;",
             params,
         )
+        if course_id is not None:
+            cn_params = [(course_id, nid, xy[0], xy[1]) for nid, xy in positions.items()]
+            self.conn.executemany(
+                """
+                INSERT INTO course_notes (course_id, note_id, pos_x, pos_y, is_pinned)
+                VALUES (?, ?, ?, ?, 0)
+                ON CONFLICT (course_id, note_id) DO UPDATE SET pos_x = excluded.pos_x, pos_y = excluded.pos_y;
+                """,
+                cn_params,
+            )
+        else:
+            fallback_params = [(xy[0], xy[1], nid) for nid, xy in positions.items()]
+            self.conn.executemany(
+                """
+                UPDATE course_notes
+                SET pos_x = ?, pos_y = ?
+                WHERE note_id = ?;
+                """,
+                fallback_params,
+            )
+
+    def unlink_from_course(self, course_id: int, note_id: int) -> None:
+        """Soft-delete: removes note from course DAG and removes its edges in this course,
+        but keeps note, cards, and schedules intact in the database and note browser."""
+        self.conn.execute("DELETE FROM course_notes WHERE course_id = ? AND note_id = ?;", (course_id, note_id))
+        self.conn.execute(
+            "DELETE FROM edges WHERE course_id = ? AND (source_note_id = ? OR target_note_id = ?);",
+            (course_id, note_id, note_id),
+        )
+        other = self.conn.execute("SELECT course_id FROM course_notes WHERE note_id = ? LIMIT 1;", (note_id,)).fetchone()
+        new_cid = int(other["course_id"]) if other else None
+        self.conn.execute("UPDATE notes SET course_id = ? WHERE id = ?;", (new_cid, note_id))
+
+    def inject_into_course(self, course_id: int, note_id: int, pos_x: float = 0.0, pos_y: float = 0.0) -> None:
+        """Injects an existing note from anywhere in the database into the specified course."""
+        self.conn.execute(
+            """
+            INSERT OR IGNORE INTO course_notes (course_id, note_id, pos_x, pos_y, is_pinned)
+            VALUES (?, ?, ?, ?, 0);
+            """,
+            (course_id, note_id, pos_x, pos_y),
+        )
+        self.conn.execute(
+            "UPDATE notes SET course_id = ? WHERE id = ? AND course_id IS NULL;",
+            (course_id, note_id),
+        )
+
+    def list_all_notes(self, include_children: bool = True, limit: int = 5000) -> list[NoteModel]:
+        rows = self.conn.execute(
+            "SELECT * FROM notes ORDER BY title ASC LIMIT ?;",
+            (limit,),
+        ).fetchall()
+        notes = [self._row_to_note(r) for r in rows]
+        if not include_children or not notes:
+            return notes
+        note_map = {n.id: n for n in notes if n.id is not None}
+        placeholders = ",".join("?" for _ in note_map)
+        note_ids = list(note_map.keys())
+
+        tag_rows = self.conn.execute(
+            f"""
+            SELECT nt.note_id, t.name
+            FROM note_tags nt
+            JOIN tags t ON t.id = nt.tag_id
+            WHERE nt.note_id IN ({placeholders})
+            ORDER BY t.name ASC;
+            """,
+            note_ids,
+        ).fetchall()
+        for tr in tag_rows:
+            nid = int(tr["note_id"])
+            if nid in note_map:
+                note_map[nid].tags.append(str(tr["name"]))
+
+        card_rows = self.conn.execute(
+            f"""
+            SELECT c.*, cs.card_id, cs.state, cs.step, cs.stability, cs.difficulty,
+                   cs.due_at, cs.last_review_at, cs.reps, cs.lapses,
+                   cs.scheduled_days, cs.elapsed_days, cs.is_suspended, cs.is_buried
+            FROM cards c
+            LEFT JOIN card_schedules cs ON cs.card_id = c.id
+            WHERE c.note_id IN ({placeholders})
+            ORDER BY c.note_id ASC, c.step_order ASC, c.id ASC;
+            """,
+            note_ids,
+        ).fetchall()
+        for cr in card_rows:
+            card = CardRepository.row_to_card(cr)
+            if card.note_id in note_map:
+                note_map[card.note_id].cards.append(card)
+
+        return notes
 
     def delete(self, note_id: int, bridge_edges: bool = False) -> None:
         if bridge_edges:

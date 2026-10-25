@@ -96,7 +96,7 @@ class SettingsDialog(QDialog):
         self.retention_spin = QDoubleSpinBox(w)
         self.retention_spin.setRange(0.70, 0.99)
         self.retention_spin.setSingleStep(0.01)
-        self.retention_spin.setValue(float(self.config.get("default_desired_retention", 0.90)))
+        self.retention_spin.setValue(float(self.config.get("default_desired_retention", 0.80)))
         form.addRow("Default Desired Retention:", self.retention_spin)
 
         self.backups_spin = QSpinBox(w)

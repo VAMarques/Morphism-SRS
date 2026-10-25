@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import math
+from dataclasses import replace
 from collections import deque
 from datetime import datetime, timedelta, timezone
 from typing import Iterable
@@ -30,7 +31,7 @@ def parse_utc(iso_str: str | None) -> datetime:
         dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
-        return dt
+        return dt.astimezone(timezone.utc)
     except ValueError:
         return datetime.now(timezone.utc)
 
@@ -61,9 +62,11 @@ class SchedulerEngine:
 
     def __init__(
         self,
-        desired_retention: float = 0.90,
+        desired_retention: float = 0.80,
         weights_json: str | list[float] | None = None,
         enable_fuzzing: bool = False,
+        learning_steps: tuple[timedelta, ...] | None = None,
+        relearning_steps: tuple[timedelta, ...] | None = None,
     ) -> None:
         self.desired_retention = max(0.70, min(0.99, float(desired_retention)))
         params = None
@@ -77,10 +80,17 @@ class SchedulerEngine:
         elif isinstance(weights_json, (list, tuple)) and len(weights_json) in (17, 19):
             params = tuple(float(x) for x in weights_json)
 
+        if params is not None and len(params) == 17:
+            # Legacy FSRS-4.5 vectors have no short-term coefficients.
+            params = params + (0.51655, 0.6621)
+
+        steps_learn = learning_steps if learning_steps is not None else (timedelta(minutes=10),)
+        steps_relearn = relearning_steps if relearning_steps is not None else (timedelta(minutes=10),)
+
         kwargs: dict = {
             "desired_retention": self.desired_retention,
-            "learning_steps": (timedelta(minutes=1), timedelta(minutes=10)),
-            "relearning_steps": (timedelta(minutes=10),),
+            "learning_steps": steps_learn,
+            "relearning_steps": steps_relearn,
             "maximum_interval": 36500,
             "enable_fuzzing": enable_fuzzing,
         }
@@ -160,7 +170,7 @@ class SchedulerEngine:
             else:
                 r = cls.compute_card_retrievability(s, now_dt)
                 r_values.append(r)
-                if parse_utc(s.due_at) <= now_dt:
+                if parse_utc(s.due_at) <= now_dt or s.state in (CardState.LEARNING, CardState.RELEARNING):
                     due_count += 1
 
         r_min = min(r_values) if r_values else 0.0
@@ -275,14 +285,15 @@ class SchedulerEngine:
         card_id: int,
         logs: list[ReviewLogModel],
         base_schedule: CardScheduleModel | None = None,
+        initial_schedule: CardScheduleModel | None = None,
     ) -> CardScheduleModel:
         """Replays review history chronologically to recompute schedule under current FSRS weights."""
-        sched = CardScheduleModel(
+        sched = replace(initial_schedule) if initial_schedule is not None else CardScheduleModel(
             card_id=card_id,
             is_suspended=base_schedule.is_suspended if base_schedule else False,
             is_buried=base_schedule.is_buried if base_schedule else False,
         )
-        sorted_logs = sorted(logs, key=lambda lg: lg.reviewed_at)
+        sorted_logs = sorted(logs, key=lambda lg: (parse_utc(lg.reviewed_at), lg.uuid))
         for lg in sorted_logs:
             rev_dt = parse_utc(lg.reviewed_at)
             sched, _ = self.rate_card(sched, RatingEnum(lg.rating), now=rev_dt, duration_ms=lg.duration_ms)

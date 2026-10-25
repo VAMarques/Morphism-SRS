@@ -44,7 +44,7 @@ Morphism SRS Prototype 2 supports three mathematical conditioning modes at the N
 - `NEW NOTE "Note Title"` — Starts a new mathematical note node in the DAG.
 - `MODE standard | serial | cloze` — Sets the review conditioning mode and node shape.
 - `TAGS tag_one, tag_two` — Comma-separated standardized snake_case tags (from `tags_default.csv`).
-- `RETENTION 0.90` — Optional target FSRS retention in $[0.70, 0.99]$.
+- `RETENTION 0.80` — Optional target FSRS retention in $[0.70, 0.99]$.
 - `CARD 1 "Card Title"` — Starts a card/step inside the current note.
 - `FRONT` — Begins the multiline HTML/LaTeX question prompt.
 - `BACK` — Begins the multiline HTML/LaTeX answer.

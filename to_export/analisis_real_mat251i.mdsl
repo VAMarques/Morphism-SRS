@@ -1,0 +1,2293 @@
+COURSE "Analisis Real MAT251I"
+
+NEW NOTE "Producto Interno"
+MODE standard
+TAGS analisis, espacios_vectoriales, producto_interno
+RETENTION 0.85
+POS -1500.0, -520.0
+
+CARD 1 "Definición de Producto Interno"
+FRONT
+Dado un espacio vectorial $V$ en un cuerpo $\mathbb F$, definición de un producto interno:
+BACK
+<ul><li><strong>Antisimetría:</strong>
+$\langle \vec{x}, \vec y \rangle = \overline{\langle \vec y, \vec x \rangle}$</li><li><strong>Linealidad en el primer slot:</strong> $\langle a\vec{x}+\vec y, \vec z \rangle = a\langle \vec x, \vec z \rangle + \langle \vec y, \vec z \rangle$</li><li><strong>Semi definido positivo:</strong> $\langle \vec x, \vec x \rangle \ge 0$</li><li><strong>No degenerado:</strong> $\langle \vec x, \vec x \rangle = 0 \iff \vec x = 0$</li></ul><hr><p><em>Ejemplo en $\mathbb C^n$:</em> $\langle \vec x, \vec y \rangle = \sum_{i=1}^n x_i\overline{y_i}$. Una multiplicación conjugada podría considerarse el producto interno más simple.</p>
+
+NEW NOTE "Norma"
+MODE standard
+TAGS analisis, espacios_normados, norma
+RETENTION 0.85
+POS -1200.0, -520.0
+
+CARD 1 "Definición de Norma"
+FRONT
+Dado un espacio vectorial $V$, definición de una Norma $\|\cdot\|: V \to \mathbb R_+$:
+BACK
+<ul><li><strong>Semi definido positivo:</strong> $\|\vec x\| \ge 0$</li><li><strong>No degenerado:</strong> $\|\vec x\| = 0 \iff \vec x = 0$</li><li><strong>Homogénea:</strong> $\|\alpha\vec x\| = |\alpha| \cdot \|\vec x\|$</li><li><strong>Desigualdad Triangular:</strong> $\|\vec x+\vec y\| \le \|\vec x\|+\|\vec y\|$</li></ul><hr><p>Dado un espacio de producto interno, $\sqrt{\langle\vec x, \vec x\rangle}$ es una norma.</p><p><strong>Desigualdad Triangular de la métrica inducida:</strong><br>$$\|\vec x-\vec y\| \le \|\vec x-\vec z\|+\|\vec z-\vec y\|$$</p><p><strong>Desigualdad Triangular Inversa:</strong><br>$$|\, \|\vec x\|-\|\vec y\|\,| \le \|\vec x-\vec y\|$$</p>
+
+NEW NOTE "Métrica"
+MODE standard
+TAGS analisis, espacios_metricos, metrica
+RETENTION 0.85
+POS -600.0, -520.0
+
+CARD 1 "Definición de Métrica"
+FRONT
+Dado un espacio $X$, definición de una Métrica $d: X \times X \to \mathbb R_+$:
+BACK
+<ul><li><strong>Semi definida positiva:</strong> $d(x,y) \ge 0$</li><li><strong>No degenerado:</strong> $d(x,y) = 0 \iff x = y$</li><li><strong>Simétrica:</strong> $d(x,y) = d(y,x)$</li><li><strong>Desigualdad Triangular:</strong> $d(x,z) \le d(x,y) + d(y,z)$</li></ul><hr><p>Dado un espacio normado, $\|\vec x - \vec y\|$ es una métrica.</p><p><em>Nota:</em> La condición (1) es redundante dadas (2) y (4):<br>$$0 = d(x,x) \le d(x,y) + d(y,x) = 2d(x,y) \implies d(x,y) \ge 0$$</p>
+
+NEW NOTE "Desigualdad de Cauchy-Schwarz"
+MODE serial
+TAGS analisis, cauchy_schwarz, desigualdades
+RETENTION 0.85
+POS -1500.0, -650.0
+
+CARD 1 "Paso 1: Proyección Ortogonal"
+FRONT
+Sea $(V, \langle\cdot, \cdot\rangle)$ un espacio de producto interno.<br><strong>Desigualdad de Cauchy-Schwarz:</strong><br>$$|\langle \vec x, \vec y\rangle|^2 \le \langle \vec x, \vec x \rangle \langle \vec y, \vec y \rangle$$<br><em>Demostración - Paso 1: Definir la proyección ortogonal $\vec z$</em>
+BACK
+$$\vec z = \vec y - \frac{\langle\vec y, \vec x \rangle}{\langle\vec x, \vec x \rangle}\vec x$$<p>$\vec z$ tiene producto interno 0 con $\vec x$ y por lo tanto es ortogonal.</p>
+
+CARD 2 "Paso 2: Teorema de Pitágoras"
+FRONT
+<em>Demostración - Paso 2: Aplicar el Teorema de Pitágoras</em> (bajo cuales vectores?)
+BACK
+$$\left\|\vec z\right\|^2 + \left\|\frac{\langle\vec y, \vec x \rangle}{\langle\vec x, \vec x \rangle}\vec x\right\|^2 = \left\|\vec z + \frac{\langle\vec y, \vec x \rangle}{\langle\vec x, \vec x \rangle}\vec x \right\|^2 = \|\vec y\|^2$$
+
+CARD 3 "Paso 3: Simplificación"
+FRONT
+<em>Demostración - Paso 3: Reordenar la expresión</em>
+BACK
+$$\left\|\vec z\right\|^2 + \frac{|\langle\vec y, \vec x \rangle|^2}{\langle\vec x, \vec x \rangle} = \|\vec y\|^2$$
+
+CARD 4 "Paso 4: Conclusión e Igualdad"
+FRONT
+<em>Demostración - Paso 4: Concluir la desigualdad y condición de igualdad</em>
+BACK
+Como $\|\vec z\|^2 \ge 0$:<br>$$\|\vec y\|^2 \ge \frac{|\langle\vec y, \vec x \rangle|^2}{\langle\vec x, \vec x \rangle} \iff |\langle \vec x, \vec y\rangle|^2 \le \langle \vec x, \vec x \rangle\langle \vec y, \vec y \rangle$$<p>La igualdad se cumple si $\vec z = 0 \iff \text{Dependencia Lineal}$.</p>
+
+NEW NOTE "Segmentos e Intervalos"
+MODE standard
+TAGS analisis, intervalos, topologia
+RETENTION 0.85
+POS -2100.0, -520.0
+
+CARD 1 "Segmento e Intervalo en R"
+FRONT
+Sean los segmentos $(a,b)$ y el intervalo $[a,b]$ en $\mathbb R$:
+BACK
+$$(a,b) = \{x : a \lt  x \lt  b\}$$<br>$$[a,b] = \{x : a \le x \le b\}$$
+
+NEW NOTE "k-celdas"
+MODE standard
+TAGS analisis, celdas, topologia
+RETENTION 0.85
+POS -2100.0, -650.0
+
+CARD 1 "Definición de K-Celda"
+FRONT
+En $\mathbb R^k$, sea $\forall i \in \{1, \dots, k\},\ a_i \lt  b_i$. Definir la $K$-celda:
+BACK
+$$\operatorname{K-Cell}(\vec a, \vec b) = \{\vec x \in \mathbb R^k : a_i \le x_i \le b_i\}$$<hr><p><em>Propiedad:</em> Las $k$-celdas son convexas.</p>
+
+NEW NOTE "Convexidad"
+MODE standard
+TAGS analisis, convexidad, geometria
+RETENTION 0.85
+POS -2100.0, -780.0
+
+CARD 1 "Definición de Conjunto Convexo"
+FRONT
+Sea $E \subseteq V$ un subconjunto de un espacio vectorial. ¿Cuándo es $E$ convexo?
+BACK
+$$\operatorname{Convex}(E) \iff \forall x, y \in E,\ \lambda \in [0,1].\ \lambda x + (1-\lambda) y \in E$$
+
+NEW NOTE "Bolas en un Espacio Métrico"
+MODE standard
+TAGS analisis, bolas, topologia
+RETENTION 0.85
+POS -600.0, -910.0
+
+CARD 1 "Bolas Abiertas y Cerradas"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Cómo se definen las bolas (abierta y cerrada) de centro $c$ y radio $r$?
+BACK
+<p>Dado $r \gt  0$:</p><ul><li><strong>Bola Abierta:</strong> $\mathrm B_r(c) = \{ x \in X : d(c, x) \lt  r \}$</li><li><strong>Bola Cerrada:</strong> $\mathrm C_r(c) = \{ x \in X : d(c, x) \le r \}$</li></ul><hr><p><em>Nota:</em> Si $r \le 0,\ r\lt 0$ respectivamente, el vecindario es vacío.</p>
+
+NEW NOTE "Conceptos Topológicos en Espacios Métricos"
+MODE standard
+TAGS analisis, espacios_metricos, topologia
+RETENTION 0.85
+POS 0.0, -910.0
+
+CARD 1 "Puntos Límite"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Cuáles son los puntos límite de $E \subseteq X$?
+BACK
+$$E' = \{ x \in X : \forall r \gt  0.\ \mathrm B_r(x) \cap E \setminus \{x\} \ne \varnothing \}$$
+
+CARD 2 "Puntos Aislados"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Cuáles son los puntos aislados de $E \subseteq X$?
+BACK
+$$\operatorname{isol}(E) = E \setminus E'$$<hr><p><strong>Definición alternativa:</strong><br>$$E^* = \{ x \in X : \exists r \gt  0.\ \mathrm B_r(x) \cap E = \{x\} \}$$<br><em>Lo cual promueve una visión más intuitiva.</em></p>
+
+CARD 3 "Puntos Interiores"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Cuáles son los puntos interiores de $E \subseteq X$?
+BACK
+$$E^{\circ} = \{x \in X : \exists r \gt  0.\ \mathrm B_r(x) \subseteq E\}$$<hr><p><em>Nota:</em> Si $x \notin E$, como debe existir $r \gt  0$ tal que $\mathrm B_r(x) \subseteq E$, se tendría contradicción pues $x \in \mathrm B_r(x) \subseteq E$. Por lo tanto, $x \in E^\circ \implies x \in E$, demostrando que siempre $E^\circ \subseteq E$.</p>
+
+CARD 4 "Conjunto Cerrado"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Cuándo es $E \subseteq X$ cerrado?
+BACK
+$$\operatorname{Closed}(E) \iff E' \subseteq E$$<p><em>Nota:</em> Los puntos aislados son cerrados bajo esta perspectiva.</p>
+
+CARD 5 "Conjunto Abierto"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Cuándo es $E \subseteq X$ abierto?
+BACK
+$$\operatorname{Open}(E) \iff E = E^{\circ}$$<p><em>Nota:</em> Es suficiente verificar $E \subseteq E^{\circ}$ pues siempre $E^\circ \subseteq E$.</p>
+
+CARD 6 "Conjunto Perfecto"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Cuándo es $E \subseteq X$ perfecto?
+BACK
+$$\operatorname{Perfect}(E) \iff E = E'$$<p>También se expresa como: $\operatorname{Closed}(E) \land E \subseteq \operatorname{LimitP}(E)$.</p>
+
+CARD 7 "Conjunto Acotado"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Cuándo es $E \subseteq X$ acotado?
+BACK
+$$\operatorname{Bounded}(E) \iff \exists r \gt  0 \ \exists c \in X,\ \forall x \in E.\ d(c, x) \lt  r$$<p>Reexpresado: $\exists r \gt  0 \ \exists c \in X.\ E \subseteq \mathrm B_r(c)$ ($E$ es subconjunto de algún vecindario).</p>
+
+CARD 8 "Conjunto Denso"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Cuándo es $E \subseteq X$ denso?
+BACK
+$$\operatorname{Dense}(E) \iff X = \overline E$$
+
+CARD 9 "Cubierta Abierta y Subcubierta"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Qué es una cubierta abierta $\Omega$ de $E \subseteq X$? ¿Cómo se define una subcubierta?
+BACK
+$$\Omega\ \operatorname{OpenCover}\ E \iff \left(\bigcup \Omega \supseteq E\right) \land (\forall G \in \Omega.\ \operatorname{Open}(G) \land G \subseteq X)$$<hr><p>Una colección de abiertos que unidos cubren $E$. Una subcubierta es simplemente un $\Lambda \subseteq \Omega$ que también es cubierta abierta.</p>
+
+CARD 10 "Conjunto Compacto"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Cuándo es $E \subseteq X$ compacto?
+BACK
+$$\operatorname{Compact}(E) \iff (\forall \Omega\ \operatorname{OpenCover}\ E)(\exists \Lambda \subseteq \Omega).\ (\Lambda\ \operatorname{OpenCover}\ E \land |\Lambda| \lt  \aleph_0)$$<p>Para toda cubierta abierta existe una subcubierta finita.</p>
+
+CARD 11 "Conjunto Disconexo y Conexo"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Cuándo es disconexo y cuándo es conexo?
+BACK
+$(X,d)$ es disconexo si $X = A \cup B$ para $A, B \ne \varnothing$ abiertos disjuntos (en consecuencia $A,B$ son clopens).<br><br>$(X,d)$ es conexo si $X$ no es disconexo y no es vacío.
+
+CARD 12 "Cerradura del Conjunto"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Cuál es la cerradura $\overline E$ de $E \subseteq X$?
+BACK
+$$\overline E = E \cup E'$$<hr><p><strong>Puntos adherentes:</strong> $\overline E = \{x \in X : \forall r \gt  0.\ \mathrm B_r(x) \cap E \ne \varnothing\}$.</p><p>También: $\overline E = E \cup \partial E$.</p>
+
+CARD 13 "Conjunto Abierto Condicional (Relativo)"
+FRONT
+Sea $(X,d)$ espacio métrico con $Y \subseteq X$. ¿Cuándo es $E \subseteq Y$ abierto con respecto a $Y$?
+BACK
+Cuando
+$$E = \{x \in Y : \exists r \gt  0.\ \mathrm B^Y_r(x) \subseteq E\}$$<hr><p>Donde la bola restringida a $Y$ es: $\mathrm B^Y_r(p) = \{y \in Y : d(y,p) \lt  r\}$.</p>
+
+CARD 14 "Puntos de Frontera"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Cuáles son los puntos frontera $\partial E$ de $E \subseteq X$? ¿Cómo se descompone $X$?
+BACK
+$$\partial E = \{x \in X : \forall r \gt  0.\ \mathrm B_r(x) \cap E \ne \varnothing \land \mathrm B_r(x) \cap E^c \ne \varnothing\}$$<hr><p>$\partial E = \overline E \cap \overline{E^c}$.</p><p><strong>Descomposición de $X$:</strong> $X = E^{\circ} \cup \partial E \cup (E^c)^\circ$ (Interior, Frontera, Exterior).</p>
+
+NEW NOTE "Límite de una Secuencia"
+MODE standard
+TAGS analisis, limites, secuencias
+RETENTION 0.85
+POS -600.0, -260.0
+
+CARD 1 "Definición de Límite de Secuencia"
+FRONT
+Sea $(X,d)$ un espacio métrico y $(x_n)$ una secuencia en $X$. ¿Cuál es el límite de la secuencia?
+BACK
+$$\lim_{n\to\infty} x_n = \biota x \in X \mathop{}\forall \varepsilon \gt  0\ \exists N \in \mathbb N\ \forall n \ge N.\ d(x, x_n) \lt  \varepsilon$$<hr><p>El límite es el único elemento del espacio métrico tal que para todo $\varepsilon\gt 0$ existe $N$ tras el cual la distancia es $\lt \varepsilon$. Se denota $x_n \leadsto x$.</p>
+
+
+NEW NOTE "Subsecuencia y Límite Secuencial"
+MODE standard
+TAGS analisis, secuencias, subsecuencias
+RETENTION 0.85
+POS 0.0, -260.0
+
+CARD 1 "Definición de Subsecuencia y Límite Subsecuencial"
+FRONT
+Sea $(X,d)$ espacio métrico y $(x_n)$ secuencia. ¿Qué es una subsecuencia y un límite subsecuencial?
+BACK
+Dada una sucesión estrictamente creciente de naturales $n_1 \lt  n_2 \lt  \dots$, la secuencia $(x_{n_k})_{k \in \mathbb N}$ es una subsecuencia, y $\lim_{k\to\infty} x_{n_k}$ es un límite subsecuencial.<hr><p><em>Propiedad:</em> $x_n \to x \iff$ toda subsecuencia $(x_{n_k})$ converge a $x$.</p>
+
+NEW NOTE "Secuencias de Cauchy"
+MODE standard
+TAGS analisis, cauchy, secuencias
+RETENTION 0.85
+POS 300.0, -260.0
+
+CARD 1 "Definición de Secuencia de Cauchy"
+FRONT
+Sea $(X,d)$ un espacio métrico y $(x_n)$ una secuencia. ¿Cuándo es de Cauchy?
+BACK
+$$\operatorname{Cauchy}(x_n) \iff \forall \varepsilon \gt  0\ \exists N \in \mathbb N\ \forall n,m \ge N.\ d(x_n, x_m) \lt  \varepsilon$$
+
+NEW NOTE "Diámetro de un Conjunto"
+MODE standard
+TAGS analisis, diametro, espacios_metricos
+RETENTION 0.85
+POS 600.0, -260.0
+
+CARD 1 "Definición de Diámetro"
+FRONT
+Sea $(X,d)$ un espacio métrico y $E \subseteq X$. ¿Cuál es el diámetro de $E$?
+BACK
+$$\operatorname{diam}(E) = \sup\{d(x,y) : x,y \in E\}$$<hr><p><em>Nota:</em> Si $E = \varnothing$, $\operatorname{diam}(\varnothing) = -\infty$.</p>
+
+NEW NOTE "Espacio Métrico Completo"
+MODE standard
+TAGS analisis, completitud, espacios_metricos
+RETENTION 0.85
+POS 900.0, -260.0
+
+CARD 1 "Definición de Espacio Métrico Completo"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Cuándo es completo?
+BACK
+$(X,d)$ es completo si toda secuencia de Cauchy $(x_n)$ converge en $X$, es decir, $\lim_{n\to\infty} x_n \in X$.
+
+NEW NOTE "Secuencia Monótona"
+MODE standard
+TAGS analisis, monotonia, secuencias
+RETENTION 0.85
+POS 0.0, -130.0
+
+CARD 1 "Definición de Secuencia Monótona"
+FRONT
+Sea $(x_n)$ una secuencia de números reales. ¿Qué significa que sea monótona?
+BACK
+<ul><li><strong>Monótonamente creciente:</strong> $x_n \le x_{n+1}$ para todo $n$.</li><li><strong>Monótonamente decreciente:</strong> $x_n \ge x_{n+1}$ para todo $n$.</li></ul>
+
+NEW NOTE "Límites Infinitos"
+MODE standard
+TAGS analisis, infinito, secuencias
+RETENTION 0.85
+POS 300.0, -130.0
+
+CARD 1 "Convergencia a Infinito"
+FRONT
+Sea $(x_n)$ una secuencia de números reales. ¿Cuándo hay convergencia a $\pm\infty$?
+BACK
+$$x_n \leadsto +\infty \iff \forall M \in \mathbb R\ \exists N\ \forall n \ge N.\ x_n \ge M$$$$x_n \leadsto -\infty \iff \forall M \in \mathbb R\ \exists N\ \forall n \ge N.\ x_n \le M$$
+
+NEW NOTE "Límites Superior e Inferior"
+MODE standard
+TAGS analisis, limsup_liminf, secuencias
+RETENTION 0.85
+POS 600.0, -130.0
+
+CARD 1 "Definición de Limsup y Liminf (Limite)"
+FRONT
+Sea $(x_n)_n$ una secuencia en $\mathbb R$. ¿Cuáles son el límite superior e inferior? (Definición por limite)
+BACK
+$$\limsup_{n\to\infty} x_n  = \inf_n \left(\sup_{k \ge n} x_k\right) = \lim_{n\to\infty} a_n$$
+$$\liminf_{n\to\infty} x_n  = \sup_n \left(\inf_{k \ge n} x_k\right) = \lim_{n\to\infty} b_n$$
+<hr><p><em>Ejemplo:</em> Para $x_n = (-1)^n \left(1 + \frac{1}{n}\right)$, $\limsup x_n = 1$ y $\liminf x_n = -1$.</p>
+
+CARD 2 "Definición de Limsup y Liminf (Subsecuencia)"
+FRONT
+Sea $(x_n)_n$ una secuencia en $\mathbb R$. ¿Cuáles son el límite superior e inferior? (Definición por subsecuencias)
+BACK
+Sea $E = \set{\lim_{k\to\infty} (x_{n_k}): (x_{n_k})_k \text{ subsecuencia convergente}}$
+
+$$\limsup_{n\to\infty} x_n = \sup E $$
+$$\liminf_{n\to\infty} x_n = \inf E $$
+<hr><p><em>Ejemplo:</em> Para $x_n = (-1)^n \left(1 + \frac{1}{n}\right)$, $\limsup x_n = 1$ y $\liminf x_n = -1$.</p>
+
+NEW NOTE "Sumatoria y Sumas Parciales"
+MODE standard
+TAGS analisis, series, sumas_parciales
+RETENTION 0.85
+POS 0.0, -390.0
+
+CARD 1 "Sumatoria, Sumas Parciales y Series"
+FRONT
+Sea $(x_n)$ una secuencia de números reales. ¿Cómo se definen las sumatorias, las sumas parciales y las series?
+BACK
+Dados $p \le q \in \mathbb N$, abreviamos $x_p + \dots + x_q$ como $\sum_{n=p}^q x_n$.<br><br>Sumas parciales: $s_n = \sum_{i=1}^n x_i$.<br>Serie formal: $\sum_{i=1}^\infty x_i$.<br><br>Si $(s_n) \to s$, la serie converge y escribimos $\sum_{i=1}^\infty x_i = s$.
+
+NEW NOTE "Definición del Número e"
+MODE standard
+TAGS analisis, constantes, numero_e
+RETENTION 0.85
+POS -900.0, -260.0
+
+CARD 1 "Definición por Interés Compuesto"
+FRONT
+Definición del número de Euler $e$ mediante límite de interés compuesto:
+BACK
+$$e = \lim_{n\to\infty} \left(1 + \frac{1}{n} \right)^n$$
+<hr>
+Mas aun, podemos definir $e^x$:
+$$e^x = \lim_{n\to\infty} \left(1 + \frac{x}{n} \right)^n$$
+
+CARD 2 "Definición por Serie"
+FRONT
+Definición del número de Euler $e$ mediante serie de potencias:
+BACK
+$$e = \sum_{k=0}^\infty \frac{1}{k!} = 1 + 1 + \frac{1}{2!} + \frac{1}{3!} + \dots$$
+<hr>
+Mas aun, podemos definir $e^x$:
+$$e^x = \sum_{k=0}^\infty \frac{x^k}{k!} = 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \dots$$
+
+NEW NOTE "Series de Potencias"
+MODE standard
+TAGS analisis, potencias, series
+RETENTION 0.85
+POS 300.0, -391.5
+
+CARD 1 "Definición de Serie de Potencias"
+FRONT
+Dado $(c_n)_{n\in\mathbb{N}}$ con $c_n, z \in \mathbb C$, ¿cuál es la serie de potencias asociada en $x_0$?
+BACK
+$$\sum_{n=0}^\infty c_n(z - x_0)^n$$
+
+CARD 2 "Círculo y Radio de Convergencia"
+FRONT
+¿Qué es el círculo y radio de convergencia de una serie de potencias?
+BACK
+El radio de convergencia $R$ se define por la fórmula de Hadamard:<br>$$R = \frac{1}{\limsup_{n\to\infty} |c_n|^{1/n}}$$<hr><p>Por teorema:</p><ul><li>Si $|z - x_0| \lt  R$, la serie converge absolutamente.</li><li>Si $|z - x_0| \gt  R$, la serie diverge.</li></ul>
+
+NEW NOTE "Convergencia Absoluta"
+MODE standard
+TAGS analisis, convergencia_absoluta, series
+RETENTION 0.85
+POS 600.0, -390.0
+
+CARD 1 "Definición de Convergencia Absoluta"
+FRONT
+Sea $\sum a_n$ una serie. ¿Cuándo converge absolutamente?
+BACK
+La serie $\sum a_n$ converge absolutamente si $\sum |a_n|$ converge.<hr><p><em>Propiedad:</em> Toda serie absolutamente convergente es convergente.</p>
+
+NEW NOTE "Reordenamiento de Series (Rearrangements)"
+MODE standard
+TAGS analisis, reordenamiento, series
+RETENTION 0.85
+POS 900.0, -390.0
+
+CARD 1 "Definición de Reordenamiento"
+FRONT
+Sea $\sum a_n$ una serie. ¿Qué es un reordenamiento?
+BACK
+Sea $(k_n)$ una biyección de $\mathbb N$ en $\mathbb N$. Definimos la nueva secuencia $a'_n = a_{k_n}$.<br><br>La serie $\sum a'_n$ es un reordenamiento de $\sum a_n$.
+
+NEW NOTE "Demostración sobre la Raíz de 2"
+MODE serial
+TAGS analisis, demostraciones, irracionalidad
+RETENTION 0.85
+POS 1200.0, 390.0
+
+CARD 1 "Paso 1: Irracionalidad de la Raíz de 2"
+FRONT
+Demostración de que $\sqrt{2} \notin \mathbb Q$ (por contradicción):
+BACK
+Si $\sqrt 2 \in \mathbb Q$, existen $m,n \in \mathbb N_+$ con $\gcd(m,n)=1$ tal que $(m/n)^2 = 2 \implies m^2 = 2n^2$.<br><br>Como 2 divide a $m^2$, entonces $2 \mid m \implies m = 2k$.<br><br>Sustituyendo: $n^2 = m^2/2 = 2k^2 \implies 2 \mid n$.<br><br>Por lo tanto $2$ divide tanto a $m$ como a $n$, contradiciendo que $\gcd(m,n)=1$. Conclusión: $\sqrt 2 \notin \mathbb Q$.
+
+CARD 2 "Paso 2: Construcción Intuitiva de Aprox Racional q"
+FRONT
+Construcción de una aproximación racional $q$ para mostrar que los conjuntos $\{x\in\mathbb Q:x^2\lt 2\}$ y $\{x\in\mathbb Q:x^2\gt 2\}$ no tienen elemento máximo ni mínimo en $\mathbb Q$:
+BACK
+Notemos que $\sqrt 2 = r + (\sqrt 2 - r) = r + \frac{2-r^2}{\sqrt 2 + r}$.<br><br>Para evitar invocar $\sqrt 2$, definimos la función de aproximación racional:<br>$$q = r + \frac{2-r^2}{2+r}$$
+
+CARD 3 "Paso 3: Identidad Algebraica"
+FRONT
+Demostración formal (sin invocar $\sqrt 2$) de que $q^2 - 2$ tiene el mismo signo que $r^2 - 2$:
+BACK
+Calculando directamente:<br>$$q^2 - 2 = \frac{(2+2r)^2 - 2(2+r)^2}{(2+r)^2} = \frac{4+8r+4r^2 - 8-8r-2r^2}{(2+r)^2} = 2 \frac{r^2-2}{(2+r)^2}$$
+
+CARD 4 "Paso 4: No existencia de Maximo/Minimo."
+FRONT
+Concluir que $\{x \in \mathbb Q : x^2 \lt  2\}$ no tiene maximo, y $\{x \in \mathbb Q : x^2 \gt  2\}$ no tiene minimo. (Es decir, los racionales tienen agujeros).
+BACK
+Conclusiones:<br><ul><li>Si $r^2 \lt  2$, entonces $q \gt  r$ y $q^2 \lt  2$ (no hay máximo en $\{x \in \mathbb Q : x^2 \lt  2\}$).</li><li>Si $r^2 \gt  2$, entonces $q \lt  r$ y $q^2 \gt  2$ (no hay mínimo en $\{x \in \mathbb Q : x^2 \gt  2\}$).</li></ul>
+
+NEW NOTE "Demostración sobre la n-Raíz"
+MODE serial
+TAGS analisis, demostraciones, raizes
+RETENTION 0.85
+POS 900.0, 390.0
+
+CARD 1 "Paso 1: Definición del Conjunto E"
+FRONT
+Para $x \gt  0$ y $n \in \mathbb N_+$, definir el conjunto $E$ y demostrar que $E \ne \varnothing$:
+BACK
+Definimos $E = \{t \in \mathbb R_+ : t^n \lt  x\}$.<br><br>Como $0 \lt  \frac{x}{x+1} \lt  1$, se tiene $\left(\frac{x}{x+1}\right)^n \lt  \frac{x}{x+1} \lt  x$.<br><br>Por lo tanto $\frac{x}{x+1} \in E$, demostrando que $E \ne \varnothing$.
+
+CARD 2 "Paso 2: Cota Superior"
+FRONT
+Demostrar que el conjunto $E$ está acotado superiormente:
+BACK
+Tomemos $x+1 \gt  0$.<br><ul><li>Si $x \le 1$, entonces $(x+1)^n \gt  1 \ge x$, luego $t \lt  x+1$.</li><li>Si $x \gt  1$, entonces $(x+1)^n \gt  x+1 \gt  x \gt  t^n \implies t \lt  x+1$.</li></ul><br>En ambos casos $x+1$ es cota superior de $E$.
+
+CARD 3 "Paso 3: Supremo"
+FRONT
+Demostración sobre la n-Raíz
+BACK
+Como $E \ne \varnothing$ y acotado superiormente, por el axioma del supremo existe $y = \sup E$.
+
+CARD 4 "Paso 4: Desigualdad Auxiliar de Rudin"
+FRONT
+Demostrar $0\lt  a \lt  b \implies b^n-a^n \lt  (b-a)nb^{n-1}$
+BACK
+Como $b^n-a^n = (b-a)(b^{n-1} +b^{n-2}a+ \cdots +ba^{n-2}+ a^{n-1})$ y $a^k\lt  b^k$ entonces$$
+b^n-a^n \lt  (b-a)nb^{n-1}$$
+
+CARD 5 "Paso 5: Desigualdades"
+FRONT
+Establecer las desigualdades clave para eliminar las posibilidades $y^n \lt  x$ y $y^n \gt  x$:
+BACK
+Se busca demostrar que:<br><ul><li>Si $y^n \lt  x$, existe $h \gt  0$ tal que $(y+h)^n \lt  x$.</li><li>Si $y^n \gt  x$, existe $k \gt  0$ tal que $(y-k)^n \gt  x$.</li></ul><br>Usando el paso anterior (Desigualdad de Rudin):<br>$$(y+h)^n - y^n \lt  h n (y+h)^{n-1}$$$$y^n - (y-k)^n \lt  k n y^{n-1}$$
+
+CARD 6 "Paso 6: Elección de h y k y Conclusión"
+FRONT
+Elección explícita de $h$ y $k$ y conclusión final:
+BACK
+Elegimos:<br>$$h := \frac{1}{2} \min\left( \frac{x - y^n}{n(y+1)^{n-1}}, 1 \right) \gt  0$$<br>Esto garantiza $(y+h)^n \lt  x \implies y+h \in E$, contradiciendo que $y = \sup E$.<br><br>Elegimos:<br>$$k := \frac{1}{2} \min\left( \frac{y^n - x}{n y^{n-1}}, 1 \right) \gt  0$$<br>Esto garantiza $(y-k)^n \gt  x$, contradiciendo que $y$ es la menor cota superior.<br><br>Conclusión: $y^n = x$.
+
+NEW NOTE "Demostraciones Topológicas 1"
+MODE serial
+TAGS analisis, demostraciones, topologia
+RETENTION 0.85
+POS 600.0, 390.0
+
+CARD 1 "Teorema 1: Todo Vecindario es Abierto"
+FRONT
+Sea $(X,d)$ espacio métrico. Demostrar que toda bola abierta $B_r(p)$ es un conjunto abierto:
+BACK
+Sea $x \in B_r(p)$, luego $d(x,p) \lt  r$. Elegimos el radio $r' = r - d(x,p) \gt  0$.<br><br>Si $y \in B_{r'}(x)$, por la desigualdad triangular:<br>$$d(y,p) \le d(y,x) + d(x,p) \lt  (r - d(x,p)) + d(x,p) = r$$<br>Por lo tanto $B_{r-d(x,p)}(x) \subseteq B_r(p)$, demostrando que $B_r(p)$ es abierto.
+
+CARD 2 "Teorema 2: Puntos Límite y Vecindarios Infinitos"
+FRONT
+Si $p$ es punto límite de $E$, demostrar que todo vecindario de $p$ contiene infinitos puntos de $E$:
+BACK
+Por contradicción, supongamos que un vecindario de $p$ solo contiene un número finito de puntos $\{x_1, \dots, x_k\} \subseteq E \setminus \{p\}$.<br><br>Sea $s_{\min} = \min_{1 \le i \le k} d(x_i, p) \gt  0$.<br><br>El vecindario $B_{s_{\min}}(p)$ no contiene ningún punto de $E \setminus \{p\}$, contradiciendo que $p$ es punto límite.<br><br><em>Corolario:</em> Los conjuntos finitos no tienen puntos límite.
+
+CARD 3 "Teorema 3: Abierto ssi Complemento Cerrado"
+FRONT
+Demostrar que $\operatorname{Open}(E) \iff \operatorname{Closed}(E^c)$:
+BACK
+$$\begin{align*} \operatorname{Closed}(E^c) & \iff (E^c)' \subseteq E^c \\ \iff & x \in E \implies x \notin (E^c)' \\ \iff & x \in E \implies \neg(\forall r \gt  0.\ B_r(x) \cap E^c \setminus \{x\} \ne \varnothing) \\ \iff & x \in E \implies \exists r \gt  0.\ B_r(x) \subseteq E \\ \iff & E \subseteq E^\circ \iff \operatorname{Open}(E) \end{align*}$$
+
+CARD 4 "Teorema 4: Propiedades de la Topología Inducida"
+FRONT
+Demostrar que la colección de abiertos $\tau$ satisface las propiedades de una topología:
+BACK
+<ul><li><strong>Unión arbitraria:</strong> Si $x \in \bigcup_{\alpha} G_\alpha$, existe $\alpha_0$ tal que $x \in G_{\alpha_0}$. Como $G_{\alpha_0}$ es abierto, existe $B_r(x) \subseteq G_{\alpha_0} \subseteq \bigcup_\alpha G_\alpha$.</li><li><strong>Intersección finita:</strong> Si $x \in G_1 \cap G_2$, existen $B_r(x) \subseteq G_1$ y $B_s(x) \subseteq G_2$. Luego $B_{\min(r,s)}(x) \subseteq G_1 \cap G_2$.</li><li><strong>Totales:</strong> $X$ y $\varnothing$ son abiertos.</li></ul>
+
+NEW NOTE "Demostraciones Topológicas 2 (Cerradura e Intro Compactos)"
+MODE serial
+TAGS analisis, cerradura, topologia
+RETENTION 0.85
+POS 300.0, 390.0
+
+CARD 1 "Teorema 1: Descomposición de X"
+FRONT
+Demostrar que $X = E^\circ \cup \partial E \cup (E^c)^\circ$:
+BACK
+Si $x \notin E^\circ$ y $x \notin \partial E$, entonces $\forall r \gt  0.\ B_r(x) \cap E^c \ne \varnothing$ y $\exists r \gt  0.\ (B_r(x) \cap E = \varnothing \lor B_r(x) \cap E^c = \varnothing)$.<br><br>Como $B_r(x) \cap E^c \ne \varnothing$ para todo $r$, debe ser $B_r(x) \cap E = \varnothing$, lo que implica $B_r(x) \subseteq E^c \implies x \in (E^c)^\circ$.
+
+CARD 2 "Teorema 2: Propiedades de la Cerradura"
+FRONT
+Demostrar que $\overline E$ es cerrado, $E = \overline E \iff \operatorname{Closed}(E)$, y que $\overline E$ es el menor cerrado que contiene a $E$:
+BACK
+Como $\overline E = E^\circ \cup \partial E$, su complemento $\overline E^c = (E^c)^\circ$ es abierto, luego $\overline E$ es cerrado.<br><br>Si $E$ es cerrado, $E' \subseteq E \implies \overline E = E \cup E' = E$.<br><br>Si $E \subseteq F$ con $F$ cerrado, entonces $E' \subseteq F' \subseteq F \implies \overline E = E \cup E' \subseteq F$. Por lo tanto, $\overline E$ es el cerrado más pequeño que contiene a $E$.
+
+CARD 3 "Teorema 3: Puntos de Cerradura y el Supremo"
+FRONT
+Si $\varnothing \ne E \subseteq \mathbb R$ está acotado superiormente, demostrar que $\sup E \in \overline E$:
+BACK
+Sea $s = \sup E$. Por caracterización del supremo, $\forall \varepsilon \gt  0\ \exists x \in E.\ s - \varepsilon \lt  x \le s$.<br><br>Por tanto, toda bola $B_\varepsilon(s)$ interseca a $E$. Luego $s \in E$ o $s \in E'$, lo que implica $s \in \overline E$.
+
+CARD 4 "Teorema 4: Abiertos en el Espacio Relativo"
+FRONT
+Demostrar que $E \subseteq Y \subseteq X$ es abierto relativo a $Y$ ssi $E = Y \cap G$ para algún $G$ abierto en $X$:
+BACK
+$(\implies)$ Para cada $x \in E$, existe $r_x \gt  0$ tal que $B_{r_x}(x) \cap Y \subseteq E$. Definimos $G = \bigcup_{x \in E} B_{r_x}(x)$. $G$ es abierto en $X$ y $G \cap Y = E$.<br><br>$(\impliedby)$ Si $E = Y \cap G$ con $G$ abierto, para todo $x \in E \subseteq G$ existe $B_r(x) \subseteq G$, luego $B_r(x) \cap Y \subseteq G \cap Y = E$, demostrando que $E$ es abierto en $Y$.
+
+NEW NOTE "Demostraciones Topológicas 2.2 (Propiedades de Compactos)"
+MODE serial
+TAGS analisis, compactos, topologia
+RETENTION 0.85
+POS 0.0, 390.0
+
+CARD 1 "Teorema 1: Compacidad Relativa"
+FRONT
+Demostrar que $K \subseteq Y \subseteq X$ es compacto relativo a $Y$ ssi es compacto relativo a $X$:
+BACK
+Toda cubierta abierta en $Y$ adopta la forma $(G_\alpha \cap Y)_\alpha$ donde los $G_\alpha$ son abiertos en $X$.<br><br>La colección $\{G_\alpha\}$ forma una cubierta abierta de $K$ en $X$. Por compacidad en $X$, existe una subcubierta finita $\{G_{\alpha_1}, \dots, G_{\alpha_n}\}$, lo que proporciona una subcubierta finita $\{G_{\alpha_i} \cap Y\}$ en $Y$.
+
+CARD 2 "Teorema 2: Todo Compacto es Cerrado"
+FRONT
+Demostrar que si $K \subseteq X$ es compacto, entonces $K$ es cerrado:
+BACK
+Sea $c \notin K$. Para cada $n \in \mathbb N_+$, consideramos los abiertos $V_n = \{x \in X : d(c,x) \gt  1/n\}$.<br><br>La colección $\{V_n\}_{n=1}^\infty$ es una cubierta abierta de $K$. Si $K$ fuera no cerrado y $c \in K'$, ninguna subcubierta finita $\{V_1, \dots, V_N\}$ podría cubrir a $K$, pues existirían puntos de $K$ a distancia menor a $1/N$ de $c$. Contradicción, por tanto $K$ es cerrado.
+
+CARD 3 "Teorema 3: Cerrados de Compactos son Compactos"
+FRONT
+Demostrar que si $E \subseteq K \subseteq X$ con $E$ cerrado y $K$ compacto, entonces $E$ es compacto:
+BACK
+Dada una cubierta abierta $\{G_\alpha\}$ de $E$, como $E$ es cerrado, $E^c$ es abierto.<br><br>Entonces $\{G_\alpha\} \cup \{E^c\}$ es una cubierta abierta de $K$. Por compacidad de $K$, existe una subcubierta finita. Removiendo $E^c$ (si estuviera presente), obtenemos una subcubierta finita de $\{G_\alpha\}$ para $E$.<br><br><em>Corolario:</em> Si $F$ es cerrado y $K$ es compacto, $F \cap K$ es compacto.
+
+CARD 4 "Teorema 4: Todo Compacto es Acotado"
+FRONT
+Demostrar que si $K \subseteq X$ es compacto, entonces $K$ es acotado:
+BACK
+Fijemos $x_0 \in X$ y consideremos la familia de bolas $\{B_n(x_0)\}_{n=1}^\infty$.<br><br>Esta familia es una cubierta abierta de $K$. Por compacidad, existe una subcubierta finita $\{B_{n_1}(x_0), \dots, B_{n_m}(x_0)\}$.<br><br>Tomando $N = \max(n_1, \dots, n_m)$, se tiene $K \subseteq B_N(x_0)$, por lo tanto $K$ es acotado.
+
+NEW NOTE "Demostraciones Topológicas 3 (Intersecciones y Celdas)"
+MODE serial
+TAGS analisis, intersecciones_compactas, topologia
+RETENTION 0.85
+POS -300.0, 390.0
+
+CARD 1 "Teorema 1: Intersección Finita en Compactos"
+FRONT
+Sea $\{K_\alpha\}_{\alpha \in A}$ una familia de compactos en $X$ tal que toda intersección finita es no vacía. Demostrar que $\bigcap_{\alpha \in A} K_\alpha \ne \varnothing$:
+BACK
+Supongamos que $K_1 \cap \bigcap_{\alpha} K_\alpha = \varnothing$.<br><br>Por leyes de De Morgan, $K_1 \subseteq \bigcup_{\alpha} K_\alpha^c$. Como cada $K_\alpha^c$ es abierto, forman una cubierta abierta del compacto $K_1$.<br><br>Existe subcubierta finita $K_1 \subseteq K_{\alpha_1}^c \cup \dots \cup K_{\alpha_n}^c \implies K_1 \cap K_{\alpha_1} \cap \dots \cap K_{\alpha_n} = \varnothing$, lo que contradice la hipótesis.
+
+CARD 2 "Teorema 2: Secuencias Anidadas de Compactos"
+FRONT
+Si $\{K_n\}_{n=1}^\infty$ son compactos no vacíos con $K_1 \supseteq K_2 \supseteq \dots$, demostrar que $\bigcap_{n=1}^\infty K_n \ne \varnothing$:
+BACK
+Toda subcolección finita $\{K_{n_1}, \dots, K_{n_m}\}$ tiene intersección igual a $K_{\max(n_i)} \ne \varnothing$.<br><br>Por la propiedad de intersección finita de compactos, $\bigcap_{n=1}^\infty K_n \ne \varnothing$.
+
+CARD 3 "Teorema 3: Puntos Límite en Subconjuntos Infinitos de Compactos"
+FRONT
+Si $E \subseteq K$ es un subconjunto infinito de un compacto $K$, demostrar que $E$ tiene un punto límite en $K$ ($E' \cap K \ne \varnothing$):
+BACK
+Si no existieran puntos límite de $E$ en $K$, para cada $q \in K$ existiría un vecindario $B_{r_q}(q)$ que contiene a lo sumo un punto de $E$ (el propio $q$).<br><br>La familia $\{B_{r_q}(q)\}_{q \in K}$ cubriría el compacto $K$, admitiendo subcubierta finita $\{B_1, \dots, B_m\}$. Pero esto implicaría que $E$ es finito, contradicción.
+
+CARD 4 "Teorema 4: Intervalos y K-Celdas Anidadas"
+FRONT
+Si $(I_n)$ son intervalos cerrados acotados $I_n = [a_n, b_n]$ en $\mathbb R$ (o $K$-celdas en $\mathbb R^k$) con $I_n \supseteq I_{n+1}$, demostrar que $\bigcap_{n=1}^\infty I_n \ne \varnothing$:
+BACK
+En $\mathbb R$: $a_n \le a_{n+1} \le b_{n+1} \le b_n$. El conjunto $\{a_n\}$ está acotado superiormente por $b_1$.<br><br>Sea $a = \sup a_n$. Para todo $n,m$, $a_n \le a \le b_m$, luego $a \in I_n$ para todo $n \implies a \in \bigcap_{n=1}^\infty I_n$.<br><br>En $\mathbb R^k$: aplicando el argumento coordenada a coordenada para $I_{n,j} = [a_{n,j}, b_{n,j}]$, obtenemos $\vec a = (a_1, \dots, a_k) \in \bigcap_{n=1}^\infty I_n \ne \varnothing$.
+
+NEW NOTE "Límite Topológico"
+MODE standard
+TAGS analisis, espacios_metricos, limites
+RETENTION 0.85
+POS 300.0, -910.0
+
+CARD 1 "Definición de Límite en Espacios Métricos"
+FRONT
+Sean $(X,d_X), (Y,d_Y)$ espacios métricos con $E \subseteq X$, y $f: E \to Y$ con $p \in E'$. ¿Cuál es el límite cuando $x \to p$?
+BACK
+$$\lim_{x\to p} f(x) = \biota q \in Y\ \forall \varepsilon \gt  0\ \exists \delta \gt  0\ \forall x \in E.\ (0 \lt  d_X(x,p) \lt  \delta \implies d_Y(f(x), q) \lt  \varepsilon)$$<hr><p><em>Notas:</em> El límite es único. En $\mathbb R$ se reduce a $0 \lt  |x-p| \lt  \delta \implies |f(x)-q| \lt  \varepsilon$. La condición $0 \lt  d_X(x,p)$ indica que es sobre el vecindario perforado.</p>
+
+NEW NOTE "Continuidad"
+MODE standard
+TAGS analisis, continuidad, espacios_metricos
+RETENTION 0.85
+POS 600.0, -910.0
+
+CARD 1 "Definición de Continuidad en un Punto"
+FRONT
+Sean $(X,d_X), (Y,d_Y)$ espacios métricos con $E \subseteq X$, y $f: E \to Y$. ¿Cuándo es $f$ continua en $p$?
+BACK
+$$f \text{ continua en } p \iff \forall \varepsilon \gt  0\ \exists \delta \gt  0\ \forall x \in E.\ (d_X(x,p) \lt  \delta \implies d_Y(f(x), f(p)) \lt  \varepsilon)$$<hr><p>$f$ es función continua en $E$ si es continua en todo $p \in E$. A diferencia del límite, aquí se permite $d_X(x,p) = 0$.</p>
+
+NEW NOTE "Continuidad Uniforme"
+MODE standard
+TAGS analisis, continuidad_uniforme
+RETENTION 0.85
+POS 900.0, -1040.0
+
+CARD 1 "Definición de Continuidad Uniforme"
+FRONT
+Sean $(X,d_X), (Y,d_Y)$ espacios métricos con $E \subseteq X$, y $f: E \to Y$. ¿Cuándo es $f$ uniformemente continua?
+BACK
+$f$ uniformemente continua en $E$ si y solo si:
+$$ \forall \varepsilon \gt  0\ \exists \delta \gt  0\ \forall x,y \in E.\ (d_X(x,y) \lt  \delta \implies d_Y(f(x), f(y)) \lt  \varepsilon)$$<hr><p><em>Diferencia con continuidad puntual:</em> Se introduce el cuantificador de $p$ hacia adentro, haciendo que $\delta$ sea global e independiente del punto en el dominio.</p>
+
+NEW NOTE "Mapa Acotado"
+MODE standard
+TAGS acotamiento, analisis, funciones
+RETENTION 0.85
+POS 0.0, -1300.0
+
+CARD 1 "Definición de Función Acotada"
+FRONT
+Sean $X, Y$ espacios metricos, con $E \subseteq X$, y $f: E \to Y$. ¿Cuándo es $f$ acotada?
+BACK
+$$\operatorname{Bounded}(f) \iff \operatorname{Bounded} f[E]$$
+<hr>
+<p>Para un espacio normado: $\exists M \gt  0\ \forall x \in E.\ \|f(x)\| \lt  M$</p>
+(creo)
+
+NEW NOTE "Límites Laterales (Izquierdo y Derecho)"
+MODE standard
+TAGS analisis, limites, limites_laterales
+RETENTION 0.85
+POS 300.0, -780.0
+
+CARD 1 "Límites por Izquierda y por Derecha"
+FRONT
+Sea $f: D \to \mathbb R$ con $D \subseteq \mathbb R$. ¿Qué son el límite izquierdo y derecho en $p$?
+BACK
+$$\lim_{x\to p^+} f(x) = \lim_{x\to p} f\upharpoonright_{[p,\infty)}(x)$$$$\lim_{x\to p^-} f(x) = \lim_{x\to p} f\upharpoonright_{(-\infty, p]}(x)$$<hr><p><em>Teorema:</em> $\lim_{x\to p} f(x) = L \iff \lim_{x\to p^-} f(x) = L = \lim_{x\to p^+} f(x)$.</p>
+
+NEW NOTE "Tipos de Discontinuidades"
+MODE standard
+TAGS analisis, continuidad, discontinuidades
+RETENTION 0.85
+POS 900.0, -780.0
+
+CARD 1 "Discontinuidades de Primer y Segundo Tipo"
+FRONT
+¿Qué son discontinuidades del primer y segundo tipo para $f: D \to \mathbb R$?
+BACK
+<ul><li><strong>Primer tipo (De salto / removible):</strong> $f$ es discontinua en $p$, pero ambos límites laterales $\lim_{x\to p^+} f(x)$ y $\lim_{x\to p^-} f(x)$ existen.</li><li><strong>Segundo tipo (Esencial):</strong> Al menos uno de los límites laterales no existe.</li></ul>
+
+NEW NOTE "Funciones Monótonas"
+MODE standard
+TAGS analisis, funciones, monotonia
+RETENTION 0.85
+POS 300.0, 0.0
+
+CARD 1 "Funciones Crecientes y Decrecientes"
+FRONT
+¿Cuándo es una función $f: D \to \mathbb R$ monótona en $(a,b)$?
+BACK
+Para $x \lt  y$ en $(a,b)$:<br><ul><li><strong>Monótonamente creciente:</strong> $f(x) \le f(y)$.</li><li><strong>Monótonamente decreciente:</strong> $f(x) \ge f(y)$.</li></ul><hr><p><em>Propiedad:</em> Toda función monótona tiene límites laterales a la izquierda y a la derecha en cada punto. Por ejemplo, si es creciente, $\lim_{x\to a^-} f(x) = \sup_{x \lt  a} f(x)$.</p>
+
+NEW NOTE "Vecindarios en el Infinito"
+MODE standard
+TAGS analisis, infinito, topologia
+RETENTION 0.85
+POS 900.0, -910.0
+
+CARD 1 "Vecindarios Abiertos en los Extremos Infinitos"
+FRONT
+En la recta real extendida $\overline{\mathbb R} = [-\infty, +\infty]$, ¿cómo se definen los vecindarios abiertos en $+\infty$ y $-\infty$?
+BACK
+Se añade a la topología estándar de $\mathbb R$ la base de abiertos en los extremos infinitos:<br><ul><li><strong>Vecindarios en $+\infty$:</strong> Para cualquier $M \in \mathbb R$, el conjunto $(M, +\infty]$ forma un abierto de $+\infty$.</li><li><strong>Vecindarios en $-\infty$:</strong> Para cualquier $M \in \mathbb R$, el conjunto $[-\infty, M)$ forma un abierto de $-\infty$.</li></ul>
+
+NEW NOTE "Límite Topológico Generalizado a los Reales Extendidos"
+MODE standard
+TAGS analisis, limites, topologia_generalizada
+RETENTION 0.85
+POS 1200.0, -910.0
+
+CARD 1 "Definición con Vecindarios Infinitos"
+FRONT
+Sea $f: D \to \overline{\mathbb R}$ con $D \subseteq \overline{\mathbb R}$. ¿Cómo se define el límite cuando $x \to +\infty$ o $x \to -\infty$?
+BACK
+$$\lim_{x\to +\infty} f(x) = \biota L\in \overline{\mathbb R}\ \forall V \in \mathrm N_L\  \exists M \in \mathbb R\  f[(M,\infty]] \in V$$<p>En la recta real extendida $\overline{\mathbb R}$, la convergencia continua a infinito se unifica mediante los vecindarios abiertamente infinitos $(M, +\infty]$.</p>
+
+CARD 2 "Definición Estrictamente Topológica de Límite"
+FRONT
+Sean $(X, \tau_X)$ y $(Y, \tau_Y)$ espacios topológicos, $E \subseteq X$, $p \in E'$.<br>
+Considere $\mathrm N^X_x = \Set{V \in \tau_X : x \in V}$<br>
+
+Definición estrictamente topológica de límite de una función $f: E \to Y$ entre espacios topológicos.
+BACK
+$$\lim_{x\to p} f(x) = \biota q\in Y\ \forall V \in \mathrm N^Y_q\ \exists U \in \mathrm N^X_p.\ f[ U \cap E\setminus \set{p}] \subseteq V$$
+<hr><p>Esta definición generaliza unificadamente los límites en espacios métricos, límites al infinito ($x \to \pm\infty$), y límites infinitos ($f(x) \to \pm\infty$).</p>
+Pueden haber varias formas de hacer esta definición debido a las multiples caracterizaciones posibles.
+
+NEW NOTE "Espacio de Funciones Acotadas B(X,Y)"
+MODE standard
+TAGS acotamiento, analisis, espacios_de_funciones
+RETENTION 0.85
+POS 0.0, -1430.0
+
+CARD 1 "Definición de B(X,Y)"
+FRONT
+Sean $(X,d_X), (Y,d_Y)$ espacios métricos. ¿Cuál es el espacio de funciones acotadas $\mathscr B(X,Y)$?
+BACK
+$$\mathscr B(X,Y) = \{f \in Y^X : \operatorname{Bounded}(f(X))\}$$
+
+NEW NOTE "Derivada"
+MODE standard
+TAGS analisis, calculo, derivada
+RETENTION 0.85
+POS 300.0, -1040.0
+
+CARD 1 "Definición de Derivada"
+FRONT
+Sea $f: I \to \mathbb R$ con $I \subseteq \mathbb R$. ¿Cómo se define su derivada en $x$?
+BACK
+Definiendo el cociente de diferencias $\phi(t) = \frac{f(t)-f(x)}{t-x}$ para $t \ne x$:<br>$$f'(x) = \lim_{t\to x} \phi(t) = \lim_{h\to 0} \frac{f(x+h) - f(x)}{h}$$
+
+NEW NOTE "Máximo y Mínimo Local"
+MODE standard
+TAGS analisis, calculo, extremos_locales
+RETENTION 0.85
+POS 0.0, -780.0
+
+CARD 1 "Definición de Extremos Locales"
+FRONT
+Sea $(X,d)$ un espacio métrico y $f: X \to \mathbb R$. ¿Cuándo es $p$ un máximo o mínimo local?
+BACK
+<ul><li><strong>Máximo local:</strong> $\exists \delta \gt  0\ \forall x \in \mathrm B_\delta(p).\ f(x) \le f(p)$.</li><li><strong>Mínimo local:</strong> $\exists \delta \gt  0\ \forall x \in \mathrm B_\delta(p).\ f(x) \ge f(p)$.</li></ul>
+
+NEW NOTE "Derivadas de Orden Superior"
+MODE standard
+TAGS analisis, calculo, derivadas_superiores
+RETENTION 0.85
+POS 300.0, -1170.0
+
+CARD 1 "Definición de Derivadas de Orden n"
+FRONT
+Sea $f: [a,b] \to \mathbb R$. ¿Cómo se definen sus derivadas de orden superior $f^{(n)}$?
+BACK
+$$f'' = (f')',\quad f^{(n)} = D(f^{(n-1)})$$<hr><p><em>Nota:</em> Si $f^{(n)}(x)$ existe, entonces $f^{(n-1)}$ debe existir en una vecindad alrededor de $x$, y $f^{(n-2)}$ debe ser diferenciable en dicha vecindad.</p>
+
+NEW NOTE "Espacios de Funciones Continuamente Diferenciables C^n(I)"
+MODE standard
+TAGS analisis, diferenciabilidad, espacios_de_funciones
+RETENTION 0.85
+POS 300.0, -1300.0
+
+CARD 1 "Definición de C^n(I)"
+FRONT
+Sea $I \subseteq \mathbb R$. ¿Cuál es el espacio de funciones continuamente diferenciables de grado $n$, $C^n(I)$?
+BACK
+$$C^n(I) = \{f \in \mathbb R^I : f^{(n)} \text{ existe y es continua en } I\}$$<hr><p>Para $n=0$: $C(I) = \{f \in \mathbb R^I : f \text{ continua en } I\}$.<br>En espacios métricos/Banach: $C^n(X,Y)$ mediante la derivada de Fréchet.</p>
+
+NEW NOTE "Espacio de Funciones Continuas C(X,Y)"
+MODE standard
+TAGS analisis, continuidad, espacios_de_funciones
+RETENTION 0.85
+POS 600.0, -1300.0
+
+CARD 1 "Definición de C(X,Y)"
+FRONT
+Sean $(X,d_X), (Y,d_Y)$ espacios métricos. ¿Cuál es el espacio de funciones continuas $C(X,Y)$?
+BACK
+$$C(X,Y) = \{f \in Y^X : f \text{ es continua en } X\}$$<hr><p>Corresponde a $C^0(X,Y)$.</p>
+
+NEW NOTE "Espacio de Funciones Continuas Acotadas C_b(X,Y)"
+MODE standard
+TAGS acotadas_continuas, analisis, espacios_de_funciones
+RETENTION 0.85
+POS 600.0, -1430.0
+
+CARD 1 "Definición de C_b(X,Y)"
+FRONT
+Sean $(X,d_X), (Y,d_Y)$ espacios métricos. ¿Cuál es el espacio de funciones continuas acotadas $\mathscr C_b(X,Y)$?
+BACK
+$$\mathscr C_b(X,Y) = \mathscr B(X,Y) \cap C(X,Y)$$
+
+NEW NOTE "Polinomio de Taylor"
+MODE standard
+TAGS analisis, calculo, taylor
+RETENTION 0.85
+POS 300.0, -1560.0
+
+CARD 1 "Fórmula del Polinomio de Taylor"
+FRONT
+Sea $f \in C^n(I)$ con $x_0 \in I$. ¿Cuál es su polinomio de Taylor de grado $n$ centrado en $x_0$?
+BACK
+$$T_{n, f, x_0}(x) = \sum_{k=0}^n \frac{f^{(k)}(x_0)}{k!} (x - x_0)^k$$
+
+NEW NOTE "Integración de Riemann-Stieltjes"
+MODE serial
+TAGS analisis, integracion, riemann_stieltjes
+RETENTION 0.85
+POS 0.0, -1560.0
+
+CARD 1 "División del Intervalo"
+FRONT
+Sea $[a,b]$ un intervalo. ¿Qué es una división (partición de Riemann) sobre $[a,b]$?
+BACK
+Una secuencia finita $(x_i)_{i=0}^n$ tal que:<br>$$a = x_0 \lt  x_1 \lt  \dots \lt  x_n = b$$<hr><p>Definimos $\Delta x_i = x_i - x_{i-1}$ para $1 \le i \le n$. Los subintervalos $[x_{i-1}, x_i)$ forman una partición disjunta de $[a,b)$.</p>
+
+CARD 2 "Partición Intervalar (Fina vs Gruesa)"
+FRONT
+Sea $[a,b]$ un intervalo. ¿Qué es una partición del intervalo en el contexto de integrabilidad de Riemann? ¿Cuándo es una partición más fina o más gruesa que otra?
+
+(Nota: consideraremos definiciones tanto para particiones como para divisiones).
+BACK
+Una partición $P$ es un conjunto finito de intervalos y puntos tal que $\forall x \in [a,b]\ \exists! I \in P.\ x \in I$.<hr><p><strong>Comparación:</strong> $P_1$ es más fina que $P_2$ (y $P_2$ es más gruesa que $P_1$) si:<br>$$\forall J \in P_1\ \exists! K \in P_2.\ J \subseteq K$$</p>
+<hr>
+Alternativamente, hablando de divisiones, $P_1$ es mas fina que $P_2$ si$$
+P_1 \supseteq P_2
+$$
+
+CARD 3 "Refinamiento entre Particiones"
+FRONT
+Sean $P_1, P_2$ particiones de $[a,b]$. ¿Qué es el refinamiento común entre ambas? ¿Como se compara con el refinamiento de una división?
+BACK
+$$P' = P_1 \# P_2 = \{K \cap J : K \in P_1, J \in P_2\}$$<p>$P'$ es una partición más fina tanto que $P_1$ como que $P_2$.</p>
+<hr>
+Si comparamos con la división del intervalo, entonces la otra definición es$$
+P'=P_1 \cup P_2
+$$
+
+CARD 4 "Valores Mayores y Menores"
+FRONT
+Sea $P$ una partición de $[a,b]$ y $f \in \mathscr B([a,b], \mathbb R)$. ¿Cuáles son los valores menores y mayores de la partición en $f$?
+BACK
+Para cada intervalo $I \in P$:<br><ul><li><strong>Valor menor:</strong> $m_I = \inf_{x \in I} f(x)$</li><li><strong>Valor mayor:</strong> $M_I = \sup_{x \in I} f(x)$</li></ul><hr><p>Para una división $(x_i)_{i=0}^n$ definimos $m_i = \inf_{x \in [x_{i-1}, x_i]} f(x)$ y $M_i = \sup_{x \in [x_{i-1}, x_i]} f(x)$.</p>
+
+CARD 5 "Longitud Stieltjes"
+FRONT
+Sea $\alpha: [a,b] \to \mathbb R$ monótona creciente. ¿Cómo se define la longitud inducida por $\alpha$ para subconjuntos e intervalos de $[a,b]$?
+BACK
+<ul><li>$\alpha(\varnothing) = 0$</li>
+<li>Para un punto $I = \{a\}$: $$\alpha(I) = \lim_{x\to a^+} \alpha(x) - \lim_{x\to a^-} \alpha(x)$$</li>
+<li>Para intervalo abierto $I = (a,b)$: $$\alpha(I) = \lim_{x\to b^-} \alpha(x) - \lim_{x\to a^+} \alpha(x)$$</li>
+<li>$\alpha[a,b) = \alpha\{a\} + \alpha(a,b)$</li>
+<li>$\alpha(a,b] = \alpha(a,b) + \alpha\{b\}$</li>
+<li>$\alpha[a,b] = \alpha\{a\} + \alpha(a,b) + \alpha\{b\}$</li></ul>
+<hr><p>Para una división $(x_i)_{i=0}^n$: $\Delta\alpha_i = \alpha(x_i) - \alpha(x_{i-1})$. En el caso continuo: $\alpha[a,b] = \alpha(b) - \alpha(a)$.</p>
+
+CARD 6 "Sumas de Riemann-Stieltjes"
+FRONT
+Sea $\alpha: [a,b] \to \mathbb R$ monótona creciente, $P$ partición de $[a,b]$ y $f \in \mathscr B([a,b], \mathbb R)$. ¿Cuáles son las sumas inferior y superior de Darboux/Riemann-Stieltjes?
+BACK
+<ul><li><strong>Suma inferior:</strong> $L(P,f,\alpha) = \sum_{I \in P} m_I \cdot \alpha[I] = \sum_{i=1}^n m_i \Delta\alpha_i$</li><li><strong>Suma superior:</strong> $U(P,f,\alpha) = \sum_{I \in P} M_I \cdot \alpha[I] = \sum_{i=1}^n M_i \Delta\alpha_i$</li></ul>
+
+CARD 7 "Integral Inferior y Superior"
+FRONT
+Sea $\alpha: [a,b] \to \mathbb R$ monótona creciente y $f \in \mathscr B([a,b], \mathbb R)$. ¿Cuáles son la integral superior e inferior de Riemann-Stieltjes?
+BACK
+Sea $\mathscr T$ la colección de todas las particiones de $[a,b]$:<br><ul><li><strong>Integral inferior:</strong> $\underline{\int_a^b} f\ \mathrm d\alpha = \sup_{P \in \mathscr T} L(P,f,\alpha)$</li><li><strong>Integral superior:</strong> $\overline{\int_a^b} f\ \mathrm d\alpha = \inf_{P \in \mathscr T} U(P,f,\alpha)$</li></ul>
+
+CARD 8 "Funciones Integrables (Stieltjes)"
+FRONT
+¿Cuándo es $f \in \mathscr B([a,b], \mathbb R)$ integrable respecto a $\alpha:[a,b] \to \mathbb R$? ¿Cuál es el espacio $\mathscr R_\alpha([a,b])$?
+BACK
+$f$ es integrable bajo $\alpha$ ($f \in \mathscr R_\alpha([a,b])$) si:<br>$$\underline{\int_a^b} f\ \mathrm d\alpha = \overline{\int_a^b} f\ \mathrm d\alpha$$<hr>
+$$
+\mathscr R_\alpha([a,b]) = \Set{f \in \mathscr B([a,b], \mathbb R): \underline{\int_a^b} f\ \mathrm d\alpha = \overline{\int_a^b} f\ \mathrm d\alpha}
+$$
+
+NEW NOTE "Límite Puntual"
+MODE standard
+TAGS analisis, convergencia, limite_puntual
+RETENTION 0.85
+POS -300.0, -520.0
+
+CARD 1 "Definición de Límite Puntual"
+FRONT
+Sea $(Y,d_Y)$ espacio métrico, $(f_n)$ secuencia con $f_n: X \to Y$ y $f: X \to Y$. ¿Cuándo hay convergencia puntual?
+BACK
+$$\forall x \in X.\ f_n(x) \leadsto f(x)$$<hr><p>Expresado formalmente:<br>$$\forall x \in X\ \forall \varepsilon \gt  0\ \exists N \in \mathbb N\ \forall n \ge N.\ d_Y(f(x), f_n(x)) \lt  \varepsilon$$</p>
+
+NEW NOTE "Convergencia Uniforme"
+MODE standard
+TAGS analisis, convergencia, convergencia_uniforme
+RETENTION 0.85
+POS -300.0, -650.0
+
+CARD 1 "Definición de Convergencia Uniforme"
+FRONT
+Sea $(Y,d_Y)$ espacio métrico, $(f_n)$ secuencia con $f_n: X \to Y$ y $f: X \to Y$. ¿Cuándo hay convergencia uniforme?
+BACK
+$$\forall \varepsilon \gt  0\ \exists N \in \mathbb N\ \forall n \ge N\ \forall x \in X.\ d_Y(f(x), f_n(x)) \lt  \varepsilon$$<hr><p>El entero $N$ depende únicamente de $\varepsilon$, siendo independiente del punto $x \in X$.</p>
+
+NEW NOTE "Métrica Uniforme"
+MODE standard
+TAGS analisis, espacios_de_funciones, metrica_uniforme
+RETENTION 0.85
+POS -300.0, -1430.0
+
+CARD 1 "Definición de Métrica Uniforme"
+FRONT
+Sea $(Y,d_Y)$ espacio métrico. ¿Cuál es la métrica uniforme en $\mathscr B(X,Y)$?
+BACK
+Entre $f,g \in \mathscr B(X,Y)$:<br>$$d_\infty(f,g) = \sup_{x \in X} d_Y(f(x), g(x))$$
+<hr>
+<p><em>Propiedad:</em> $f_n \xrightarrow{d_\infty} f \iff f_n \to f$ uniformemente en $X$.</p>
+<hr>
+<p><em>Propiedad:</em> Si $Y$ es un espacio métrico completo (ej. $\mathbb R$), entonces $\mathscr B(X,Y)$ dotado de la métrica del supremo $d_\infty(f,g) = \sup_{x \in X} d_Y(f(x), g(x))$ también es completo.</p>
+
+NEW NOTE "Familias Puntual vs Uniformemente Acotadas"
+MODE standard
+TAGS acotamiento, analisis, familias_de_funciones
+RETENTION 0.85
+POS -300.0, -1820.0
+
+CARD 1 "Acotamiento Puntual y Uniforme de Familias"
+FRONT
+Sea $\mathcal F \subseteq Y^X$ una familia de funciones en un espacio normado $(Y, \|\cdot\|)$. ¿Cuándo es $\mathcal F$ puntualmente acotada y cuándo uniformemente acotada?
+BACK
+<ul><li><strong>Puntualmente acotada:</strong> $\forall x \in X\ \exists M_x \gt  0\ \forall f \in \mathcal F.\ \|f(x)\| \le M_x$.</li><li><strong>Uniformemente acotada:</strong> $\exists K \gt  0\ \forall x \in X\ \forall f \in \mathcal F.\ \|f(x)\| \le K$.</li></ul>
+
+NEW NOTE "Equicontinuidad Puntual y Uniforme"
+MODE standard
+TAGS analisis, equicontinuidad, familias_de_funciones
+RETENTION 0.85
+POS 600.0, -1820.0
+
+CARD 1 "Definición de Equicontinuidad"
+FRONT
+Sea $(Y,d_Y)$ espacio métrico y $\mathcal F \subseteq Y^X$ una familia de funciones. ¿Cuándo es $\mathcal F$ puntualmente equicontinua y cuándo uniformemente equicontinua?
+BACK
+<ul><li><strong>Puntualmente Equicontinua:</strong><br>$$\forall p \in X\ \forall \varepsilon \gt  0\ \exists \delta \gt  0\ \forall x \in X\ \forall f \in \mathcal F.\ (d(x,p) \lt  \delta \implies d(f(x), f(p)) \lt  \varepsilon)$$</li><li><strong>Uniformemente Equicontinua:</strong><br>$$\forall \varepsilon \gt  0\ \exists \delta \gt  0\ \forall x,y \in X\ \forall f \in \mathcal F.\ (d(x,y) \lt  \delta \implies d(f(x), f(y)) \lt  \varepsilon)$$</li></ul>
+
+NEW NOTE "Álgebra de Funciones"
+MODE standard
+TAGS algebra_de_banach, analisis, espacios_de_funciones
+RETENTION 0.85
+POS 1200.0, -1820.0
+
+CARD 1 "Definición de Álgebra de Funciones"
+FRONT
+Sea $\mathcal A \subseteq \mathbb F^X$ un subespacio de funciones sobre un cuerpo $\mathbb F$. ¿Cuándo es $\mathcal A$ un álgebra de funciones?
+BACK
+$\mathcal A$ es un álgebra si es cerrado bajo multiplicación puntual:<br>$$\forall f,g \in \mathcal A,\ c \in \mathbb F \implies f \cdot g \in \mathcal A,\ f+g \in \mathcal A,\ cf \in \mathcal A$$<hr><p>Si $\mathcal A \subseteq \mathscr B(X,\mathbb F)$, su clausura $\overline{\mathcal A}$ bajo la métrica uniforme $d_\infty$ también forma un álgebra cerrada.</p>
+
+NEW NOTE "Separación de Puntos y Anulación"
+MODE standard
+TAGS analisis, familias_de_funciones, stone_weierstrass
+RETENTION 0.85
+POS 1200.0, -1560.0
+
+CARD 1 "Separación de Puntos y Anulación (Vanishing)"
+FRONT
+Sea $\mathcal F \subseteq Y^X$ una familia de funciones. ¿Cuándo separa puntos y cuándo se anula?
+BACK
+<ul><li><strong>Separa puntos:</strong> $\forall x,y \in X\ (x \ne y) \implies \exists f \in \mathcal F.\ f(x) \ne f(y)$.</li><li><strong>Se anula en $x \in X$:</strong> $\forall f \in \mathcal F.\ f(x) = 0$.</li></ul>
+
+NEW NOTE "Funciones Analíticas"
+MODE standard
+TAGS analisis, calculo, funciones_analiticas
+RETENTION 0.85
+POS 300.0, -1690.0
+
+CARD 1 "Definición de Función Analítica"
+FRONT
+Sea $f: D \to \mathbb R$ en un conjunto abierto $D \subseteq \mathbb R$. ¿Cuándo es $f$ analítica en $D$?
+BACK
+$f$ es analítica ($f \in C^\omega(D, \mathbb R)$) si para cada $x_0 \in D$, su serie de Taylor converge a $f(x)$ en una vecindad $(x_0 - R, x_0 + R) \subseteq D$:<br>$$f(x) = \sum_{n=0}^\infty \frac{f^{(n)}(x_0)}{n!} (x - x_0)^n$$<hr><p><em>Nota:</em> En el caso complejo, ser analítica es equivalente a ser holomorfa.</p>
+
+NEW NOTE "Conjunto Denso en Ninguna Parte (NWD)"
+MODE standard
+TAGS analisis, nowhere_dense, topologia
+RETENTION 0.85
+POS 1200.0, -262.3
+
+CARD 1 "Definición de Conjunto NWD"
+FRONT
+Sea $(X,d)$ un espacio métrico y $E \subseteq X$. ¿Cuándo es $E$ denso en ninguna parte (Nowhere Dense)?
+BACK
+$$\operatorname{NWD}(E) \iff (\overline E)^\circ = \varnothing$$<p>El interior de su cerradura es vacío (no contiene ninguna bola abierta).</p>
+
+NEW NOTE "Categoría Métrica (Categoría I y II)"
+MODE standard
+TAGS analisis, baire_category, topologia
+RETENTION 0.85
+POS 1500.0, -260.0
+
+CARD 1 "Categorías I, II y Conjunto Residual"
+FRONT
+Sea $(X,d)$ un espacio métrico. ¿Qué es la categoría (I y II) de un subconjunto $E \subseteq X$?
+BACK
+<ul><li><strong>Categoría I (Magro / Meager):</strong> $E$ es unión contable de conjuntos densos en ninguna parte ($\text{NWD}$): $E = \bigcup_{i=1}^\infty F_i$ con $\operatorname{NWD}(F_i)$.</li><li><strong>Categoría II (Grueso / Thick):</strong> $E$ no es de Categoría I.</li><li><strong>Conjunto Residual:</strong> Su complemento $E^c$ es de Categoría I.</li></ul>
+
+NEW NOTE "Demostraciones Secuenciales 1"
+MODE serial
+TAGS analisis, demostraciones, secuencias
+RETENTION 0.85
+POS -300.0, 520.0
+
+CARD 1 "Teorema 1.1: Convergencia e Infinitud de Puntos"
+FRONT
+Sea $(X,d)$ espacio métrico. Demostrar que $p_n \leadsto p \iff$ todo vecindario de $p$ contiene infinitos términos de $(p_n)$:
+BACK
+$(\implies)$ Para todo $\varepsilon \gt  0$, existe $N \in \mathbb N$ tal que $\forall n \ge N,\ p_n \in B_\varepsilon(p)$. Dado que se excluyen a lo sumo los primeros $N-1$ términos finitos, el vecindario contiene infinitos términos.<br><br>$(\impliedby)$ Si para todo $\varepsilon \gt  0$ el vecindario $B_\varepsilon(p)$ contiene infinitos términos de la secuencia, excluyendo a lo sumo una cantidad finita, se deduce que existe un índice $N$ a partir del cual todos los $p_n \in B_\varepsilon(p)$. Luego $d(p_n, p) \lt  \varepsilon \implies p_n \leadsto p$.
+
+CARD 2 "Teorema 1.2: Unicidad del Límite"
+FRONT
+Sea $(X,d)$ espacio métrico. Si $p_n \leadsto x$ y $p_n \leadsto y$, demostrar que $x = y$:
+BACK
+Por desigualdad triangular, para todo $n \in \mathbb N$:<br>$$d(x,y) \le d(p_n, x) + d(p_n, y)$$<br>Dado $\varepsilon \gt  0$, existen $N_1, N_2$ tales que $\forall n \ge N_1,\ d(p_n, x) \lt  \varepsilon/2$ y $\forall n \ge N_2,\ d(p_n, y) \lt  \varepsilon/2$.<br><br>Tomando $n \ge \max(N_1, N_2)$:<br>$$d(x,y) \lt  \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon$$<br>Como $d(x,y) \lt  \varepsilon$ para todo $\varepsilon \gt  0$, concluimos $d(x,y) = 0 \implies x = y$.
+
+CARD 3 "Teorema 1.3: Secuencia Convergente es Acotada"
+FRONT
+Sea $(X,d)$ espacio métrico. Si $p_n \leadsto x$, demostrar que el conjunto $\{p_n : n \in \mathbb N\}$ es acotado:
+BACK
+Fijamos $\varepsilon = 1$. Por convergencia, existe $N \in \mathbb N$ tal que $\forall n \ge N,\ d(p_n, x) \lt  1$.<br><br>Para los primeros $N-1$ términos finitos, definimos el máximo $M = \max\{d(p_n, x) : n \lt  N\}$.<br><br>Tomando $R = \max(M, 1)$, se tiene $\forall n \in \mathbb N,\ d(p_n, x) \le R$. Por lo tanto, $\{p_n\} \subseteq B_R(x)$, demostrando que la secuencia es acotada.
+
+CARD 4 "Teorema 1.4: Puntos Límite y Secuencias"
+FRONT
+Sea $E \subseteq X$. Si $x$ es punto límite de $E$, demostrar que existe una secuencia $(p_n) \subseteq E \setminus \{x\}$ tal que $p_n \leadsto x$:
+BACK
+Para cada $n \in \mathbb N_+$, como $x$ es punto límite, el vecindario $B_{1/n}(x)$ contiene al menos un punto $p_n \in E \setminus \{x\}$.<br><br>Dado $\varepsilon \gt  0$, por la propiedad arquimediana existe $N \in \mathbb N$ tal que $1/N \lt  \varepsilon$.<br><br>Luego, $\forall n \ge N,\ d(p_n, x) \lt  1/n \le 1/N \lt  \varepsilon$, demostrando que $p_n \leadsto x$.
+
+NEW NOTE "Demostraciones Secuenciales 2"
+MODE serial
+TAGS algebra_de_limites, analisis, secuencias_complejas
+RETENTION 0.85
+POS 0.0, 520.0
+
+CARD 1 "Propiedades 2.1 & 2.3: Límite de la Suma y Desplazamiento"
+FRONT
+Si $s_n \to s$ y $t_n \to t$ en $\mathbb C$, demostrar que $\lim (s_n + t_n) = s + t$ y $\lim (s_n + a) = s + a$:
+BACK
+$$|(s_n + t_n) - (s + t)| \le |s_n - s| + |t_n - t|$$<br>Dado $\varepsilon \gt  0$, existen $N_1, N_2$ tales que $|s_n - s| \lt  \varepsilon/2$ y $|t_n - t| \lt  \varepsilon/2$. Tomando $n \ge \max(N_1, N_2)$, se concluye la suma.<br><br>Para el desplazamiento constante: $|(s_n + a) - (s + a)| = |s_n - s| \lt  \varepsilon$.
+
+CARD 2 "Propiedad 2.2: Límite del Producto Escalar"
+FRONT
+Si $s_n \to s$ en $\mathbb C$ y $\alpha \in \mathbb C$, demostrar que $\lim (\alpha s_n) = \alpha s$:
+BACK
+Si $\alpha = 0$, la propiedad es trivial.<br><br>Si $\alpha \ne 0$, dado $\varepsilon \gt  0$, existe $N$ tal que $\forall n \ge N,\ |s_n - s| \lt  \frac{\varepsilon}{|\alpha|}$.<br><br>Luego $|\alpha s_n - \alpha s| = |\alpha| |s_n - s| \lt  |\alpha| \frac{\varepsilon}{|\alpha|} = \varepsilon$.
+
+CARD 3 "Propiedad 2.4: Límite del Producto de Secuencias"
+FRONT
+Si $s_n \to s$ y $t_n \to t$ en $\mathbb C$, demostrar que $\lim (s_n t_n) = s t$:
+BACK
+Descomponemos:<br>$$s_n t_n - st = (s_n - s)(t_n - t) + s(t_n - t) + t(s_n - s)$$<br>Como $s_n \to s$ y $t_n \to t$, para $n \ge \max(N_1, N_2)$ se tiene $|s_n - s| \lt  \sqrt{\varepsilon}$ y $|t_n - t| \lt  \sqrt{\varepsilon}$, luego $(s_n - s)(t_n - t) \to 0$.<br><br>Por continuidad de suma y producto por escalar, cada término tiende a 0, demostrando $s_n t_n \to st$.
+
+CARD 4 "Propiedad 2.5: Límite del Recíproco"
+FRONT
+Si $s_n \to s$ con $s \ne 0$ y $s_n \ne 0$, demostrar que $\lim \frac{1}{s_n} = \frac{1}{s}$:
+BACK
+Elegimos $N_1$ tal que $\forall n \ge N_1,\ |s_n - s| \lt  \frac{|s|}{2}$. Por desigualdad triangular inversa:<br>$$|s| \le |s - s_n| + |s_n| \lt  \frac{|s|}{2} + |s_n| \implies |s_n| \gt  \frac{|s|}{2}$$<br>Dado $\varepsilon \gt  0$, elegimos $N_2$ tal que $|s_n - s| \lt  \frac{|s|^2 \varepsilon}{2}$.<br><br>Para $n \ge \max(N_1, N_2)$:<br>$$\left|\frac{1}{s_n} - \frac{1}{s}\right| = \left|\frac{s - s_n}{s_n s}\right| \le \frac{|s - s_n|}{|s_n| |s|} \lt  \frac{2}{|s|^2} |s - s_n| \lt  \varepsilon$$
+
+NEW NOTE "Demostraciones Secuenciales 3"
+MODE serial
+TAGS analisis, orden, secuencias_reales
+RETENTION 0.85
+POS 300.0, 520.0
+
+CARD 1 "Teorema 3.1: Preservación del Orden en el Límite"
+FRONT
+Sean $(s_n), (t_n)$ secuencias reales con $s_n \le t_n$ para todo $n$. Si $s_n \to s$ y $t_n \to t$, demostrar que $s \le t$:
+BACK
+Usamos la identidad $|x| - x = 0 \iff x \ge 0$. Para $t_n \ge s_n$, se tiene $|t_n - s_n| - (t_n - s_n) = 0$.<br><br>Por desigualdad triangular:<br>$$||t-s| - (t-s)| \le ||t-s| - |t_n - s_n|| + ||t_n - s_n| - (t-s)| \le 2|(t-s) - (t_n - s_n)| \lt  2\varepsilon$$<br>Haciendo $\varepsilon \to 0$, concluimos $|t-s| = t-s \implies t - s \ge 0 \implies s \le t$.
+
+CARD 2 "Teorema 3.2: Teorema del Sándwich"
+FRONT
+Sean $(s_n), (x_n), (t_n)$ secuencias reales con $s_n \le x_n \le t_n$ para todo $n$. Si $s_n \to L$ y $t_n \to L$, demostrar que $x_n \to L$:
+BACK
+Restando $L$: $s_n - L \le x_n - L \le t_n - L$.<br><br>Por lo tanto:<br>$$|x_n - L| \le |t_n - s_n| + |s_n - L| \le |t_n - L| + 2|s_n - L|$$<br>Dado $\varepsilon \gt  0$, elegimos $N$ tal que $\forall n \ge N$, $|s_n - L| \lt  \varepsilon/3$ y $|t_n - L| \lt  \varepsilon/3$.<br><br>Luego $|x_n - L| \lt  \frac{\varepsilon}{3} + \frac{2\varepsilon}{3} = \varepsilon \implies x_n \to L$.
+
+NEW NOTE "Demostraciones Secuenciales 4"
+MODE serial
+TAGS analisis, bolzano_weierstrass, limsup_liminf, monotonia
+RETENTION 0.85
+POS 600.0, 520.0
+
+CARD 1 "Teorema 4.1: Secuencias Monótonas Acotadas"
+FRONT
+Demostrar que toda secuencia real acotada y monótona es convergente:
+BACK
+Sin pérdida de generalidad, supongamos $(x_n)$ creciente y acotada superiormente ($x_1 \le x_2 \le \dots \le M$).<br><br>Por el axioma del supremo, existe $L = \sup\{x_n : n \in \mathbb N\}$.<br><br>Por propiedades del supremo, $\forall \varepsilon \gt  0\ \exists N \in \mathbb N$ tal que $L - \varepsilon \lt  x_N \le L$.<br><br>Como $(x_n)$ es creciente, $\forall n \ge N,\ L - \varepsilon \lt  x_N \le x_n \le L \lt  L + \varepsilon \implies |x_n - L| \lt  \varepsilon$. Conclusión: $x_n \to L$.
+
+CARD 2 "Teorema 4.2: Propiedades de Limsup y Liminf"
+FRONT
+Para una secuencia acotada $(x_n)$, sea $a_n = \sup_{k \ge n} x_k$. Demostrar que $(a_n)$ es decreciente y acotada, concluyendo $\limsup x_n = \inf_n a_n = \lim a_n$, y que $\liminf x_n \le \limsup x_n$:
+BACK
+Como $\{x_k : k \ge n+1\} \subseteq \{x_k : k \ge n\}$, se tiene $a_{n+1} \le a_n$. Como $(a_n)$ es decreciente y acotada inferiormente por cualquier cota inferior de $(x_n)$, la secuencia $(a_n)$ converge a $\inf_n a_n = \limsup x_n$.<br><br>Análogamente, $b_n = \inf_{k \ge n} x_k$ es creciente y converge a $\sup_n b_n = \liminf x_n$. Como $b_n \le a_n$ para todo $n$, se deduce $\liminf x_n \le \limsup x_n$.
+
+CARD 3 "Teorema 4.3: Subsecuencias Convergentes a Limsup"
+FRONT
+Demostrar que toda secuencia real acotada $(x_n)$ tiene una subsecuencia $(x_{n_k})$ que converge a $\limsup x_n$:
+BACK
+Sea $a = \limsup x_n = \lim a_n$. Construimos la subsecuencia por inducción:<br>Fijamos $n_1 = 1$. Dado $n_k$, elegimos el menor $m \gt  n_k$ tal que $0 \le a_m - a \lt  \frac{1}{2k}$.<br><br>Por definición de $a_m = \sup_{j \ge m} x_j$, existe $n_{k+1} \ge m \gt  n_k$ tal que $a_m - \frac{1}{2k} \lt  x_{n_{k+1}} \le a_m$.<br><br>Entonces $|x_{n_{k+1}} - a| \le |x_{n_{k+1}} - a_m| + |a_m - a| \lt  \frac{1}{2k} + \frac{1}{2k} = \frac{1}{k}$. Haciendo $k \to \infty$, se concluye $x_{n_k} \to a$.
+
+CARD 4 "Teorema 4.4: Convergencia vía Limsup/Liminf y Bolzano-Weierstrass"
+FRONT
+Demostrar que una secuencia acotada es convergente ssi $\liminf x_n = \limsup x_n$, y enunciar el Teorema de Bolzano-Weierstrass en $\mathbb R^k$:
+BACK
+$(\implies)$ Si $x_n \to L$, toda subsecuencia converge a $L$, luego el único valor de acumulación es $L = \liminf x_n = \limsup x_n$.<br>$(\impliedby)$ Si $\liminf x_n = \limsup x_n = L$, por compresión de las secuencias de cotas $b_n \le x_n \le a_n$, se deduce $x_n \to L$.<br><br><strong>Bolzano-Weierstrass:</strong> Toda secuencia acotada en $\mathbb R^k$ tiene una subsecuencia convergente (demostrado aplicando el argumento coordenada por coordenada en $\mathbb R$).
+
+NEW NOTE "Demostraciones Secuenciales 5"
+MODE serial
+TAGS analisis, compacidad_secuencial, heine_borel
+RETENTION 0.85
+POS 900.0, 520.0
+
+CARD 1 "Teorema 5.1: Compacidad implica Compacidad Secuencial"
+FRONT
+Demostrar que en un espacio métrico $(X,d)$, si $K$ es compacto, entonces toda secuencia $(x_n) \subseteq K$ tiene una subsecuencia convergente en $K$:
+BACK
+Si la secuencia adopta solo un número finito de valores, existe una subsecuencia constante (convergente).<br><br>Si el conjunto $\{x_n\}$ es infinito, por compacidad de $K$ tiene un punto límite $v \in K$. Todo vecindario $B_{1/k}(v)$ contiene infinitos términos de la secuencia, permitiendo seleccionar inductivamente una subsecuencia $x_{n_k} \to v \in K$.
+
+CARD 2 "Teorema 5.2: Lema de Recubrimiento de Lebesgue"
+FRONT
+Si toda secuencia en $K$ tiene subsecuencia convergente, demostrar el Lema de Lebesgue: para toda cubierta abierta $\{U_\lambda\}$, existe un número de Lebesgue $\delta \gt  0$ tal que $\forall x \in K\ \exists \lambda.\ B_\delta(x) \subseteq U_\lambda$:
+BACK
+Por contradicción: supongamos que $\forall n \in \mathbb N_+\ \exists x_n \in K$ tal que $B_{1/n}(x_n) \nsubseteq U_\lambda$ para todo $\lambda$.<br><br>Por compacidad secuencial, existe subsecuencia $x_{n_k} \to v \in K$. Como $\{U_\lambda\}$ cubre $K$, existe $\mu$ tal que $v \in U_\mu$. Como $U_\mu$ es abierto, existe $\varepsilon \gt  0$ con $B_\varepsilon(v) \subseteq U_\mu$.<br><br>Elegimos $k$ suficientemente grande tal que $1/n_k \lt  \varepsilon/2$ y $x_{n_k} \in B_{\varepsilon/2}(v)$. Entonces $B_{1/n_k}(x_{n_k}) \subseteq B_\varepsilon(v) \subseteq U_\mu$, contradicción.
+
+CARD 3 "Teorema 5.3: Compacidad Secuencial implica Compacidad"
+FRONT
+Demostrar que si toda secuencia en $K$ tiene subsecuencia convergente, entonces $K$ es compacto:
+BACK
+Sea $\{U_\lambda\}$ una cubierta abierta de $K$. Por el Lema de Lebesgue, existe un número $\delta \gt  0$.<br><br>Construimos una secuencia en $K$: elegimos $x_1 \in K$ y $U_{\lambda_1}$ con $B_\delta(x_1) \subseteq U_{\lambda_1}$. Definimos $K_1 = K \setminus U_{\lambda_1}$. Repetimos $x_n \in K_{n-1}$ y $K_n = K_{n-1} \setminus U_{\lambda_n}$.<br><br>Si el proceso se detiene en paso $m$, $\{U_{\lambda_1}, \dots, U_{\lambda_m}\}$ es cubierta finita. Si no se detiene, para $k \lt  n$ se tiene $d(x_k, x_n) \ge \delta$. Ninguna subsecuencia puede ser de Cauchy ni convergente, contradicción.
+
+CARD 4 "Teorema 5.4: Heine-Borel y Total Acotamiento"
+FRONT
+Demostrar el Teorema de Heine-Borel ($E \subseteq \mathbb R^n$ es compacto ssi es cerrado y acotado) y la caracterización $K$ compacto ssi Completo y Totalmente Acotado:
+BACK
+<strong>Heine-Borel:</strong> En $\mathbb R^n$, todo conjunto acotado admite subsecuencias convergentes por Bolzano-Weierstrass. Si además es cerrado, el límite pertenece al conjunto, luego es compacto secuencial $\iff$ compacto.<br><br><strong>Completo y Totalmente Acotado:</strong> Si $K$ es compacto, toda secuencia de Cauchy converge (completo) y admite subcubiertas finita de bolas de radio $\varepsilon$ (totalmente acotado). El converso se demuestra filtrando subconjuntos infinitos mediante bolas decrecientes de radio $1/n$.
+
+CARD 5 "Teorema 5.5: Subespacios Completo ssi Cerrado"
+FRONT
+Sea $Y$ subconjunto de un espacio métrico completo $X$. Demostrar que $Y$ es completo ssi $Y$ es cerrado en $X$:
+BACK
+$(\implies)$ Sea $y \in Y'$. Existe $(y_n) \subseteq Y$ con $y_n \to y$. Toda secuencia convergente es de Cauchy. Como $Y$ es completo, la secuencia debe converger a un punto en $Y$, luego $y \in Y$, demostrando que $Y$ es cerrado.<br><br>$(\impliedby)$ Sea $(y_n) \subseteq Y$ de Cauchy. Como $X$ es completo, $y_n \to x \in X$. Como $Y$ es cerrado, $x \in Y$, luego $Y$ es completo.
+
+NEW NOTE "Demostraciones Secuenciales 6"
+MODE serial
+TAGS analisis, baire_category, nowhere_dense
+RETENTION 0.85
+POS 1200.0, 520.0
+
+CARD 1 "Teorema 6.1: Caracterización de Conjuntos NWD"
+FRONT
+Sea $(X,d)$ espacio métrico. Si $N \subseteq X$ es Nowhere Dense ($\text{NWD}$, es decir, $(\overline N)^\circ = \varnothing$) y $U \subseteq X$ es abierto no vacío, demostrar que existe $x \in U$ y $\varepsilon \gt  0$ tal que $B_\varepsilon(x) \subseteq N^c$:
+BACK
+Si para toda bola $B_\varepsilon(x) \subseteq U$ se tuviera $B_\varepsilon(x) \cap N \ne \varnothing$, entonces todo punto de $U$ sería punto de adherencia de $N$, lo que implicaría $U \subseteq \overline N$.<br><br>Pero esto significaría que $U$ es un abierto no vacío contenido en $\overline N$, contradiciendo que $(\overline N)^\circ = \varnothing$. Por lo tanto, debe existir $B_\varepsilon(x) \subseteq U$ con $B_\varepsilon(x) \cap \overline N = \varnothing \implies B_\varepsilon(x) \subseteq N^c$.
+
+CARD 2 "Teorema 6.2: Teorema de Categoría de Baire"
+FRONT
+Sea $(X,d)$ un espacio métrico completo. Si $M = \bigcup_{k=1}^\infty N_k$ es un conjunto de Categoría I (Magro, donde cada $N_k$ es $\text{NWD}$), demostrar que $M^\circ = \varnothing$:
+BACK
+Sea $B_0$ cualquier bola abierta no vacía. Como $N_1$ es $\text{NWD}$, existe una bola abierta $B_1$ con $\overline{B_1} \subseteq B_0 \setminus \overline{N_1}$ y radio $\varepsilon_1 \lt  1$.<br><br>Inductivamente, dado $B_n$, existe $B_{n+1} = B_{\varepsilon_{n+1}}(x_{n+1})$ tal que $\overline{B_{n+1}} \subseteq B_n \setminus \overline{N_{n+1}}$ con radio $\varepsilon_{n+1} \lt  1/(n+1)$.<br><br>La secuencia de centros $(x_n)$ es de Cauchy pues $d(x_n, x_m) \lt  1/n$ para $m \gt  n$. Por completitud, $x_n \to x \in X$. Como $\overline{B_n}$ son cerradas anidadas, $x \in \overline{B_k} \subseteq B_0$ para todo $k$, pero $x \notin N_k$ para todo $k$.<br><br>Luego $x \in B_0 \setminus M$, demostrando que $M$ no contiene ninguna bola abierta, es decir, $M^\circ = \varnothing$.
+
+CARD 3 "Teorema 6.3 & 6.4: Intersección de Abiertos Densos"
+FRONT
+Demostrar que en un espacio métrico completo, la intersección contable de abiertos densos $R = \bigcap_{k=1}^\infty U_k$ es densa en $X$, y que si $X = \bigcup_{k=1}^\infty F_k$ con $F_k$ cerrados, al menos algún $F_k$ tiene interior no vacío:
+BACK
+<strong>Intersección Densa:</strong> El complemento de $R$ es $R^c = \bigcup_{k=1}^\infty U_k^c$. Cada $U_k^c$ es cerrado y denso en ninguna parte (pues $U_k$ es abierto denso). Luego $R^c$ es de Categoría I, por lo que $(R^c)^\circ = \varnothing \implies \overline R = X$.<br><br><strong>Unión de Cerrados:</strong> Si ningún $F_k$ tuviera interior, todos serían $\text{NWD}$, por lo que $X = \bigcup F_k$ sería de Categoría I, contradiciendo el Teorema de Baire ($X^\circ = X \ne \varnothing$).
+
+NEW NOTE "Demostraciones Continuas 1"
+MODE serial
+TAGS analisis, continuidad, preimagenes
+RETENTION 0.85
+POS 1200.0, 650.0
+
+CARD 1 "Teorema 7.1: Caracterización Secuencial de Continuidad"
+FRONT
+Sea $f: X \to Y$ entre espacios métricos. Demostrar que $f$ es continua en $p \iff$ para toda secuencia $p_n \to p$ se tiene $f(p_n) \to f(p)$:
+BACK
+$(\implies)$ Por continuidad de $f$, dada $\varepsilon \gt  0$, existe $\delta \gt  0$ tal que $d_X(x,p) \lt  \delta \implies d_Y(f(x), f(p)) \lt  \varepsilon$. Como $p_n \to p$, existe $N$ tal que $\forall n \ge N,\ d_X(p_n, p) \lt  \delta$. Luego $d_Y(f(p_n), f(p)) \lt  \varepsilon \implies f(p_n) \to f(p)$.<br><br>$(\impliedby)$ Por contradicción: si $f$ no fuera continua, existiría $\varepsilon \gt  0$ tal que para todo $\delta = 1/n$, existe $p_n \in B_{1/n}(p)$ con $d_Y(f(p_n), f(p)) \ge \varepsilon$. Esto genera una secuencia $p_n \to p$ pero $f(p_n) \nrightarrow f(p)$, contradicción.
+
+CARD 2 "Teorema 7.2 & 7.3: Preimágenes de Abiertos y Cerrados"
+FRONT
+Demostrar que $f: X \to Y$ es continua $\iff$ la preimagen $f^{-1}(V)$ de todo abierto $V \subseteq Y$ es abierta en $X$, y lo mismo para cerrados:
+BACK
+<strong>Abiertos:</strong> Sea $V \subseteq Y$ abierto y $x \in f^{-1}(V)$. Como $f(x) \in V$ abierto, existe $B_\varepsilon(f(x)) \subseteq V$. Por continuidad, existe $B_\delta(x)$ tal que $f(B_\delta(x)) \subseteq B_\varepsilon(f(x)) \subseteq V \implies B_\delta(x) \subseteq f^{-1}(V)$. Luego $f^{-1}(V)$ es abierto.<br><br><strong>Cerrados:</strong> Usando la identidad de complementos $f^{-1}(F^c) = (f^{-1}(F))^c$. $F$ es cerrado $\iff F^c$ es abierto $\iff f^{-1}(F^c) = (f^{-1}(F))^c$ es abierto $\iff f^{-1}(F)$ es cerrado.
+
+CARD 3 "Teorema 7.4: Continuidad de Polinomios en Rn"
+FRONT
+Demostrar que toda función polinomial $P: \mathbb R^n \to \mathbb R$ es continua:
+BACK
+Las proyecciones $\pi_i(x_1, \dots, x_n) = x_i$ son continuas ya que $\|x - p\| \lt  \delta \implies |\pi_i(x) - \pi_i(p)| \le \|x - p\| \lt  \delta$.<br><br>La suma y el producto de funciones continuas son continuos. Como todo monomio $x_1^{k_1} \cdots x_n^{k_n}$ es producto finito de proyecciones, es continuo, y cualquier polinomio es combinación lineal finita de monomios, resultando en una función continua en $\mathbb R^n$.
+
+NEW NOTE "Demostraciones Continuas 2"
+MODE serial
+TAGS analisis, continuidad, heine_cantor, topologia_relativa
+RETENTION 0.85
+POS 900.0, 650.0
+
+CARD 1 "Teorema 8.1: Topología y Bolas Relativas"
+FRONT
+Sea $(X,d)$ espacio métrico y $Y \subseteq X$. Identificar la topología relativa $\tau_Y$ y la bola relativa $B_r^Y(x)$:
+BACK
+La topología relativa en $Y$ es $\tau_Y = \{U \cap Y : U \in \tau_X\}$.<br><br>Los conjuntos cerrados relativos son $\{F \cap Y : F^c \in \tau_X\}$.<br><br>La bola abierta relativa es $B_r^Y(x) = B_r(x) \cap Y = \{y \in Y : d(x,y) \lt  r\}$.
+
+CARD 2 "Teorema 8.2: Conexidad de Intervalos en R"
+FRONT
+Demostrar que un subconjunto no vacío $I \subseteq \mathbb R$ es conexo $\iff$ es un intervalo (o un punto):
+BACK
+$(\impliedby)$ Supongamos por contradicción que un intervalo $I$ fuera disconexo: $I = A \cup B$ con $A, B$ abiertos relativos no vacíos y disjuntos. Tomemos $x \in A$ y $y \in B$ con $x \lt  y$. El intervalo $[x,y] \subseteq I$.<br><br>Sea $z = \sup(A \cap [x,y])$. Como $A$ es cerrado en $[x,y]$, $z \in A$. Pero como $A$ es abierto en $[x,y]$, debe existir $[z, z+\varepsilon) \subseteq A$, contradiciendo que $z$ sea la cota superior. Análogamente se llega a contradicción si $z \in B$. Conclusión: $I$ es conexo.
+
+CARD 3 "Teorema 8.3 & 8.4: Conservación de Compacidad y Conexidad"
+FRONT
+Si $f: X \to Y$ es continua, demostrar que la imagen de un compacto $f(K)$ es compacta, y la imagen de un conexo $f(E)$ es conexa:
+BACK
+<strong>Compacidad:</strong> Sea $\{V_\alpha\}$ cubierta abierta de $f(K)$. Por continuidad, $\{f^{-1}(V_\alpha)\}$ es cubierta abierta del compacto $K$. Existe subcubierta finita $\{f^{-1}(V_{\alpha_1}), \dots, f^{-1}(V_{\alpha_m})\}$. Luego $\{V_{\alpha_1}, \dots, V_{\alpha_m}\}$ es cubierta finita de $f(K)$.<br><br><strong>Conexidad:</strong> Si $f(E)$ fuera disconexo ($f(E) = A \cup B$ con $A,B$ abiertos relativos disjuntos no vacíos), entonces $E = f^{-1}(A) \cup f^{-1}(B)$ expresaría a $E$ como unión de abiertos relativos disjuntos no vacíos, contradiciendo la conexidad de $E$.
+
+CARD 4 "Teorema 8.5: Teorema de Heine-Cantor"
+FRONT
+Demostrar que si $f: K \to Y$ es continua y $K$ es compacto, entonces $f$ es uniformemente continua en $K$:
+BACK
+Dada $\varepsilon \gt  0$, por continuidad puntual en cada $p \in K$, existe $\delta_p \gt  0$ tal que $f(B_{\delta_p}(p)) \subseteq B_{\varepsilon/2}(f(p))$.<br><br>La familia $\{B_{\delta_p/2}(p)\}_{p \in K}$ es una cubierta abierta de $K$. Por el Lema de Lebesgue (o compacidad), existe un $\delta \gt  0$ tal que $\forall q \in K\ \exists p \in K.\ B_\delta(q) \subseteq B_{\delta_p/2}(p)$.<br><br>Si $d(x,y) \lt  \delta$, entonces $x,y \in B_{\delta_p}(p)$, luego por desigualdad triangular:<br>$$d(f(x), f(y)) \le d(f(x), f(p)) + d(f(p), f(y)) \lt  \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon$$
+
+NEW NOTE "Demostraciones Continuas 3"
+MODE serial
+TAGS analisis, continuidad, spivak, tve_tvi
+RETENTION 0.85
+POS 600.0, 650.0
+
+CARD 1 "Teorema 1: Teorema del Valor Extremo (TVE)"
+FRONT
+Sea $(X,d)$ espacio métrico compacto y $f: X \to \mathbb R$ continua. Demostrar el Teorema del Valor Extremo (alcanza su máximo y mínimo en $X$):
+BACK
+Como $X$ es compacto y $f$ es continua, la imagen $f(X) \subseteq \mathbb R$ es compacta.<br><br>Como todo compacto en $\mathbb R$ es cerrado y acotado, $f(X)$ contiene a su supremo $M = \sup f(X)$ y a su ínfimo $m = \inf f(X)$.<br><br>Por lo tanto, existen $z_{\max}, z_{\min} \in X$ tales que $f(z_{\max}) = M$ y $f(z_{\min}) = m$.
+
+CARD 2 "Teorema 2: Teorema del Valor Intermedio (TVI)"
+FRONT
+Sea $(X,d)$ espacio métrico conexo y $f: X \to \mathbb R$ continua. Demostrar el Teorema del Valor Intermedio:
+BACK
+Como $X$ es conexo y $f$ es continua, la imagen $f(X) \subseteq \mathbb R$ es conexa, luego $f(X)$ es un intervalo en $\mathbb R$.<br><br>Si $x, y \in X$ tales que $f(x) \le z \le f(y)$, por conexidad de $f(X)$, el valor intermedio $z$ pertenece a la imagen $f(X)$.<br><br>Por lo tanto, existe $w \in X$ tal que $f(w) = z$.
+
+CARD 3 "Teorema 3: Acotamiento de Funciones Continuas en Compactos"
+FRONT
+Sea $(X,d)$ espacio métrico compacto y $f: X \to \mathbb R$ continua. Demostrar que $f$ es acotada en $X$:
+BACK
+Por conservación de compacidad, $f(X)$ es un subconjunto compacto de $\mathbb R$.<br><br>Por el Teorema de Heine-Borel en $\mathbb R$, todo compacto es acotado.<br><br>Por lo tanto, existe $M \gt  0$ tal que $|f(x)| \le M$ para todo $x \in X$, demostrando que $f \in \mathscr B(X, \mathbb R)$.
+
+CARD 4 "Teorema Extra: Unión de Conjuntos Conexos"
+FRONT
+Sea $\{A_i\}_{i \in I}$ una familia de subconjuntos conexos de $X$ tal que $\bigcap_{i \in I} A_i \ne \varnothing$. Demostrar que $A = \bigcup_{i \in I} A_i$ es conexo:
+BACK
+Sea $p \in \bigcap_{i \in I} A_i$. Supongamos por contradicción que $A = U \cup V$ es una separación (con $U, V$ abiertos relativos disjuntos no vacíos en $A$).<br><br>Sin pérdida de generalidad, supongamos $p \in U$. Para cada $i \in I$, el conjunto $A_i \subseteq A$ es conexo y $p \in A_i \cap U$.<br><br>Como $A_i = (A_i \cap U) \cup (A_i \cap V)$ es separación de $A_i$ y $A_i$ es conexo, debe ser $A_i \cap V = \varnothing \implies A_i \subseteq U$.<br><br>Tomando unión sobre $i \in I$, obtenemos $A \subseteq U \implies V = \varnothing$, contradicción. Por tanto, $A$ es conexo.
+
+NEW NOTE "Demostraciones Convergentes 1"
+MODE serial
+TAGS analisis, completitud, convergencia_uniforme, dini
+RETENTION 0.85
+POS 3000.0, 910.0
+
+CARD 1 "Teorema 1: C_b(X,Y) es Subespacio Cerrado de B(X,Y)"
+FRONT
+Demostrar que el límite uniforme de funciones continuas es continuo (luego $\mathscr C_b(X,Y) \subseteq \mathscr B(X,Y)$ es cerrado):
+BACK
+Sea $f_n \xrightarrow{d_\infty} f$ con $f_n$ continuas. Por desigualdad triangular:<br>$$d_Y(f(x), f(x_0)) \le d_Y(f(x), f_N(x)) + d_Y(f_N(x), f_N(x_0)) + d_Y(f_N(x_0), f(x_0))$$<br>Dado $\varepsilon \gt  0$, por convergencia uniforme elegimos $N$ tal que $d_\infty(f_N, f) \lt  \varepsilon/3$. Por continuidad de $f_N$ en $x_0$, existe $\delta \gt  0$ tal que $d_X(x, x_0) \lt  \delta \implies d_Y(f_N(x), f_N(x_0)) \lt  \varepsilon/3$.<br><br>Luego $d_Y(f(x), f(x_0)) \lt  \frac{\varepsilon}{3} + \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \varepsilon$, demostrando que $f$ es continua.
+
+CARD 2 "Teorema 2: Teorema de Dini"
+FRONT
+Sea $X$ compacto, $f_n: X \to \mathbb R$ continuas con $f_n \downarrow f$ (o $f_n \uparrow f$) puntualmente y $f: X \to \mathbb R$ continua. Demostrar que $f_n \to f$ uniformemente:
+BACK
+Supongamos $f_n \downarrow f$ (es decir, $f_{n+1}(x) \le f_n(x)$). Definimos $g_n = f_n - f \ge 0$. Las funciones $g_n$ son continuas y $g_n \downarrow 0$ puntualmente.<br><br>Dado $\varepsilon \gt  0$, definimos $A_n = \{x \in X : g_n(x) \lt  \varepsilon\}$. Como $g_n$ es continua, $A_n$ es abierto.<br><br>Como $g_n \downarrow 0$, $A_n \subseteq A_{n+1}$. Por convergencia puntual, $\bigcup_{n=1}^\infty A_n = X$.<br><br>Como $X$ es compacto, existe subcubierta finita $X = A_N$. Por monotonía, $\forall n \ge N\ \forall x \in X,\ 0 \le g_n(x) \le g_N(x) \lt  \varepsilon \implies d_\infty(f_n, f) \lt  \varepsilon$. Conclusión: la convergencia es uniforme.
+
+CARD 3 "Teorema 3: Completitud de B(X,Y)"
+FRONT
+Demostrar que si $(Y, d_Y)$ es un espacio métrico completo, entonces $(\mathscr B(X,Y), d_\infty)$ es completo:
+BACK
+Sea $(f_n)$ una secuencia de Cauchy en $\mathscr B(X,Y)$. Como $d_Y(f_n(x), f_m(x)) \le d_\infty(f_n, f_m)$, para cada $x \in X$ la secuencia $(f_n(x))$ es de Cauchy en $Y$.<br><br>Como $Y$ es completo, definimos el límite puntual $f(x) = \lim_{n\to\infty} f_n(x)$.<br><br>Dado $\varepsilon \gt  0$, existe $N$ tal que $\forall n,m \ge N,\ d_\infty(f_n, f_m) \lt  \varepsilon$. Tomando el límite $m \to \infty$:<br>$$d_Y(f_n(x), f(x)) = \lim_{m\to\infty} d_Y(f_n(x), f_m(x)) \le \varepsilon$$<br>Como esto vale $\forall x \in X$, $d_\infty(f_n, f) \le \varepsilon$ para $n \ge N$. Además $f$ es acotada pues $d_Y(f(x), y_0) \le \varepsilon + \|f_N\|$, demostrando que $\mathscr B(X,Y)$ es completo.
+
+NEW NOTE "Demostraciones Derivables 1"
+MODE serial
+TAGS analisis, calculo, derivacion
+RETENTION 0.85
+POS 600.0, 780.0
+
+CARD 1 "Teorema 1: Diferenciabilidad Implica Continuidad"
+FRONT
+Si $f: I \to \mathbb R$ es derivable en $a \in I$, demostrar que $f$ es continua en $a$:
+BACK
+Por diferenciabilidad, existe $f'(a) = \lim_{x\to a} \frac{f(x) - f(a)}{x - a}$.<br><br>Calculando el límite del incremento:<br>$$\lim_{x\to a} [f(x) - f(a)] = \lim_{x\to a} \left[ \frac{f(x) - f(a)}{x - a} (x - a) \right] = f'(a) \cdot 0 = 0$$<br>Por lo tanto $\lim_{x\to a} f(x) = f(a)$, demostrando que $f$ es continua en $a$.
+
+CARD 2 "Teorema 2: Reglas Algebraicas de Derivación"
+FRONT
+Demostrar las reglas de derivación para suma $(f+g)'$, producto $(fg)'$ y cociente $(f/g)'$:
+BACK
+<ul><li><strong>Suma:</strong> $\lim \frac{(f+g)(x) - (f+g)(a)}{x-a} = \lim \frac{f(x)-f(a)}{x-a} + \lim \frac{g(x)-g(a)}{x-a} = f'(a) + g'(a)$.</li><li><strong>Producto:</strong> Sumando y restando $f(x)g(a)$: $\lim \frac{f(x)(g(x)-g(a)) + g(a)(f(x)-f(a))}{x-a} = f(a)g'(a) + f'(a)g(a)$.</li><li><strong>Cociente:</strong> $\lim \frac{1}{g(x)g(a)} \frac{g(x)(f(x)-f(a)) - f(x)(g(x)-g(a))}{x-a} = \frac{g(a)f'(a) - f(a)g'(a)}{g(a)^2}$.</li></ul>
+
+CARD 3 "Teorema 3: Regla de la Cadena"
+FRONT
+Sean $f: I_1 \to I_2$ y $g: I_2 \to \mathbb R$ derivables en $x$ y $f(x)$ respectivamente. Demostrar la Regla de la Cadena $(g \circ f)'(x) = g'(f(x)) f'(x)$:
+BACK
+Definimos $u(t) = \frac{f(t)-f(x)}{t-x} - f'(x)$ y $v(s) = \frac{g(s)-g(f(x))}{s-f(x)} - g'(f(x))$ con $u(t) \to 0$ y $v(s) \to 0$.<br><br>Sustituyendo $s = f(t)$:<br>$$\frac{g(f(t)) - g(f(x))}{t - x} = (v(f(t)) + g'(f(x))) \frac{f(t) - f(x)}{t - x} = (v(f(t)) + g'(f(x)))(u(t) + f'(x))$$<br>Tomando el límite $t \to x$, por continuidad de $f$, $f(t) \to f(x) \implies v(f(t)) \to 0$.<br><br>Por tanto $\lim_{t\to x} \frac{h(t)-h(x)}{t-x} = g'(f(x)) f'(x)$.
+
+NEW NOTE "Demostraciones Derivables 2"
+MODE serial
+TAGS analisis, calculo, darboux, tvm
+RETENTION 0.85
+POS 900.0, 780.0
+
+CARD 1 "Teorema 1: Extremos Locales e Igualdad f'(a) = 0"
+FRONT
+Si $f: I \to \mathbb R$ tiene un extremo local en $a \in I^\circ$ y es derivable en $a$, demostrar que $f'(a) = 0$:
+BACK
+Supongamos que $a$ es un máximo local en $B_\delta(a)$.<br><ul><li>Para $a - \delta \lt  x \lt  a$: $x - a \lt  0 \implies \frac{f(x) - f(a)}{x - a} \ge 0 \implies \lim_{x\to a^-} \dots \ge 0$.</li><li>Para $a \lt  x \lt  a + \delta$: $x - a \gt  0 \implies \frac{f(x) - f(a)}{x - a} \le 0 \implies \lim_{x\to a^+} \dots \le 0$.</li></ul><br>Como $f'(a)$ existe, ambos límites laterales son iguales a $f'(a)$, luego $0 \le f'(a) \le 0 \implies f'(a) = 0$.
+
+CARD 2 "Teorema 2: TVM de Cauchy y Teorema de Rolle"
+FRONT
+Sean $f,g: [a,b] \to \mathbb R$ continuas en $[a,b]$ y derivables en $(a,b)$. Demostrar el TVM de Cauchy $\exists x \in (a,b).\ (f(b)-f(a))g'(x) = (g(b)-g(a))f'(x)$ y deducir Rolle y el TVM estándar:
+BACK
+Definimos $h(x) = (f(b)-f(a))g(x) - (g(b)-g(a))f(x)$. $h$ es continua en $[a,b]$, derivable en $(a,b)$ y $h(a) = h(b)$.<br><br>Si $h$ es constante, $h'(x) = 0$ para todo $x$. Si no es constante, por TVE alcanza un máximo o mínimo en $x_0 \in (a,b)$. Por el Teorema 1, $h'(x_0) = 0$.<br><br><em>Caso $g(x) = x$:</em> Brinda el TVM estándar $\frac{f(b)-f(a)}{b-a} = f'(x_0)$.<br><em>Caso $f(a) = f(b)$:</em> Brinda el Teorema de Rolle $f'(x_0) = 0$.
+
+CARD 3 "Teorema 3: Signo de la Derivada y Monotonía"
+FRONT
+Demostrar que si $f'(x) \ge 0$ en $(a,b)$, entonces $f$ es creciente; si $f'(x) \le 0$, decreciente; y si $f'(x) = 0$, constante:
+BACK
+Sean $x_1 \lt  x_2$ en $(a,b)$. Por el TVM, existe $x_0 \in (x_1, x_2)$ tal que:<br>$$f(x_2) - f(x_1) = (x_2 - x_1) f'(x_0)$$<br>Como $x_2 - x_1 \gt  0$, el signo de $f(x_2) - f(x_1)$ viene determinado por el signo de $f'(x_0)$:<br><ul><li>$f'(x_0) \ge 0 \implies f(x_2) \ge f(x_1)$ (Creciente).</li><li>$f'(x_0) \le 0 \implies f(x_2) \le f(x_1)$ (Decreciente).</li><li>$f'(x_0) = 0 \implies f(x_2) = f(x_1)$ (Constante).</li></ul>
+
+CARD 4 "Teorema 4 & 5: Teorema de Darboux y Ausencia de Discontinuidades Simples"
+FRONT
+Demostrar el Teorema de Darboux (la derivada satisface la propiedad del valor intermedio) y concluye que $f'$ no puede tener discontinuidades de primer tipo:
+BACK
+<strong>Darboux:</strong> Sea $\lambda \in (f'(a), f'(b))$. Definimos $g(t) = f(t) - \lambda t$. $g'(a) = f'(a) - \lambda \lt  0$ y $g'(b) = f'(b) - \lambda \gt  0$.<br>Como $g$ es continua en el compacto $[a,b]$, alcanza su mínimo en $x_0 \in (a,b)$. Luego $g'(x_0) = 0 \implies f'(x_0) = \lambda$.<br><br><strong>Sin discontinuidades de primer tipo:</strong> Si $f'$ tuviera una discontinuidad de salto en $c$ donde los límites laterales $L^- = \lim_{x\to c^-} f'(x)$ y $L^+ = \lim_{x\to c^+} f'(x)$ existen pero $L^- \ne L^+$, por Darboux la derivada debería tomar todos los valores intermedios en cualquier vecindad de $c$, lo cual contradice la existencia de límites laterales distintos.
+
+NEW NOTE "Demostraciones Derivables 3"
+MODE serial
+TAGS analisis, calculo, lhopital, taylor
+RETENTION 0.85
+POS 1200.0, 780.0
+
+CARD 1 "Teorema 1: Extensión de la Derivada en un Punto Límite"
+FRONT
+Sea $f: (a,b) \to \mathbb R$ continua en $c \in (a,b)$ y derivable en $(a,c) \cup (c,b)$. Si $\lim_{x\to c} f'(x) = L$, demostrar que $f'(c)$ existe y $f'(c) = L$:
+BACK
+Calculamos el límite por la derecha $h \gt  0$. Por el TVM en $[c, c+h]$, existe $x_h \in (c, c+h)$ tal que:<br>$$\frac{f(c+h) - f(c)}{h} = f'(x_h)$$<br>Cuando $h \to 0^+$, por sándwich $x_h \to c^+$. Como $\lim_{x\to c} f'(x) = L$, se tiene $\lim_{h\to 0^+} \frac{f(c+h)-f(c)}{h} = L$.<br><br>Análogamente para $h \lt  0$, $\lim_{h\to 0^-} \frac{f(c+h)-f(c)}{h} = L$. Conclusión: $f'(c) = L$.
+
+CARD 2 "Teorema 2: Regla de L'Hôpital"
+FRONT
+Sean $f,g: (a,b) \to \mathbb R$ derivables con $g'(x) \ne 0$. Si $\lim_{x\to a} \frac{f'(x)}{g'(x)} = L$, demostrar que $\lim_{x\to a} \frac{f(x)}{g(x)} = L$ para los casos $0/0$ e $\infty/\infty$:
+BACK
+Para todo $r \gt  L$, en un vecindario $U = (a, c_1)$ se tiene $\frac{f'(t)}{g'(t)} \lt  r$. Por el TVM de Cauchy en $[x,y] \subseteq U$:<br>$$\frac{f(x) - f(y)}{g(x) - g(y)} = \frac{f'(t)}{g'(t)} \lt  r$$<br><ul><li><strong>Caso $0/0$:</strong> Tomando el límite $x \to a^+$ (donde $f(x) \to 0$ y $g(x) \to 0$), se obtiene $\frac{f(y)}{g(y)} \le r$. Como $r \gt  L$ es arbitrario, $\limsup_{y\to a^+} \frac{f(y)}{g(y)} \le L$.</li><li><strong>Caso $\infty/\infty$:</strong> Si $g(x) \to \infty$, dividiendo por $g(x)$: $\frac{f(x)}{g(x)} \lt  r \left(1 - \frac{g(y)}{g(x)}\right) + \frac{f(y)}{g(x)}$. Al tomar $x \to a^+$, el lado derecho tiende a $r$.</li></ul><br>Análogamente para $p \lt  L$, concluyendo $\lim_{x\to a} \frac{f(x)}{g(x)} = L$.
+
+CARD 3 "Teorema 3: Teorema del Resto de Taylor (Lagrange)"
+FRONT
+Sea $f \in C^{n-1}([a,b])$ $n$-veces derivable en $(a,b)$. Para $\alpha, \beta \in [a,b]$, demostrar que existe $t \in (\alpha, \beta)$ tal que $f(\beta) - T_{n-1, f, \alpha}(\beta) = f^{(n)}(t) \frac{(\beta - \alpha)^n}{n!}$:
+BACK
+Definimos la constante $M = \frac{f(\beta) - T_{n-1, f, \alpha}(\beta)}{(\beta - \alpha)^n}$ y la función auxiliar:<br>$$g(t) = f(t) - T_{n-1, f, \alpha}(t) - M(t - \alpha)^n$$<br>Por definición de $T_{n-1}$, se verifica $g(\alpha) = g'(\alpha) = \dots = g^{(n-1)}(\alpha) = 0$. Además $g(\beta) = 0$.<br><br>Aplicando el Teorema de Rolle repetidamente:<br><ul><li>$g(\alpha) = 0$ y $g(\beta) = 0 \implies \exists x_1 \in (\alpha, \beta).\ g'(x_1) = 0$.</li><li>$g'(\alpha) = 0$ y $g'(x_1) = 0 \implies \exists x_2 \in (\alpha, x_1).\ g''(x_2) = 0$.</li><li>Inductivamente $n$ veces: $\exists t \in (\alpha, x_{n-1}).\ g^{(n)}(t) = 0$.</li></ul><br>Derivando $g(t)$ $n$ veces: $g^{(n)}(t) = f^{(n)}(t) - n! M = 0 \implies M = \frac{f^{(n)}(t)}{n!}$, concluyendo la fórmula del resto.
+
+NEW NOTE "Equivalencia de Definiciones de Limsup"
+MODE serial
+TAGS analisis, demostraciones, limites, limsup
+RETENTION 0.85
+POS 600.0, 0.0
+
+CARD 1 "Paso 1: Enunciado y Definiciones de Limsup"
+FRONT
+Equivalencia de las Definiciones de Limsup:<br>Demostrar que $\limsup x_n$ por supremos de cola es igual al supremo de los límites subsecuenciales.
+BACK
+<strong>Definición 1 (Supremo de cola):</strong> $a_n = \sup_{k \ge n} x_k$. La sucesión $(a_n)$ es decreciente, luego $\alpha = \lim_{n\to\infty} a_n$.
+<br><br>
+<strong>Definición 2 (Valor de acumulación supremo):</strong> Sea $E=\{L : \exists (x_{n_k}) \text{ tal que } x_{n_k} \to L\}$ y definimos $L^* = \sup E$.<br><br><strong>Objetivo:</strong> Demostrar que $\alpha = L^*$ probando ambas desigualdades ($\le$ y $\ge$).
+
+CARD 2 "Paso 2: Cota Superior del Término Subsecuencial"
+FRONT
+Demostración de $L^* \le \alpha$ — Paso 1: Cota superior de los términos subsecuenciales
+BACK
+Sea $(x_{n_k})$ cualquier subsecuencia convergente con $x_{n_k} \to L$.<br><br>Como los índices de la subsecuencia satisfacen $n_k \ge k$, por definición de supremo de cola $a_{n_k} = \sup_{j \ge n_k} x_j$, tenemos:<br>$$\forall k \in \mathbb N.\ x_{n_k} \le a_{n_k}$$
+
+CARD 3 "Paso 3: Paso al Límite y Primera Desigualdad L* <= α"
+FRONT
+Demostración de $L^* \le \alpha$ — Paso 2: Paso al límite y cota superior
+BACK
+Como $(a_n) \to \alpha$, toda subsecuencia de $(a_n)$ también converge a $\alpha$, luego $\lim_{k\to\infty} a_{n_k} = \alpha$.<br><br>Tomando límites en la desigualdad $x_{n_k} \le a_{n_k}$:<br>$$L = \lim_{k\to\infty} x_{n_k} \le \lim_{k\to\infty} a_{n_k} = \alpha$$<br>Como todo límite subsecuencial satisface $L \le \alpha$, tomando el supremo sobre todos los límites subsecuenciales obtenemos:<br>$$L^* = \sup E \le \alpha$$
+
+CARD 4 "Paso 4: Selección Inductiva de Índices m_n"
+FRONT
+Demostración de $L^* \ge \alpha$ — Paso 1: Selección de elementos de la subsecuencia
+BACK
+$a_n = \sup_{k \ge n} x_k$, por definición, el valor $a_1-1$ no es cota superior del conjunto $\{x_k : k \ge 1\}$.<br><br>Por lo tanto, existe $m_1$ tal que $$a_1 \ge x_{m_1} \gt  a_1-1$$
+Continuando esta construcción el valor $a_{m_{n-1}+1} - 1/n$ no es cota superior del conjunto $\set{x_k: k \gt  m_{n-1}}$. Asi, existe $m_n \gt  m_{n-1}\ge n-1$ tal que
+
+$$a_{m_{n-1}+1} \ge x_{m_n} \gt  a_{m_{n-1}+1} - 1/n$$
+
+
+
+CARD 5 "Paso 5: Monotonía de Índices y Desigualdad Doble"
+FRONT
+Demostración de $L^* \ge \alpha$ — Paso 2: Encuadre de la subsecuencia
+BACK
+Como $\forall n.\  m_n \gt  m_{n-1}$, tenemos $m_n \to \infty$, por lo que $(x_{m_n})$ forma una subsecuencia válida.
+
+CARD 6 "Paso 6: Convergencia de x_m_n a α"
+FRONT
+Demostración de $L^* \ge \alpha$ — Paso 3: Teorema del Sándwich para $x_{m_n}$
+BACK
+Tomando el límite cuando $n \to \infty$ en $a_{m_{n-1}+1} \ge x_{m_n} \gt  a_{m_{n-1}+1} - 1/n$:<br>
+$$\lim_{n\to\infty} \left(a_{m_{n-1}+1} - \frac{1}{n}\right) = \alpha - 0 = \alpha \quad \text{y} \quad \lim_{n\to\infty} a_{m_{n-1}+1} = \alpha$$
+<br>
+Por el Teorema del Sándwich:
+<br>
+$$\alpha \le \liminf_{n\to\infty} x_{m_n} \le \limsup_{n\to\infty} x_{m_n} \le \alpha \implies x_{m_n} \longrightarrow \alpha$$
+<br>
+Esto demuestra que $\alpha \in E$, por lo tanto $L^* \ge \alpha$.
+
+CARD 7 "Paso 7: Conclusión Final de Equivalencia"
+FRONT
+Conclusión de la demostración de equivalencia de limsup:
+BACK
+Por lo tanto concluimos:<br>$$\alpha = L^*$$
+Es decir, ambas definiciónes son equivalentes. (demostración para liminf es equivalente)
+
+NEW NOTE "Límite de (1 + x/n)^n y Serie de Potencias de e^x"
+MODE serial
+TAGS analisis, exponencial, limites, series
+RETENTION 0.85
+POS -900.0, -130.0
+
+CARD 1 "Paso 1: Enunciado y Notación s_n(x) y t_n(x)"
+FRONT
+Teorema: $\lim_{n \to \infty} \left(1 + \frac{x}{n}\right)^n = \sum_{k=0}^{\infty} \frac{x^k}{k!}$ para $x \ge 0$.<br>
+Paso 1: Definición de secuencias parciales.
+BACK
+Para $x \ge 0$, definimos la suma parcial de la serie $s_n(x)$ y el término binomial $t_n(x)$:<br>$$s_n(x) = \sum_{k=0}^n \frac{x^k}{k!}, \quad t_n(x) = \left(1 + \frac{x}{n}\right)^n$$
+
+CARD 2 "Paso 2: Expansión Binomial y Cota Superior"
+FRONT
+Paso 2: Expansión binomial de $t_n(x)$ y cota superior por $s_n(x)$ ($x \ge 0$)
+BACK
+Expandiendo $t_n(x)$ por el teorema del binomio:<br>$$t_n(x) = \sum_{k=0}^n\binom{n}{k}\frac{x^k}{n^k}=\sum_{k=0}^n \frac{1}{k!}\prod_{i=0}^{k-1}\left(1-\frac{i}{n}\right) \cdot x^k$$
+
+<br>Como $x \ge 0$ y cada factor $\left(1 - \frac{i}{n}\right) \lt  1$, acotamos cada término por arriba:<br>$$t_n(x) \le s_n(x)$$
+
+CARD 3 "Paso 3: Desigualdad con Limsup"
+FRONT
+Paso 3: Límite superior.
+BACK
+Tomando $\limsup_{n\to\infty}$ en la desigualdad $t_n(x) \le s_n(x)$:<br>$$\limsup_{n\to\infty} t_n(x) \le \lim_{n\to\infty} s_n(x)$$
+
+CARD 4 "Paso 4: Truncamiento Truncado a m Términos"
+FRONT
+Paso 4: Truncamiento a $m$ términos. ($m \le n$)
+BACK
+Para cualquier entero fijo $m \le n$, truncamos la suma de $t_n(x)$ a los primeros $m$ términos. Como todos los términos omitidos son $\ge 0$ (pues $x \ge 0$):<br>$$t_n(x) \ge \sum_{k=0}^m \frac{1}{k!}\prod_{i=0}^{k-1}\left(1-\frac{i}{n}\right) \cdot x^k$$
+
+CARD 5 "Paso 5: Límites n -> infty y m -> infty"
+FRONT
+Paso 5: Límites en $n \to \infty, m \to \infty$ y conclusión.
+BACK
+Manteniendo $m$ fijo y tomando $n \to \infty$, como es una suma finita de $m$ términos, los factores $(1 - j/n) \to 1$:<br>$$\liminf_{n\to\infty} t_n(x) \ge s_m(x)$$<br>Tomando ahora el límite $m \to \infty$:<br>$$\lim_{n\to\infty} s_n(x) \le \liminf_{n\to\infty} t_n(x)$$<br>Como $$\lim_{n\to\infty} s_n(x) \le \liminf t_n(x) \le \limsup t_n(x) \le \lim_{n\to\infty} s_n(x)$$ Se concluye para $x \ge 0$: $$\lim_{n\to\infty} t_n(x) = \lim_{n\to\infty} s_n(x)$$
+
+NEW NOTE "Some Special Sequences"
+MODE serial
+TAGS analisis, rudin_3_20, secuencias_especiales
+RETENTION 0.85
+POS 1500.0, 520.0
+
+CARD 1 "Remark General & Part (a): Límite de 1/n^p"
+FRONT
+<em>General Remark:</em> If $0 \le x_n \le s_n$ for $n \ge N$, where $N$ is fixed, and if $s_n \to 0$, then $x_n \to 0$.<br><br><strong>Theorem 3.20(a):</strong> If $p \gt  0$, prove that:<br>$$\lim_{n\to\infty} \frac{1}{n^p} = 0$$
+BACK
+Take $n \gt  (1/\varepsilon)^{1/p}$. (Note that the Archimedean property of the real number system is used here.)<br><br>Then for all $n \ge N \gt  (1/\varepsilon)^{1/p}$:<br>$$n^p \gt  \frac{1}{\varepsilon} \implies 0 \lt  \frac{1}{n^p} \lt  \varepsilon$$<br>Hence $\lim_{n\to\infty} \frac{1}{n^p} = 0$.
+
+CARD 2 "Part (b): Límite de p^(1/n)"
+FRONT
+<strong>Theorem 3.20(b):</strong> If $p \gt  0$, prove that:<br>$$\lim_{n\to\infty} \sqrt[n]{p} = 1$$
+BACK
+<ul><li><strong>If $p \gt  1$:</strong> Put $x_n = \sqrt[n]{p} - 1$. Then $x_n \gt  0$, and by the Binomial Theorem:<br>$$1 + n x_n \le (1 + x_n)^n = p$$<br>so that:<br>$$0 \lt  x_n \le \frac{p - 1}{n}$$<br>Hence $x_n \to 0$ (since $\frac{p-1}{n} \to 0$ by part (a)), so $\sqrt[n]{p} \to 1$.</li><li><strong>If $p = 1$:</strong> (b) is trivial.</li><li><strong>If $0 \lt  p \lt  1$:</strong> The result is obtained by taking reciprocals of $\sqrt[n]{1/p} \to 1$.</li></ul>
+
+CARD 3 "Part (c): Límite de n^(1/n)"
+FRONT
+<strong>Theorem 3.20(c):</strong> Prove that:<br>$$\lim_{n\to\infty} \sqrt[n]{n} = 1$$
+BACK
+Put $x_n = \sqrt[n]{n} - 1$. Then $x_n \ge 0$, and by the Binomial Theorem:<br>$$n = (1 + x_n)^n \ge \frac{n(n-1)}{2} x_n^2$$<br>Hence:<br>$$0 \le x_n \le \sqrt{\frac{2}{n - 1}} \quad (n \ge 2)$$<br>Since $\sqrt{\frac{2}{n-1}} \to 0$ as $n \to \infty$, we get $x_n \to 0$, so $\lim_{n\to\infty} \sqrt[n]{n} = 1$.
+
+CARD 4 "Part (d): Límite de n^alpha / (1+p)^n"
+FRONT
+<strong>Theorem 3.20(d):</strong> If $p \gt  0$ and $\alpha$ is real, prove that:<br>$$\lim_{n\to\infty} \frac{n^\alpha}{(1+p)^n} = 0$$
+BACK
+Let $k$ be an integer such that $k \gt  \alpha, k \gt  0$. For $n \gt  2k$:<br>$$(1 + p)^n \gt  \binom{n}{k} p^k = \frac{n(n-1)\dots(n-k+1)}{k!} p^k \gt  \frac{n^k p^k}{2^k k!}$$<br>Hence:<br>$$0 \lt  \frac{n^\alpha}{(1+p)^n} \lt  \frac{2^k k!}{p^k} n^{\alpha - k} \quad (n \gt  2k)$$<br>Since $\alpha - k \lt  0$, $n^{\alpha - k} \to 0$ by part (a). Hence $\lim_{n\to\infty} \frac{n^\alpha}{(1+p)^n} = 0$.
+
+CARD 5 "Part (e): Límite de x^n para |x| < 1"
+FRONT
+<strong>Theorem 3.20(e):</strong> If $|x| \lt  1$, prove that:<br>$$\lim_{n\to\infty} x^n = 0$$
+BACK
+Take $\alpha = 0$ in part (d).<br><br>Specifically:<br><ul><li>If $x = 0$, $x^n = 0 \to 0$.</li><li>If $0 \lt  |x| \lt  1$, write $\frac{1}{|x|} = 1 + p$ with $p \gt  0$. Then $|x|^n = \frac{1}{(1+p)^n}$.</li></ul><br>By part (d) with $\alpha = 0$, $\frac{1}{(1+p)^n} \to 0 \implies |x|^n \to 0 \implies \lim_{n\to\infty} x^n = 0$.
+
+NEW NOTE "Basic Series Theorems"
+MODE serial
+TAGS analisis, rudin_3_22_3_25, series
+RETENTION 0.85
+POS 1800.0, 520.0
+
+CARD 1 "Theorem 3.22: Cauchy Criterion for Series"
+FRONT
+<strong>Theorem 3.22 (Cauchy Criterion for Series):</strong><br>Prove that $\sum a_n$ converges if and only if for every $\varepsilon \gt  0$ there is an integer $N$ such that:<br>$$\left| \sum_{k=n}^m a_k \right| \le \varepsilon \quad \text{if } m \ge n \ge N$$
+BACK
+Let $s_m = \sum_{k=1}^m a_k$ be the sequence of partial sums.<br><br>The series $\sum a_n$ converges $\iff$ the sequence $(s_m)$ converges.<br><br>By the Cauchy criterion for sequences (Theorem 3.11), $(s_m)$ converges $\iff$ for every $\varepsilon \gt  0$ there is an integer $N$ such that $|s_m - s_{n-1}| \le \varepsilon$ whenever $m \ge n \ge N$.<br><br>Since $s_m - s_{n-1} = \sum_{k=n}^m a_k$, the condition $|s_m - s_{n-1}| \le \varepsilon$ becomes:<br>$$\left| \sum_{k=n}^m a_k \right| \le \varepsilon$$
+
+CARD 2 "Theorem 3.23: Term Limit Zero & Harmonic Counterexample"
+FRONT
+<strong>Theorem 3.23:</strong> If $\sum a_n$ converges, prove that $\lim_{n\to\infty} a_n = 0$. Is $a_n \to 0$ sufficient for convergence?
+BACK
+By taking $m = n$ in the Cauchy criterion (6) of Theorem 3.22:<br>$$|a_n| \le \varepsilon \quad (n \ge N)$$<br>In other words, $\lim_{n\to\infty} a_n = 0$.<br><br><em>Counterexample:</em> The condition $a_n \to 0$ is NOT sufficient to ensure convergence of $\sum a_n$. For instance, the harmonic series $\sum_{n=1}^\infty \frac{1}{n}$ diverges (refer to Theorem 3.28).
+
+CARD 3 "Theorem 3.24: Bounded Partial Sums for Non-negative Series"
+FRONT
+<strong>Theorem 3.24:</strong> Prove that a series of non-negative terms converges if and only if its partial sums form a bounded sequence.
+BACK
+Let $s_n = \sum_{k=1}^n a_k$. Since $a_n \ge 0$, $s_n = s_{n-1} + a_n \ge s_{n-1}$, so the sequence of partial sums $(s_n)$ is monotonic increasing.<br><br>By Theorem 3.14 (monotonic sequences), a monotonic sequence of real numbers converges if and only if it is bounded.<br><br>Hence, $\sum a_n$ converges $\iff$ its partial sums form a bounded sequence.
+
+CARD 4 "Theorem 3.25: The Comparison Test"
+FRONT
+<strong>Theorem 3.25 (Comparison Test):</strong><br>(a) If $|a_n| \le c_n$ for $n \ge N_0$, where $N_0$ is some fixed integer, and if $\sum c_n$ converges, then $\sum a_n$ converges.<br>(b) If $a_n \ge d_n \ge 0$ for $n \ge N_0$, and if $\sum d_n$ diverges, then $\sum a_n$ diverges.<br><br>Prove both (a) and (b):
+BACK
+<strong>Proof of (a):</strong> Given $\varepsilon \gt  0$, there exists $N \ge N_0$ such that $m \ge n \ge N$ implies $\sum_{k=n}^m c_k \le \varepsilon$, by the Cauchy criterion. Hence:<br>$$\left| \sum_{k=n}^m a_k \right| \le \sum_{k=n}^m |a_k| \le \sum_{k=n}^m c_k \le \varepsilon$$<br>and (a) follows by Theorem 3.22.<br><br><strong>Proof of (b):</strong> (b) follows from (a) by contrapositive, for if $\sum a_n$ converges, so must $\sum d_n$ (note that (b) also follows from Theorem 3.24).
+
+NEW NOTE "Series of Non-negative Terms (Rudin 3.26 - 3.29)"
+MODE serial
+TAGS analisis, rudin_3_26_3_29, series, terminos_no_negativos
+RETENTION 0.85
+POS 2100.0, 520.0
+
+CARD 1 "Theorem 3.26: Geometric Series"
+FRONT
+<strong>Theorem 3.26 (Geometric Series):</strong><br>Prove that if $0 \le x \lt  1$, then:<br>$$\sum_{n=0}^\infty x^n = \frac{1}{1-x}$$<br>and if $x \ge 1$, the series diverges.
+BACK
+If $x \ne 1$, the partial sums are:<br>$$s_n = \sum_{k=0}^n x^k = \frac{1 - x^{n+1}}{1-x}$$<br>For $0 \le x \lt  1$, $x^{n+1} \to 0$ as $n \to \infty$, so $\lim s_n = \frac{1}{1-x}$.<br><br>For $x = 1$, we get $1 + 1 + 1 + \dots$, which evidently diverges.<br>For $x \gt  1$, $x^{n+1} \to \infty$, so $s_n \to \infty$ and the series diverges.
+
+CARD 2 "Theorem 3.27: Cauchy Condensation Test — Setup & Upper Bound"
+FRONT
+<strong>Theorem 3.27 (Cauchy Condensation Test) — Setup & Upper Bound:</strong><br>Suppose $a_1 \ge a_2 \ge a_3 \ge \dots \ge 0$. Prove that $\sum_{n=1}^\infty a_n$ converges if and only if $\sum_{k=0}^\infty 2^k a_{2^k}$ converges.<br><br>Paso 1: Definir las sumas parciales y demostrar $s_n \le t_k$ para $n \lt  2^k$:
+BACK
+By Theorem 3.24, it suffices to consider boundedness of partial sums.<br>Let:<br>$$s_n = a_1 + a_2 + \dots + a_n$$$$t_k = a_1 + 2a_2 + \dots + 2^k a_{2^k}$$<br>For $n \lt  2^k$, grouping terms:<br>$$s_n \le a_1 + (a_2 + a_3) + \dots + (a_{2^k} + \dots + a_{2^{k+1}-1}) \le a_1 + 2a_2 + \dots + 2^k a_{2^k} = t_k$$<br>so that:<br>$$s_n \le t_k$$
+
+CARD 3 "Theorem 3.27: Cauchy Condensation Test — Lower Bound & Conclusion"
+FRONT
+<strong>Theorem 3.27 (Cauchy Condensation Test) — Lower Bound & Conclusion:</strong><br>Paso 2: Demostrar $2 s_n \ge t_k$ para $n \gt  2^k$ y concluir el teorema:
+BACK
+On the other hand, for $n \gt  2^k$, grouping terms:<br>$$s_n \ge a_1 + a_2 + (a_3 + a_4) + \dots + (a_{2^{k-1}+1} + \dots + a_{2^k}) \ge \frac{1}{2} a_1 + a_2 + 2a_4 + \dots + 2^{k-1} a_{2^k} = \frac{1}{2} t_k$$<br>so that:<br>$$2 s_n \ge t_k$$<br>By $s_n \le t_k$ and $t_k \le 2 s_n$, the sequences $\{s_n\}$ and $\{t_k\}$ are either both bounded or both unbounded. This completes the proof.
+
+CARD 4 "Theorem 3.28: p-series Test"
+FRONT
+<strong>Theorem 3.28 (p-series Test):</strong><br>Prove that $\sum_{n=1}^\infty \frac{1}{n^p}$ converges if $p \gt  1$ and diverges if $p \le 1$.
+BACK
+<ul><li>If $p \le 0$, $a_n = 1/n^p \nrightarrow 0$, so divergence follows from Theorem 3.23.</li><li>If $p \gt  0$, Theorem 3.27 is applicable to the decreasing sequence $a_n = 1/n^p$, leading to the condensed series:<br>$$\sum_{k=0}^\infty 2^k \cdot \frac{1}{2^{kp}} = \sum_{k=0}^\infty 2^{(1-p)k}$$<br>Now $2^{1-p} \lt  1 \iff 1 - p \lt  0 \iff p \gt  1$. The result follows by comparison with the geometric series (take $x = 2^{1-p}$ in Theorem 3.26).</li></ul>
+
+CARD 5 "Theorem 3.29: Logarithmic p-series Test"
+FRONT
+<strong>Theorem 3.29 (Logarithmic p-series Test):</strong><br>Prove that if $p \gt  1$, $\sum_{n=2}^\infty \frac{1}{n (\log n)^p}$ converges; if $p \le 1$, the series diverges.
+BACK
+The monotonicity of the logarithmic function implies that $\{\log n\}$ increases. Hence $\{1 / (n \log n)^p\}$ decreases, and we can apply Theorem 3.27 to the series:<br>$$\sum_{k=1}^\infty 2^k \cdot \frac{1}{2^k (\log 2^k)^p} = \sum_{k=1}^\infty \frac{1}{(k \log 2)^p} = \frac{1}{(\log 2)^p} \sum_{k=1}^\infty \frac{1}{k^p}$$<br>Theorem 3.29 follows directly from Theorem 3.28.
+
+NEW NOTE "The Root and Ratio Tests (Rudin 3.33, 3.34, 3.37)"
+MODE serial
+TAGS analisis, criterio_raiz, criterio_razon, rudin_3_33_3_34_3_37, series
+RETENTION 0.85
+POS 2400.0, 520.0
+
+CARD 1 "Theorem 3.33: Root Test — Statement & Proof of (a)"
+FRONT
+<strong>Theorem 3.33 (Root Test) — Statement & Proof of (a):</strong><br>Given $\sum a_n$, put $\alpha = \limsup_{n\to\infty} \sqrt[n]{|a_n|}$.<br>Enunciar las 3 partes y demostrar la parte (a) ($\alpha \lt  1 \implies$ convergencia):
+BACK
+<strong>Enunciado:</strong><br><ul><li>(a) If $\alpha \lt  1$, $\sum a_n$ converges;</li><li>(b) If $\alpha \gt  1$, $\sum a_n$ diverges;</li><li>(c) If $\alpha = 1$, the test gives no information.</li></ul><br><strong>Demostración de (a):</strong><br>If $\alpha \lt  1$, choose $\beta$ so that $\alpha \lt  \beta \lt  1$, and an integer $N$ such that $\sqrt[n]{|a_n|} \lt  \beta$ for $n \ge N$ (by Theorem 3.17(b)).<br><br>That is, $n \ge N$ implies $|a_n| \lt  \beta^n$. Since $0 \lt  \beta \lt  1$, $\sum \beta^n$ converges (geometric series). Convergence of $\sum a_n$ follows now from the comparison test.
+
+CARD 2 "Theorem 3.33: Root Test — Proof of (b) & (c)"
+FRONT
+<strong>Theorem 3.33 (Root Test) — Proof of (b) & (c):</strong><br>Demostrar (b) ($\alpha \gt  1 \implies$ divergencia) y (c) ($\alpha = 1 \implies$ inconcluso):
+BACK
+<strong>Demostración de (b):</strong><br>If $\alpha \gt  1$, by Theorem 3.17, there is a subsequence $\{n_k\}$ such that $\sqrt[n_k]{|a_{n_k}|} \to \alpha$.<br><br>Hence $|a_n| \gt  1$ for infinitely many values of $n$, so that the condition $a_n \to 0$, necessary for convergence of $\sum a_n$, does not hold (Theorem 3.23).<br><br><strong>Demostración de (c):</strong><br>Consider the series $\sum \frac{1}{n}$ and $\sum \frac{1}{n^2}$. For each of these series $\alpha = 1$, but the first diverges, while the second converges.
+
+CARD 3 "Theorem 3.34: Ratio Test — Statement & Proof of (a)"
+FRONT
+<strong>Theorem 3.34 (Ratio Test) — Statement & Proof of (a):</strong><br>Enunciar el criterio de la razón y demostrar la parte (a) ($\limsup \left|\frac{a_{n+1}}{a_n}\right| \lt  1 \implies$ convergencia):
+BACK
+<strong>Enunciado:</strong> The series $\sum a_n$:<br><ul><li>(a) converges if $\limsup_{n\to\infty} \left| \frac{a_{n+1}}{a_n} \right| \lt  1$,</li><li>(b) diverges if $\left| \frac{a_{n+1}}{a_n} \right| \ge 1$ for $n \ge n_0$, where $n_0$ is fixed.</li></ul><br><strong>Demostración de (a):</strong><br>If condition (a) holds, we can find $\beta \lt  1$, and an integer $N$, such that $\left| \frac{a_{n+1}}{a_n} \right| \lt  \beta$ for $n \ge N$. In particular:<br>$$|a_{N+1}| \lt  \beta |a_N|, \quad |a_{N+2}| \lt  \beta |a_{N+1}| \lt  \beta^2 |a_N|, \dots, |a_{N+p}| \lt  \beta^p |a_N|$$<br>That is, $|a_n| \lt  |a_N| \beta^{-N} \cdot \beta^n$ for $n \ge N$, and (a) follows from the comparison test, since $\sum \beta^n$ converges.
+
+CARD 4 "Theorem 3.34: Ratio Test — Proof of (b) & Note on Limit 1"
+FRONT
+<strong>Theorem 3.34 (Ratio Test) — Proof of (b) & Note:</strong><br>Demostrar (b) y explicar por qué la razón igual a 1 no da información:
+BACK
+<strong>Demostración de (b):</strong><br>If $|a_{n+1}| \ge |a_n|$ for $n \ge n_0$, it is easily seen that the condition $a_n \to 0$ does not hold, and (b) follows.<br><br><em>Note:</em> The knowledge that $\lim |a_{n+1}/a_n| = 1$ implies nothing about the convergence of $\sum a_n$. The series $\sum \frac{1}{n}$ and $\sum \frac{1}{n^2}$ demonstrate this.
+
+CARD 5 "Theorem 3.37: Relation between Ratio and Root Test — Setup"
+FRONT
+<strong>Theorem 3.37 (Ratio vs Root Test) — Setup:</strong><br>For any sequence $\{c_n\}$ of positive numbers:<br>$$\limsup_{n\to\infty} \sqrt[n]{c_n} \le \limsup_{n\to\infty} \frac{c_{n+1}}{c_n}$$<br>Paso 1: Planteamiento de la demostración e iteración de desigualdades:
+BACK
+Put $\alpha = \limsup_{n\to\infty} \frac{c_{n+1}}{c_n}$.<br><br>If $\alpha = +\infty$, there is nothing to prove. If $\alpha$ is finite, choose $\beta \gt  \alpha$. There is an integer $N$ such that $\frac{c_{n+1}}{c_n} \le \beta$ for $n \ge N$.<br><br>In particular, for any $p \gt  0$:<br>$$c_{N+k+1} \le \beta c_{N+k} \quad (k = 0, 1, \dots, p-1)$$<br>Multiplying these inequalities, we obtain:<br>$$c_{N+p} \le \beta^p c_N \implies c_n \le c_N \beta^{-N} \cdot \beta^n \quad (n \ge N)$$
+
+CARD 6 "Theorem 3.37: Relation between Ratio and Root Test — Conclusion"
+FRONT
+<strong>Theorem 3.37 (Ratio vs Root Test) — Conclusion:</strong><br>Paso 2: Tomar raíz $n$-ésima y aplicar el Teorema 3.20(b) para concluir el teorema:
+BACK
+Taking $n$-th roots of $c_n \le c_N \beta^{-N} \cdot \beta^n$:<br>$$\sqrt[n]{c_n} \le \sqrt[n]{c_N \beta^{-N}} \cdot \beta$$<br>So that:<br>$$\limsup_{n\to\infty} \sqrt[n]{c_n} \le \beta$$<br>by Theorem 3.20(b) (since $\sqrt[n]{c_N \beta^{-N}} \to 1$).<br><br>Since $\limsup \sqrt[n]{c_n} \le \beta$ is true for every $\beta \gt  \alpha$, we have:<br>$$\limsup_{n\to\infty} \sqrt[n]{c_n} \le \alpha = \limsup_{n\to\infty} \frac{c_{n+1}}{c_n}$$
+
+NEW NOTE "Power Series and Radius of Convergence (Rudin 3.39 - 3.40)"
+MODE serial
+TAGS analisis, rudin_3_39_3_40, series, series_de_potencias
+RETENTION 0.85
+POS 2400.0, 650.0
+
+CARD 1 "Theorem 3.39: Power Series & Radius of Convergence"
+FRONT
+<strong>Theorem 3.39 (Power Series Convergence Theorem):</strong><br>Given the power series $\sum c_n z^n$, put:<br>$$\alpha = \limsup_{n\to\infty} \sqrt[n]{|c_n|}, \quad R = \frac{1}{\alpha}$$<br>(If $\alpha = 0$, $R = +\infty$; if $\alpha = +\infty$, $R = 0$.)<br>Prove that $\sum c_n z^n$ converges if $|z| \lt  R$, and diverges if $|z| \gt  R$.
+BACK
+Put $a_n = c_n z^n$, and apply the root test (Theorem 3.33):<br>$$\limsup_{n\to\infty} \sqrt[n]{|a_n|} = |z| \limsup_{n\to\infty} \sqrt[n]{|c_n|} = \frac{|z|}{R}$$<br>By the root test:<br><ul><li>If $\frac{|z|}{R} \lt  1 \iff |z| \lt  R$, the series converges.</li><li>If $\frac{|z|}{R} \gt  1 \iff |z| \gt  R$, the series diverges.</li></ul><br><em>Note:</em> $R$ is called the <strong>radius of convergence</strong> of $\sum c_n z^n$.
+
+CARD 2 "Examples 3.40: Radius of Convergence Examples"
+FRONT
+<strong>Examples 3.40:</strong> State the radius of convergence $R$ and boundary behavior for the following power series:<br>(a) $\sum n^n z^n$<br>(b) $\sum \frac{z^n}{n!}$<br>(c) $\sum z^n$<br>(d) $\sum \frac{z^n}{n}$<br>(e) $\sum \frac{z^n}{n^2}$
+BACK
+<ul><li><strong>(a) $\sum n^n z^n$:</strong> $\alpha = \limsup n = +\infty \implies R = 0$.</li><li><strong>(b) $\sum \frac{z^n}{n!}$:</strong> $R = +\infty$ (by ratio test: $\frac{|z|}{n+1} \to 0 \lt  1$).</li><li><strong>(c) $\sum z^n$:</strong> $R = 1$. Diverges for $|z|=1$ since $z^n \nrightarrow 0$.</li><li><strong>(d) $\sum \frac{z^n}{n}$:</strong> $R = 1$. Diverges at $z = 1$ (harmonic series); converges for all other $z$ on $|z| = 1$ (Theorem 3.44).</li><li><strong>(e) $\sum \frac{z^n}{n^2}$:</strong> $R = 1$. Converges for all $z$ on $|z| = 1$ by comparison ($|z^n/n^2| = 1/n^2$).</li></ul>
+
+NEW NOTE "Summation by Parts and Absolute Convergence (Rudin 3.41 - 3.45)"
+MODE serial
+TAGS analisis, convergencia_absoluta, rudin_3_41_3_45, series, sumacion_por_partes
+RETENTION 0.85
+POS 2100.0, 650.0
+
+CARD 1 "Theorem 3.41: Partial Summation Formula (Summation by Parts)"
+FRONT
+<strong>Theorem 3.41 (Partial Summation Formula / Summation by Parts):</strong><br>Given two sequences $\{a_n\}, \{b_n\}$, put $A_n = \sum_{k=0}^n a_k$ for $n \ge 0$, and $A_{-1} = 0$.<br>Prove that if $0 \le p \le q$, then:<br>$$\sum_{n=p}^q a_n b_n = \sum_{n=p}^{q-1} A_n (b_n - b_{n+1}) + A_q b_q - A_{p-1} b_p$$
+BACK
+Noting $a_n = A_n - A_{n-1}$:<br>$$\sum_{n=p}^q a_n b_n = \sum_{n=p}^q (A_n - A_{n-1}) b_n = \sum_{n=p}^q A_n b_n - \sum_{n=p-1}^{q-1} A_n b_{n+1}$$<br>Rearranging terms:<br>$$\sum_{n=p}^q a_n b_n = \sum_{n=p}^{q-1} A_n (b_n - b_{n+1}) + A_q b_q - A_{p-1} b_p$$<br>This is the <em>partial summation formula</em>, particularly useful when $\{b_n\}$ is monotonic.
+
+CARD 2 "Theorem 3.42: Dirichlet's Test for Convergence"
+FRONT
+<strong>Theorem 3.42 (Dirichlet's Test):</strong><br>Suppose:<br>(a) the partial sums $A_n$ of $\sum a_n$ form a bounded sequence ($|A_n| \le M$);<br>(b) $b_0 \ge b_1 \ge b_2 \ge \dots$;<br>(c) $\lim_{n\to\infty} b_n = 0$.<br>Prove that $\sum a_n b_n$ converges.
+BACK
+Given $\varepsilon \gt  0$, choose $N$ such that $b_N \le \frac{\varepsilon}{2M}$. For $N \le p \le q$, using summation by parts:<br>$$\left| \sum_{n=p}^q a_n b_n \right| = \left| \sum_{n=p}^{q-1} A_n (b_n - b_{n+1}) + A_q b_q - A_{p-1} b_p \right| \le M \left[ \sum_{n=p}^{q-1} (b_n - b_{n+1}) + b_q + b_p \right] = 2 M b_p \le 2 M b_N \le \varepsilon$$<br>(noting $b_n - b_{n+1} \ge 0$). Convergence follows from the Cauchy criterion (Theorem 3.22).
+
+CARD 3 "Theorem 3.43: Leibniz Alternating Series Test"
+FRONT
+<strong>Theorem 3.43 (Leibniz Alternating Series Test):</strong><br>Suppose:<br>(a) $|c_1| \ge |c_2| \ge |c_3| \ge \dots$;<br>(b) $c_{2m-1} \ge 0, c_{2m} \le 0$ ($m=1,2,3,\dots$);<br>(c) $\lim_{n\to\infty} c_n = 0$.<br>Prove that $\sum c_n$ converges.
+BACK
+Apply Theorem 3.42 with $a_n = (-1)^{n+1}$ and $b_n = |c_n|$.<br><br>The partial sums $A_n$ of $(-1)^{n+1}$ are bounded by 1 ($|A_n| \le 1$). Hypotheses (b) and (c) of Theorem 3.42 are satisfied by $b_n = |c_n| \downarrow 0$.<br><br>Thus $\sum c_n = \sum a_n b_n$ converges.
+
+CARD 4 "Theorem 3.44: Convergence on the Boundary Circle |z| = 1"
+FRONT
+<strong>Theorem 3.44 (Boundary Convergence of Power Series):</strong><br>Suppose the radius of convergence of $\sum c_n z^n$ is 1, and suppose $c_0 \ge c_1 \ge c_2 \ge \dots$, $\lim_{n\to\infty} c_n = 0$.<br>Prove that $\sum c_n z^n$ converges at every point on $|z|=1$, except possibly at $z = 1$.
+BACK
+Put $a_n = z^n, b_n = c_n$. For $|z|=1$ and $z \ne 1$:<br>$$|A_n| = \left| \sum_{m=0}^n z^m \right| = \left| \frac{1 - z^{n+1}}{1 - z} \right| \le \frac{2}{|1 - z|}$$<br>So the partial sums $A_n$ form a bounded sequence for each fixed $z \ne 1$ on the unit circle.<br><br>The hypotheses of Theorem 3.42 are satisfied, hence $\sum c_n z^n$ converges.
+
+CARD 5 "Definition & Theorem 3.45: Absolute Convergence"
+FRONT
+<strong>Definition & Theorem 3.45 (Absolute Convergence):</strong><br><em>Definition:</em> The series $\sum a_n$ is said to converge absolutely if $\sum |a_n|$ converges.<br><br><strong>Theorem 3.45:</strong> Prove that if $\sum a_n$ converges absolutely, then $\sum a_n$ converges.
+BACK
+The assertion follows from the triangle inequality:<br>$$\left| \sum_{k=n}^m a_k \right| \le \sum_{k=n}^m |a_k|$$<br>Since $\sum a_n$ converges absolutely, $\sum |a_n|$ satisfies the Cauchy criterion (Theorem 3.22): for any $\varepsilon \gt  0$, $\sum_{k=n}^m |a_k| \le \varepsilon$ for $m \ge n \ge N$.<br><br>By the inequality above, $\left| \sum_{k=n}^m a_k \right| \le \varepsilon$, so $\sum a_n$ satisfies the Cauchy criterion and therefore converges.
+
+NEW NOTE "Addition and Multiplication (Convolution) of Series (Rudin 3.47, 3.50, 3.51)"
+MODE serial
+TAGS analisis, convolucion_de_series, producto_cauchy, rudin_3_47_3_50_3_51, series
+RETENTION 0.85
+POS 1800.0, 650.0
+
+CARD 1 "Theorem 3.47: Addition and Scalar Multiplication of Series"
+FRONT
+<strong>Theorem 3.47 (Addition and Scalar Multiplication of Series):</strong><br>If $\sum a_n = A$ and $\sum b_n = B$, prove that $\sum (a_n + b_n) = A + B$, and $\sum c a_n = c A$ for any fixed constant $c$.
+BACK
+Let $A_n = \sum_{k=0}^n a_k$ and $B_n = \sum_{k=0}^n b_k$.<br><br>Then $A_n + B_n = \sum_{k=0}^n (a_k + b_k)$.<br><br>Since $\lim_{n\to\infty} A_n = A$ and $\lim_{n\to\infty} B_n = B$, by the algebraic properties of sequence limits:<br>$$\lim_{n\to\infty} (A_n + B_n) = A + B$$<br>The proof for $c A_n \to c A$ is even simpler.
+
+CARD 2 "Theorem 3.50 (Mertens): Series Convolution & Setup"
+FRONT
+<strong>Definition & Theorem 3.50 (Mertens' Theorem on Series Convolution):</strong><br>Given $\sum a_n = A$ and $\sum b_n = B$, define their product (convolution / Cauchy product) as $c_n = \sum_{k=0}^n a_k b_{n-k}$.<br>If $\sum a_n$ converges absolutely, prove that $\sum_{n=0}^\infty c_n = AB$.<br><br>Paso 1: Definir las sumas parciales y descomponer $C_n$:
+BACK
+Let $A_n = \sum_{k=0}^n a_k$, $B_n = \sum_{k=0}^n b_k$, $C_n = \sum_{k=0}^n c_k$, and $\beta_n = B_n - B \to 0$.<br><br>Expanding $C_n$:<br>$$\begin{aligned} C_n &= a_0 b_0 + (a_0 b_1 + a_1 b_0) + \dots + (a_0 b_n + a_1 b_{n-1} + \dots + a_n b_0) \\ &= a_0 B_n + a_1 B_{n-1} + \dots + a_n B_0 \\ &= a_0 (B + \beta_n) + a_1 (B + \beta_{n-1}) + \dots + a_n (B + \beta_0) \\ &= A_n B + a_0 \beta_n + a_1 \beta_{n-1} + \dots + a_n \beta_0 \end{aligned}$$<br>Put $\gamma_n = a_0 \beta_n + a_1 \beta_{n-1} + \dots + a_n \beta_0$. Since $A_n B \to AB$, it suffices to show $\lim_{n\to\infty} \gamma_n = 0$.
+
+CARD 3 "Theorem 3.50 (Mertens): Proof of Limit gamma_n -> 0"
+FRONT
+<strong>Theorem 3.50 (Mertens' Theorem):</strong><br>Paso 2: Demostrar que $\gamma_n \to 0$ utilizando la convergencia absoluta de $\sum a_n$:
+BACK
+Put $\alpha = \sum_{n=0}^\infty |a_n| \lt  \infty$ (by absolute convergence of $\sum a_n$).<br><br>Given $\varepsilon \gt  0$, since $\beta_n \to 0$, choose $N$ such that $|\beta_n| \le \varepsilon$ for $n \ge N$. For $n \ge N$:<br>$$|\gamma_n| \le |\beta_0 a_n + \dots + \beta_N a_{n-N}| + |\beta_{N+1} a_{n-N-1} + \dots + \beta_n a_0| \le |\beta_0 a_n + \dots + \beta_N a_{n-N}| + \varepsilon \alpha$$<br>Keeping $N$ fixed and letting $n \to \infty$, since $a_k \to 0$ as $k \to \infty$:<br>$$\limsup_{n\to\infty} |\gamma_n| \le \varepsilon \alpha$$<br>Since $\varepsilon$ is arbitrary, $\lim_{n\to\infty} \gamma_n = 0 \implies C_n \to AB$.
+
+CARD 4 "Theorem 3.51 (Abel) & Remark on Series Convolution"
+FRONT
+<strong>Theorem 3.51 (Abel's Theorem) & Remark on Series Convolution:</strong><br>Enunciar el Teorema de Abel (3.51) e incluir las observaciones clave sobre la convolución de series y la necesidad de herramientas especializadas.
+BACK
+<strong>Theorem 3.51 (Abel's Theorem):</strong><br>If the series $\sum a_n$, $\sum b_n$, and their convolution $\sum c_n$ (where $c_n = \sum_{k=0}^n a_k b_{n-k}$) converge to $A$, $B$, and $C$ respectively, then $C = AB$.<br><br><hr><p><strong>Observaciones sobre la Convolución (Producto de Cauchy) de Series:</strong></p><ul><li>La convolución $c_n = \sum_{k=0}^n a_k b_{n-k}$ representa el producto formal de dos series.</li><li>Si al menos una serie converge absolutamente, el <strong>Teorema de Mertens (3.50)</strong> garantiza que la convolución siempre converge al producto de los límites $AB$.</li><li>Sin convergencia absoluta, la serie convolución puede no converger. Sin embargo, si la convolución resulta convergente a un valor $C$, el <strong>Teorema de Abel (3.51)</strong> asegura que $C = AB$. La demostración de este resultado sin convergencia absoluta requiere herramientas especializadas del análisis real/complejo (específicamente la continuidad de las series de potencias en la frontera del disco de convergencia, Teorema 8.2 de Rudin).</li></ul>
+
+NEW NOTE "Rearrangements of Series (Riemann Rearrangement & Dirichlet-Riemann Theorems)"
+MODE serial
+TAGS analisis, reordenamiento_de_series, riemann, rudin_3_54_3_55, series
+RETENTION 0.85
+POS 1500.0, 650.0
+
+CARD 1 "Theorem 3.54 (Riemann Rearrangement Theorem) — Statement & Decomposition"
+FRONT
+<strong>Theorem 3.54 (Riemann Rearrangement Theorem) — Statement & Decomposition:</strong><br>Let $\sum a_n$ be a conditionally convergent series of real numbers (converges, but not absolutely). Let $-\infty \le \alpha \le \beta \le \infty$.<br>State the theorem and define the non-negative and negative parts $p_n$ and $q_n$:
+BACK
+<strong>Enunciado:</strong> There exists a rearrangement $\sum a'_n$ with partial sums $s'_n$ such that:<br>$$\liminf_{n\to\infty} s'_n = \alpha, \quad \limsup_{n\to\infty} s'_n = \beta$$<br><strong>Paso 1 (Descomposición):</strong> Define $p_n = \frac{|a_n| + a_n}{2}$ and $q_n = \frac{|a_n| - a_n}{2}$.<br><br>Then $p_n - q_n = a_n$, $p_n + q_n = |a_n|$, with $p_n \ge 0$ and $q_n \ge 0$ for all $n$.
+
+CARD 2 "Theorem 3.54 (Riemann Rearrangement Theorem) — Divergence of Parts"
+FRONT
+<strong>Theorem 3.54 — Divergence of $\sum p_n$ and $\sum q_n$:</strong><br>Paso 2: Demostrar que ambas series de términos no negativos $\sum p_n$ y $\sum q_n$ deben divergir a $+\infty$:
+BACK
+If both $\sum p_n$ and $\sum q_n$ converged, then $\sum (p_n + q_n) = \sum |a_n|$ would converge, contradicting that $\sum a_n$ is not absolutely convergent.<br><br>If $\sum p_n$ diverged and $\sum q_n$ converged (or vice versa), then $\sum a_n = \sum (p_n - q_n)$ would diverge, contradicting that $\sum a_n$ converges.<br><br>Therefore, both $\sum p_n$ and $\sum q_n$ must diverge to $+\infty$.
+
+CARD 3 "Theorem 3.54 (Riemann Rearrangement Theorem) — Construction"
+FRONT
+<strong>Theorem 3.54 — Construction of the Rearranged Series:</strong><br>Paso 3: Definir las secuencias de términos no nulos $P_k, Q_k$ y describir la construcción inductiva del reordenamiento:
+BACK
+Let $P_1, P_2, P_3, \dots$ be the positive terms of $\sum a_n$ in order, and $Q_1, Q_2, Q_3, \dots$ be the absolute values of the negative terms of $\sum a_n$ in order. Since $\sum p_n, \sum q_n$ diverge, $\sum P_k = \infty$ and $\sum Q_k = \infty$.<br><br>Choose real sequences $\alpha_n \to \alpha$, $\beta_n \to \beta$ with $\alpha_n \lt  \beta_n, \beta_1 \gt  0$.<br><br>Choose smallest $m_1, k_1$ such that:<br>$$P_1 + \dots + P_{m_1} \gt  \beta_1, \quad P_1 + \dots + P_{m_1} - Q_1 - \dots - Q_{k_1} \lt  \alpha_1$$<br>Then choose smallest $m_2, k_2$ to exceed $\beta_2$ and drop below $\alpha_2$, continuing indefinitely. This is possible since $\sum P_k = \infty$ and $\sum Q_k = \infty$.
+
+CARD 4 "Theorem 3.54 (Riemann Rearrangement Theorem) — Convergence Bounds"
+FRONT
+<strong>Theorem 3.54 — Proof of $\liminf s'_n = \alpha$ and $\limsup s'_n = \beta$:</strong><br>Paso 4: Acotar las sumas parciales $x_n, y_n$ en los picos y valles y concluir el teorema:
+BACK
+Let $x_n, y_n$ be the partial sums of the constructed series ending at $P_{m_n}$ and $-Q_{k_n}$ respectively. By construction:<br>$$|x_n - \beta_n| \le P_{m_n}, \quad |y_n - \alpha_n| \le Q_{k_n}$$<br>Since $\sum a_n$ converges, $a_n \to 0$ (Theorem 3.23), so $P_k \to 0$ and $Q_k \to 0$ as $k \to \infty$.<br><br>Therefore, $x_n \to \beta$ and $y_n \to \alpha$.<br><br>Finally, no number smaller than $\alpha$ or larger than $\beta$ can be a subsequential limit of $s'_n$, establishing:<br>$$\liminf_{n\to\infty} s'_n = \alpha, \quad \limsup_{n\to\infty} s'_n = \beta$$
+
+CARD 5 "Theorem 3.55: Invariance of Absolutely Convergent Series under Rearrangements"
+FRONT
+<strong>Theorem 3.55 (Rearrangement of Absolutely Convergent Series):</strong><br>If $\sum a_n$ is a series of complex numbers which converges absolutely, prove that every rearrangement of $\sum a_n$ converges, and they all converge to the same sum.
+BACK
+Let $\sum a'_n$ be a rearrangement with partial sums $s'_n$, and let $s_n$ be the partial sums of $\sum a_n$.<br><br>Given $\varepsilon \gt  0$, by absolute convergence (Theorem 3.22/3.45), choose $N$ such that for $m \ge n \ge N$:<br>$$\sum_{i=n}^m |a_i| \le \varepsilon$$<br>Choose $p$ such that the indices $1, 2, \dots, N$ are all contained in the first $p$ terms of the rearrangement $\{a'_1, \dots, a'_p\}$.<br><br>Then for any $n \gt  p$, the terms $a_1, \dots, a_N$ cancel out in the difference $s_n - s'_n$, leaving only terms $a_k$ with $k \gt  N$. Therefore:<br>$$|s_n - s'_n| \le \sum_{i=N+1}^\infty |a_i| \le \varepsilon$$<br>Hence $\{s'_n\}$ converges to the same sum as $\{s_n\}$.
+
+NEW NOTE "Integral de Riemann (Clasica)"
+MODE serial
+RETENTION 0.85
+POS 0.0, -1690.0
+
+CARD 1 "Elección de la división."
+FRONT
+Sea $f \in \mathscr B([a,b])$, y sea la división $P=\set{a=x_0\lt  \cdots \lt  x_n=b}$. ¿Que es una elección $C$ de la división?
+BACK
+Una elección $C=(c_i)_{i=1}^n$ es tal que $\forall_{i=1}^n c_i \in [x_{i-1}, x_i]$.<br>
+<br>
+O alternativamente para una partición, $\forall I \in P. c_I \in I$
+
+CARD 2 "Suma de Riemann con elección."
+FRONT
+Sea $f \in \mathscr B([a,b])$, y sea la división $P=\set{a=x_0\lt  \cdots \lt  x_n=b}$ y sea $C$ una elección de $P$. ¿Cual es la Suma de Riemann?
+BACK
+$$S(P, f, C, \alpha)=\sum_{I \in P}f(c_i)\alpha(I) = \sum_{i=1}^n f(c_i) \Delta\alpha_i$$
+
+CARD 3 "Malla de una división."
+FRONT
+Sea la división $P=\set{a=x_0\lt  \cdots \lt  x_n=b}$. ¿Que es su malla?
+BACK
+$$\|P\|_\# = \sup (x_i-x_{i-1})$$
+(Podria definirse con $\alpha$ pero esa definición no seria verdaderamente natural o algo)
+
+CARD 4 "Integrabilidad"
+FRONT
+Sea $f \in \mathscr B([a,b])$. ¿Como se define su integral?
+BACK
+$$\int_A f\ \mathrm d\alpha= \biota I \in \mathbb R.\ \forall \varepsilon\gt 0\ \exists \delta\gt 0\ \forall P\ \forall C.\ \|P\|_\# \lt  \delta \implies |S(P, f, C, \alpha) - I|\lt \varepsilon$$
+
+NEW NOTE "Funciones Lipschitz"
+MODE standard
+RETENTION 0.85
+POS 1200.0, -1040.0
+
+CARD 1 "Funciones Lipschitz"
+FRONT
+Sea $f:X\to Y$ espacios metricos. ¿Que significa ser Lipschitz? ¿Cual es su constante de Lipschitz?
+BACK
+$$
+\exists C\gt  0 \ \forall a,b \in X.\ d(f(a),f(b)) \le C \cdot d(a,b)
+$$
+En ese caso, existe una menor constante $C$ la cual llamamos constante de Lipschitz.
+$$
+C_f = \Set{\frac{d(f(a),f(b))}{d(a,b)} : a,b \in X, a\ne b}
+$$
+<hr>
+<i>Propiedad:</i> Las funciones Lipschitz son automaticamente Uniformemente continuas con $\delta = \eps/C_f$
+
+NEW NOTE "Convolución de Series"
+MODE standard
+RETENTION 0.85
+POS 1200.0, -390.0
+
+CARD 1 "Convolución de 2 series."
+FRONT
+Sean $(a_i)_{i=0}^\infty$ y $(b_i)_{i=0}^\infty$ dos secuencias y las series formales respectivas $(\sum_{i=0}^n a_i)_n$ y $(\sum_{i=0}^n b_i)_n$.<br>
+¿Cual es su convolución? ¿Que es la serie producto?
+BACK
+La convolución $(a_i)_{i=0}^\infty * (b_i)_{i=0}^\infty = (c_i)_{i=0}^\infty$ esta dada por$$
+c_n = \sum_{i=0}^n a_ib_{n-i}
+$$
+Mientras que la serie producto (Producto de Cauchy) es$$
+\sum_{i=0}^\infty c_n
+$$
+
+NEW NOTE "Demostraciones Integrales 1"
+MODE serial
+RETENTION 0.85
+POS 1500.0, 780.0
+
+CARD 1 "Cotas de Sumas de Riemann"
+FRONT
+Demostrar que para $f\in \mathscr B(I)$ tenemos que $$
+L(P,f, \alpha) \le S(P,f, C, \alpha) \le U(P,f, \alpha)
+$$
+Y que ademas si $P'$ es refinamiento/mas fina que $P$ entonces
+$$
+L(P,f, \alpha) \le L(P', f, \alpha)
+$$
+$$
+U(P',f, \alpha) \le U(P, f, \alpha)
+$$
+En resumen si $P'$ es el refinamiento comun de $P_1, P_2$:
+$$
+L(P_1,f, \alpha) \le S(P',f, C, \alpha) \le U(P_2,f, \alpha)
+$$
+BACK
+Tenemos que $m_i \le f(x_i) \le M_i$, por lo tanto $\Delta \alpha_i$ es positivo mantiene orden, y sumatoria mantiene orden es decir$$
+\sum_{i=1}^n m_i \Delta \alpha_i \le \sum_{i=1}^n f(x_i) \Delta \alpha_i \le \sum_{i=1}^n M_i \Delta \alpha_i
+$$
+Lo cual demuestra la primera desigualdad. Luego si $P'$ es mas fina, entonces $I \subseteq J$ el unico intervalo que lo contiene, $$
+m_J \le m_I \le M_I \le M_J
+$$
+Por lo tanto por inducción, si tenemos alguna partición (paso inductivo) donde $I_1 \cup I_2 = J$, entonces $\sum_{I \in P'} m_I \alpha(I) - \sum_{J \in P} m_J \alpha(J) = m_{I_1} \alpha(I_1) + m_{I_2} \alpha(I_2) - m_J \alpha(J) \ge 0$ y repetir al infinito. Entonces$$
+L(P,f, \alpha) \le L(P', f, \alpha)
+$$
+De lo cual el resto se concluye.
+(En la practica esta demostración es mas similar a un boceto)
+
+CARD 2 "Integral Inferior y Superior."
+FRONT
+Sea $f\in \mathscr B(I)$. Demostrar $\underline{\int_a^b} f\ \mathrm d\alpha \le \overline{\int_a^b} f\ \mathrm d\alpha$
+BACK
+Por lo anterior sabemos$$
+L(P_1,f,\alpha) \le U(P_2,f,\alpha)
+$$
+Aplicando $\sup, \inf$ respectivamente sobre las particiones:$$
+\underline{\int_a^b} f\ \mathrm d\alpha \le \overline{\int_a^b} f\ \mathrm d\alpha
+$$
+
+CARD 3 "Condición de Darboux."
+FRONT
+Demostrar$$
+\underline{\int_a^b} f\ \mathrm d\alpha = \overline{\int_a^b} f\ \mathrm d\alpha \iff \forall \eps \gt  0\ \exists P.\ U(P,f, \alpha) - L(P, f, \alpha) \lt  \eps
+$$
+BACK
+($\impliedby$) Tendremos que $\overline{\int_a^b} f\ \mathrm d\alpha - \underline{\int_a^b} f\ \mathrm d\alpha \le U(P,f, \alpha) - L(P, f, \alpha) \lt  \eps$ para cualquier $\eps\gt 0$, asi que $\overline{\int_a^b} f\ \mathrm d\alpha = \underline{\int_a^b} f\ \mathrm d\alpha$.<br>
+($\implies$) $U(P_2,f, \alpha) - \overline{\int_a^b} f\ \mathrm d\alpha \lt  \eps/2$ y $\underline{\int_a^b} f\ \mathrm d\alpha - L(P_1, f, \alpha)\lt \eps/2$, asi que si $P'$ es el refinamiento mutuo,$$
+U(P',f, \alpha) - L(P',f,\alpha) \lt  \eps
+$$
+
+CARD 4 "Lemas de integrabilidad."
+FRONT
+<ul>
+<li>
+Si $P' \supseteq P$ entonces$$
+U(P,f) - L(P,f) \lt  \eps \implies U(P',f) - L(P',f) 
+$$
+</li>
+<li>
+Si $C_1, C_2$ son elecciones de la partición:
+$$
+U(P,f) - L(P,f) \lt  \eps \implies |S(P,f,C_1) - S(P,f,C_2)| \lt  \eps 
+$$
+</li>
+<li>
+Si $f \in \mathscr R(\alpha)$ entonces:$$
+U(P,f) - L(P,f) \lt  \eps \implies |S(P,f,C_1) - I| \lt  \eps 
+$$
+</li>
+</ul>
+BACK
+Por refinamiento $L(P,f) \le L(P',f) \le U(P', f) \le U(P,f)$ y sale trivial.<br>
+$|S(P,f,C_1) - S(P,f,C_2)| \le U(P,f) - L(P,f)$ obvio.<br>
+$L(P,f) \le S, I \le U(P,f)$ implica la ultima.
+
+CARD 5 "Darboux -> Riemann"
+FRONT
+Si $I = \underline{\int_a^b} f = \overline{\int_a^b} f$ entonces $f \in \mathscr B(X)$ es Riemann integrable (clasica)
+BACK
+Asumimos que $f$ es Darboux integrable, entonces se tiene que $\forall \eps \gt  0 \ \exists P=(x_i)_{i=0}^n$ una partición tal que\[
+U(P,f) - L(P,f) \lt  \eps/2 
+\]
+Sea $P'=(y_k)_{k=0}^{n'}$ una partición con $$\|P'\| \lt  \min\left(\inf \Delta x_i, \frac{\eps/2}{(M-m)(n-1)} \right)$$
+
+Entonces para $1 \le k \le n'$ con $n'$ la cantidad de puntos en la partición $P'$ pueden suceder solo dos situaciónes:
+$$J = \set{k: \exists i \in \set{1,\cdots, n}.\ [y_{k-1}, y_k] \subseteq [x_{i-1}, x_i]}$$
+$$G= P' \setminus J = \set{k: \exists i \in \set{1,\cdots, n}.\ x_i \in (y_{k-1}, y_k)}$$
+Donde $|G| \le n-1$,
+y designamos $P^*=(z_j)_{j=0}^{n^*}$ el refinamiento mutuo.
+Ahora:\begin{align}
+|I-S(P',f)| & \le |I-S(P^*,f)| + |S(P^*,f)-S(P',f)| \\
+& \le |I-S(P,f)| + (M- m)\sum_{k \in G}\Delta y_k \\
+& \lt  \eps
+\end{align}
+
+La demostración puede generalizarse
+
+CARD 6 "Riemann -> Darboux"
+FRONT
+Si $f \in \mathscr B(X)$ es Riemann integrable (clasica) entonces $\underline{\int_a^b} f\ \mathrm d \alpha = \overline{\int_a^b} f\ \mathrm d \alpha$
+
+BACK
+Suponemos que $\exists I\in \mathbb R \ \forall \eps\gt 0 \ \exists \delta\gt 0$ tal que si $\|P\|\lt  \delta$ entonces para cualquier elección:\[
+|I - S(P,f)| \lt  \eps/4
+\]
+Elegimos etiquetas tales que $M_i \ge f(t_i) \gt  M_i - \delta$ y $m_i + \delta \gt  f(s_i) \ge m_i$ con $\delta \lt  \frac{\alpha(X)}{4}\eps$, luego:\begin{align}
+S(P,f, C_1) - S(P,f, C_2) &= \sum_{I \in P}(f(t_i)-f(s_i))\alpha(I) \\
+& \gt  \sum_{I \in P}(M_i - \delta -m_i - \delta)\alpha(I) \\
+& = U(P,f) - L(P,f) -2\delta\alpha(X) \\
+\end{align}
+Luego$$
+U(P,f) - L(P,f) \lt  \eps/2 + \eps/2 \lt  \eps
+$$
+
+
+NEW NOTE "Demostraciones Integrales 2"
+MODE serial
+RETENTION 0.85
+POS 1800.0, 780.0
+
+CARD 1 "Medida del singleton."
+FRONT
+Sea $f \in \mathscr R_\alpha([a,b])$ (en el sentido de $P=\set{a=x_0 \lt  \cdots \lt  x_n=b}$)<br>
+Entonces para $s \in (a,b)$:
+$$
+\begin{align}
+\alpha(s)-\alpha(s^-)\gt 0
+&\implies f(s)=f(s^-) \\
+\alpha(s^+)-\alpha(s)\gt 0
+&\implies f(s^+)=f(s)
+\end{align}
+$$
+Mientras que si $f \in \mathscr B([a,b])$ entonces para $s \in (a,b)$:
+$$
+f \in \mathscr R_{\mathbb 1(a, \infty)}([a,b]) \impliedby f \text{ Continua en } s
+$$
+BACK
+($\implies$) suponiendo que no es continua $\exists \eps \gt  0\ \forall \delta \gt  0\ \exists x.\ s \lt  x \lt  s +\delta \land |f(x)-f(s)|\ge\eps$, y por otra parte $s \lt  v \implies \alpha(v)-\alpha(s) \gt  0$, si alguna partición contiene a estos entonces$$
+U-L \ge  (M_v-m_v)(\alpha(v)-\alpha(s)) \gt  0
+$$
+Contradicción.<br>
+<br>
+($\impliedby$) Si $P=\set{a\lt  s \lt  x \lt  b}$ entonces$$
+U - L =(M_2-m_2) \xrightarrow{x \to s}0
+$$
+Asi que tenemos integrabilidad, con $\int_{a}^b f(x) \mathrm d\mathbb 1_{(a, \infty)}(x)=f(s)$
+
+CARD 2 "Integrable por divisiones -> integrable por particiones."
+FRONT
+Sea $f \in \mathscr B(X)$. Entonces si $f$ es integrable en terminos de divisiones, tambien lo es bajo particiones.
+BACK
+Si $\forall \eps\gt 0 \exists P=(x_i)_{i=0}^n$ tal que$$
+U(P,f) - L(P,f) \lt  \eps
+$$
+Definimos $$P^\square=G \cup H =\set{\set{x_i}}_{i=0}^n \cup \set{(x_{i-1},x_i)}_{i=1}^n$$
+En ese caso: $\set{x_{i-1}}, (x_{i-1}, x_i) \subseteq [x_{i-1}, x_i]$ y por lo tanto $m_{H_i}, m_{G_i} \ge m_i$ y viceversa, Luego\begin{align}
+U(P^\square, f) - L(P^\square, f) &=\sum_{I \in P^\square}(M_I-m_I)\alpha(I) \\
+&=\sum_{i =1}^n (M_{H_i}-m_{H_i})\alpha(x_{i-1},x_i) + \sum_{i=0}^n(f(x_i)-f(x_i))\alpha\set{x_i} \\
+&\le \sum_{i =1}^n (M_i-m_i)\Delta\alpha_i \lt  \eps
+\end{align}
+Por lo tanto es integrable.
+Sabemos que
+\begin{align}
+\alpha(s)-\alpha(s^-)\gt 0
+&\implies f(s)=f(s^-) \\
+\alpha(s^+)-\alpha(s)\gt 0
+&\implies f(s^+)=f(s)
+\end{align}
+
+Crearemos una nueva División $P'$ que aproveche esto. En el primer caso, añadimos para $\delta\gt 0$, $y_i = x_i - \delta \lt  x_i$, y en el segundo, $x_i\lt  x_i+\delta = z_i$, para esos casos, $y_i, z_i \leadsto x_i$, y por continuidad lateral, $\inf_{[y_i, x_i]}f(x) \leadsto f(x_i)$ etc. Luego por ejemplo,
+\begin{align}
+m_{i}^-\Delta \alpha_i^- &\leadsto f(x_i)\alpha\set{x_i} \\
+m_{i}^+\Delta \alpha_i^+ &\leadsto f(x_i)\alpha\set{x_i} \\
+m_{i}^-\Delta \alpha_i^-+m_{i}^+\Delta \alpha_i^+ &\leadsto f(x_i)\alpha\set{x_i}
+\end{align}
+para el caso 1,2 y ambos al mismo tiempo. Por el otro lado, los lados clasicos, donde esta vez tendremos
+\begin{align}
+\inf_{[x_{i-1}, y_i]} f(s)(\alpha(y_i)-\alpha(x_{i-1})) &\leadsto m_{H_i}\alpha(x_{i-1,}, x_i) \\
+\inf_{[z_{i-1}, x_i]} f(s)(\alpha(x_i)-\alpha(z_{i-1})) &\leadsto m_{H_i}\alpha(x_{i-1,}, x_i) \\
+\inf_{[z_{i-1}, y_i]} f(s)(\alpha(y_i)-\alpha(z_{i-1})) &\leadsto m_{H_i}\alpha(x_{i-1,}, x_i)
+\end{align}
+Para cada caso, asi$$
+\lim_{\delta \downarrow 0} L(P', f) = L(P^\square, f)
+$$
+Pero $L(P',f) \le I \le U(P',f)$ asi tenemos
+$$
+L(P^\square, f) \le I \le U(P^\square, f)$$
+Por lo tanto las integrales son iguales.
+
+CARD 3 "Integrable por particiones -> Integrable por divisiones (con un pequeño caveat.)"
+FRONT
+Supongamos $f\in\mathscr B([a,b])$es integrable por particiones
+y además
+\begin{align}
+\alpha(s)-\alpha(s^-)\gt 0
+&\implies f(s)=f(s^-) \\
+\alpha(s^+)-\alpha(s)\gt 0
+&\implies f(s^+)=f(s)
+\end{align}
+Entonces $f$ es integrable por división, y las integrales coinciden.
+BACK
+Sea $P^\square=G \cup H =\set{\set{x_i}}_{i=0}^n \cup \set{(x_{i-1},x_i)}_{i=1}^n$ tal que
+\[
+U(P^\square,f)-L(P^\square,f)\lt \varepsilon.
+\]
+Donde definimos $P'_\delta$ como en el inciso anterior. Si definimos
+
+$$
+I^-=\sup_P L(P,f),
+\qquad
+I^+=\inf_P U(P,f),
+$$
+
+entonces, para todo $\delta$,
+
+$$
+L(P'_\delta,f)\leq I^+\leq I^- \leq U(P'_\delta,f).
+$$
+
+Tomando $\delta\downarrow0$,
+
+$$
+L(P^\square,f)\leq I^+\leq I^-\leq U(P^\square,f).
+$$
+
+Por lo tanto,
+
+$$
+I^+-I^-
+\leq
+U(P^\square,f)-L(P^\square,f)
+\lt \varepsilon.
+$$
+
+Como $\varepsilon\gt 0$ es arbitrario,
+
+$$
+I^+=I^-.
+$$
+
+Luego $f\in\mathscr R_\alpha([a,b])$ y las integrales coinciden.
+
+<hr>
+Es lamentable que ambas nociones no coincidan. Sin embargo tenemos una contención estricta, y la integral por particiones es una buena generalización, pues esta coincide con la integral de <i>Lebesgue-Stieltjes</i> bajo la medida $\alpha$ inducida.
+
+NEW NOTE "Teoremas de Integrabilidad de Riemann-Stieltjes (Rudin 6.8 - 6.11)"
+MODE serial
+TAGS analisis, integracion, riemann_stieltjes, rudin_ch6
+RETENTION 0.85
+POS 2100.0, 780.0
+
+CARD 1 "Theorem 6.8: Continuous Functions are Riemann-Stieltjes Integrable"
+FRONT
+<strong>Theorem 6.8:</strong> Prove that if $f$ is continuous on $[a,b]$, then $f \in \mathscr R(\alpha)$ on $[a,b]$.
+BACK
+Let $\varepsilon \gt  0$. Choose $\eta \gt  0$ so that $[\alpha(b) - \alpha(a)]\eta \lt  \varepsilon$.<br><br>Since $f$ is continuous on the compact set $[a,b]$, $f$ is <em>uniformly continuous</em> on $[a,b]$ (Theorem 4.19), so there exists $\delta \gt  0$ such that $|f(x) - f(t)| \lt  \eta$ whenever $|x - t| \lt  \delta$.<br><br>If $P$ is any partition with $\Delta x_i \lt  \delta$ for all $i$, then $M_i - m_i \le \eta$ ($i=1,\dots,n$).<br><br>Therefore:<br>$$U(P,f,\alpha) - L(P,f,\alpha) = \sum_{i=1}^n (M_i - m_i)\Delta\alpha_i \le \eta \sum_{i=1}^n \Delta\alpha_i = \eta[\alpha(b) - \alpha(a)] \lt  \varepsilon$$<br>By Theorem 6.6, $f \in \mathscr R(\alpha)$.
+
+CARD 2 "Theorem 6.9: Monotonic Functions with Continuous Integrator"
+FRONT
+<strong>Theorem 6.9:</strong> Prove that if $f$ is monotonic on $[a,b]$ and $\alpha$ is continuous on $[a,b]$, then $f \in \mathscr R(\alpha)$.
+BACK
+Let $\varepsilon \gt  0$. For any integer $n$, choose a partition $P = \{x_0, \dots, x_n\}$ such that:<br>$$\Delta\alpha_i = \frac{\alpha(b) - \alpha(a)}{n} \quad (i = 1, \dots, n)$$<br>(This is possible since $\alpha$ is continuous on $[a,b]$ by the Intermediate Value Theorem).<br><br>Assuming $f$ is monotonically increasing, $M_i = f(x_i)$ and $m_i = f(x_{i-1})$. Then:<br>$$U(P,f,\alpha) - L(P,f,\alpha) = \frac{\alpha(b) - \alpha(a)}{n} \sum_{i=1}^n [f(x_i) - f(x_{i-1})] = \frac{\alpha(b) - \alpha(a)}{n} [f(b) - f(a)] \lt  \varepsilon$$<br>for $n$ sufficiently large. By Theorem 6.6, $f \in \mathscr R(\alpha)$.
+
+CARD 3 "Theorem 6.10: Finitely Many Discontinuities — Part 1: Covering Set E"
+FRONT
+<strong>Theorem 6.10 (Part 1/2):</strong> Suppose $f$ is bounded on $[a,b]$, $f$ has only finitely many points of discontinuity, and $\alpha$ is continuous at every point at which $f$ is discontinuous.<br><br>Paso 1: Definir la cota $M$ y cubrir el conjunto finito de discontinuidades $E$:
+BACK
+Let $\varepsilon \gt  0$. Put $M = \sup |f(x)|$.<br><br>Let $E$ be the finite set of points at which $f$ is discontinuous.<br><br>Since $E$ is finite and $\alpha$ is continuous at every point of $E$, we can cover $E$ by finitely many disjoint closed subintervals $[u_j, v_j] \subset [a,b]$ such that:<br>$$\sum [\alpha(v_j) - \alpha(u_j)] \lt  \varepsilon$$<br>Furthermore, we place these intervals such that every point of $E \cap (a,b)$ lies in the interior of some $[u_j, v_j]$.
+
+CARD 4 "Theorem 6.10: Finitely Many Discontinuities — Part 2: Partition & Bound"
+FRONT
+<strong>Theorem 6.10 (Part 2/2):</strong> Paso 2: Utilizar la compacidad del complemento $K = [a,b] \setminus \bigcup (u_j, v_j)$ y acotar $U(P,f,\alpha) - L(P,f,\alpha)$:
+BACK
+Remove the open segments $(u_j, v_j)$ from $[a,b]$. The remaining set $K$ is compact.<br><br>Hence $f$ is uniformly continuous on $K$, so there exists $\delta \gt  0$ such that $|f(s) - f(t)| \lt  \varepsilon$ if $s, t \in K$ and $|s - t| \lt  \delta$.<br><br>Form a partition $P = \{x_0, x_1, \dots, x_n\}$ containing all $u_j$ and $v_j$, with no points inside $(u_j, v_j)$, and with $\Delta x_i \lt  \delta$ outside the intervals $[u_j, v_j]$.<br><br>Note that $M_i - m_i \le 2M$ for intervals $[u_j, v_j]$, and $M_i - m_i \le \varepsilon$ otherwise.<br><br>Therefore:<br>$$U(P,f,\alpha) - L(P,f,\alpha) \le [\alpha(b) - \alpha(a)]\varepsilon + 2M\varepsilon$$<br>Since $\varepsilon$ is arbitrary, Theorem 6.6 shows $f \in \mathscr R(\alpha)$.
+
+CARD 5 "Theorem 6.11: Composition with Continuous Function — Part 1: Delta & Partition P"
+FRONT
+<strong>Theorem 6.11 (Part 1/3):</strong> Suppose $f \in \mathscr R(\alpha)$ on $[a,b]$, $m \le f \le M$, $\phi$ is continuous on $[m,M]$, and $h(x) = \phi(f(x))$.<br><br>Paso 1: Usar la continuidad uniforme de $\phi$ para elegir $\delta$ y seleccionar la partición $P$ para $f$:
+BACK
+Choose $\varepsilon \gt  0$. Since $\phi$ is continuous on the compact set $[m,M]$, $\phi$ is uniformly continuous on $[m,M]$.<br><br>Hence there exists $\delta \gt  0$ such that $\delta \lt  \varepsilon$ and:<br>$$|\phi(s) - \phi(t)| \lt  \varepsilon \quad \text{if } |s - t| \lt  \delta \text{ and } s,t \in [m,M]$$<br>Since $f \in \mathscr R(\alpha)$, by Theorem 6.6 there exists a partition $P = \{x_0, x_1, \dots, x_n\}$ of $[a,b]$ such that:<br>$$U(P,f,\alpha) - L(P,f,\alpha) \lt  \delta^2$$
+
+CARD 6 "Theorem 6.11: Composition with Continuous Function — Part 2: Index Classes A & B"
+FRONT
+<strong>Theorem 6.11 (Part 2/3):</strong> Paso 2: Dividir los subintervalos en las clases $A$ y $B$ y acotar las diferencias $M_i^* - m_i^*$:
+BACK
+Let $M_i, m_i$ be the bounds for $f$, and $M_i^*, m_i^*$ be the bounds for $h = \phi \circ f$.<br><br>Divide the indices $1, \dots, n$ into two classes:<br><ul><li>$i \in A$ if $M_i - m_i \lt  \delta$.</li><li>$i \in B$ if $M_i - m_i \ge \delta$.</li></ul><br>For $i \in A$: $M_i^* - m_i^* \le \varepsilon$ (by choice of $\delta$).<br>For $i \in B$: $M_i^* - m_i^* \le 2K$, where $K = \sup |\phi(t)|$ for $m \le t \le M$.<br><br>Furthermore, $\delta \sum_{i \in B} \Delta\alpha_i \le \sum_{i \in B} (M_i - m_i)\Delta\alpha_i \lt  \delta^2 \implies \sum_{i \in B} \Delta\alpha_i \lt  \delta$.
+
+CARD 7 "Theorem 6.11: Composition with Continuous Function — Part 3: Sum Bound & Conclusion"
+FRONT
+<strong>Theorem 6.11 (Part 3/3):</strong> Paso 3: Acotar $U(P,h,\alpha) - L(P,h,\alpha)$ y concluir que $h = \phi \circ f \in \mathscr R(\alpha)$:
+BACK
+Splitting the upper and lower sum difference into classes $A$ and $B$:<br>$$\begin{aligned} U(P,h,\alpha) - L(P,h,\alpha) &= \sum_{i \in A} (M_i^* - m_i^*) \Delta\alpha_i + \sum_{i \in B} (M_i^* - m_i^*) \Delta\alpha_i \\ &\le \varepsilon \sum_{i \in A} \Delta\alpha_i + 2K \sum_{i \in B} \Delta\alpha_i \\ &\le \varepsilon [\alpha(b) - \alpha(a)] + 2K\delta \\ &\lt  \varepsilon [\alpha(b) - \alpha(a) + 2K] \end{aligned}$$<br>Since $\varepsilon$ was arbitrary, Theorem 6.6 implies that $h = \phi(f(x)) \in \mathscr R(\alpha)$ on $[a,b]$.
+
+NEW NOTE "Properties of the Integral (Rudin 6.12, 6.13, 6.16)"
+MODE serial
+TAGS analisis, integracion, propiedades_integral, rudin_ch6
+RETENTION 0.85
+POS 2400.0, 780.0
+
+CARD 1 "Theorem 6.12: Properties of the Integral — Linearity & Order"
+FRONT
+<strong>Theorem 6.12 (Properties of the Integral) — Statement & Proof of (a):</strong><br>Enunciar las 5 propiedades (a-e) y demostrar la parte (a) (linealidad en el integrando):<br><ul><li>(a) $f_1, f_2 \in \mathscr R(\alpha) \implies f_1 + f_2 \in \mathscr R(\alpha)$ y $\int (f_1+f_2)d\alpha = \int f_1 d\alpha + \int f_2 d\alpha$; $cf \in \mathscr R(\alpha)$ y $\int cf d\alpha = c \int f d\alpha$.</li><li>(b) $f_1 \le f_2 \implies \int f_1 d\alpha \le \int f_2 d\alpha$.</li><li>(c) Aditividad en dominios $[a,c]$ y $[c,b]$.</li><li>(d) $|f| \le M \implies |\int_a^b f d\alpha| \le M[\alpha(b)-\alpha(a)]$.</li><li>(e) Linealidad en el integrador $\alpha$.</li></ul>
+BACK
+<strong>Demostración de (a):</strong><br>For $f = f_1 + f_2$ and any partition $P$:<br>$$L(P,f_1,\alpha) + L(P,f_2,\alpha) \le L(P,f,\alpha) \le U(P,f,\alpha) \le U(P,f_1,\alpha) + U(P,f_2,\alpha)$$<br>Given $\varepsilon \gt  0$, choose $P_1, P_2$ such that $U(P_j,f_j,\alpha) - L(P_j,f_j,\alpha) \lt  \varepsilon$ ($j=1,2$). Replacing $P_1, P_2$ by their common refinement $P = P_1 \cup P_2$:<br>$$U(P,f,\alpha) - L(P,f,\alpha) \lt  2\varepsilon \implies f \in \mathscr R(\alpha)$$<br>Furthermore, $U(P,f_j,\alpha) \lt  \int f_j d\alpha + \varepsilon$, so:<br>$$\int f d\alpha \le U(P,f,\alpha) \lt  \int f_1 d\alpha + \int f_2 d\alpha + 2\varepsilon \implies \int f d\alpha \le \int f_1 d\alpha + \int f_2 d\alpha$$<br>Replacing $f_1, f_2$ by $-f_1, -f_2$ reverses the inequality $\implies \int (f_1+f_2) d\alpha = \int f_1 d\alpha + \int f_2 d\alpha$.<br><br><em>Observación:</em> ¡Las demostraciones de las partes (b), (d) y (e) quedan como ejercicio para el lector! lol
+
+CARD 2 "Theorem 6.12(c): Additivity over Subintervals [a,c] and [c,b]"
+FRONT
+<strong>Theorem 6.12(c):</strong> Demostrar que si $f \in \mathscr R(\alpha)$ en $[a,b]$ y $a \lt  c \lt  b$, entonces $f \in \mathscr R(\alpha)$ en $[a,c]$ y en $[c,b]$, y:<br>$$\int_a^c f d\alpha + \int_c^b f d\alpha = \int_a^b f d\alpha$$
+BACK
+Given $\varepsilon \gt  0$, choose a partition $P^*$ of $[a,b]$ such that $U(P^*,f,\alpha) - L(P^*,f,\alpha) \lt  \varepsilon$.<br><br>Form the refinement $P = P^* \cup \{c\}$ by adding the point $c$. By refinement properties:<br>$$U(P,f,\alpha) - L(P,f,\alpha) \le U(P^*,f,\alpha) - L(P^*,f,\alpha) \lt  \varepsilon$$<br>The partition $P$ splits into $P_1 = P \cap [a,c]$ (partition of $[a,c]$) and $P_2 = P \cap [c,b]$ (partition of $[c,b]$).<br><br>Since $U(P,f,\alpha) = U(P_1,f,\alpha) + U(P_2,f,\alpha)$ and $L(P,f,\alpha) = L(P_1,f,\alpha) + L(P_2,f,\alpha)$:<br>$$[U(P_1,f,\alpha) - L(P_1,f,\alpha)] + [U(P_2,f,\alpha) - L(P_2,f,\alpha)] = U(P,f,\alpha) - L(P,f,\alpha) \lt  \varepsilon$$<br>Since both terms are non-negative, each is $\lt  \varepsilon$, proving $f \in \mathscr R(\alpha)$ on $[a,c]$ and $[c,b]$.<br><br>Furthermore:<br>$$\left| \int_a^c f d\alpha + \int_c^b f d\alpha - \int_a^b f d\alpha \right| \le U(P_1,f,\alpha) + U(P_2,f,\alpha) - L(P,f,\alpha) \lt  \varepsilon$$<br>Since $\varepsilon$ is arbitrary, equality $\int_a^c f d\alpha + \int_c^b f d\alpha = \int_a^b f d\alpha$ follows.
+
+CARD 3 "Theorem 6.13: Products & Absolute Values of Integrable Functions"
+FRONT
+<strong>Theorem 6.13:</strong> Si $f, g \in \mathscr R(\alpha)$ en $[a,b]$, demostrar que:<br>(a) $fg \in \mathscr R(\alpha)$<br>(b) $|f| \in \mathscr R(\alpha)$ y $\left|\int_a^b f d\alpha\right| \le \int_a^b |f| d\alpha$
+BACK
+<strong>Demostración de (a):</strong><br>Taking $\phi(t) = t^2$, Theorem 6.11 shows $f^2 \in \mathscr R(\alpha)$ whenever $f \in \mathscr R(\alpha)$.<br>Use the algebraic identity:<br>$$4fg = (f+g)^2 - (f-g)^2$$<br>Since $f+g$ and $f-g$ are in $\mathscr R(\alpha)$, their squares $(f+g)^2$ and $(f-g)^2$ are in $\mathscr R(\alpha)$. By linearity, $4fg \in \mathscr R(\alpha) \implies fg \in \mathscr R(\alpha)$.<br><br><strong>Demostración de (b):</strong><br>Taking $\phi(t) = |t|$, Theorem 6.11 shows $|f| \in \mathscr R(\alpha)$.<br>Choose $c = \pm 1$ so that $c \int_a^b f d\alpha \ge 0$. Since $c f(x) \le |f(x)|$ for all $x \in [a,b]$:<br>$$\left|\int_a^b f d\alpha\right| = c \int_a^b f d\alpha = \int_a^b c f d\alpha \le \int_a^b |f| d\alpha$$
+
+CARD 4 "Theorem 6.16: Integration with Respect to Point-Mass Series Integrator"
+FRONT
+<strong>Theorem 6.16:</strong> Suppose $c_n \ge 0$, $\sum_{n=1}^\infty c_n$ converges, $\{s_n\}$ is a sequence of distinct points in $(a,b)$, $\alpha(x) = \sum_{n=1}^\infty c_n I(x - s_n)$, and $f$ is continuous on $[a,b]$. Demostrar que:<br>$$\int_a^b f d\alpha = \sum_{n=1}^\infty c_n f(s_n)$$
+BACK
+Given $\varepsilon \gt  0$, choose $N$ such that $\sum_{N+1}^\infty c_n \lt  \varepsilon$.<br><br>Split $\alpha = \alpha_1 + \alpha_2$, where $\alpha_1(x) = \sum_{n=1}^N c_n I(x - s_n)$ and $\alpha_2(x) = \sum_{N+1}^\infty c_n I(x - s_n)$.<br><br>By Theorems 6.12 and 6.15 (finite point masses):<br>$$\int_a^b f d\alpha_1 = \sum_{n=1}^N c_n f(s_n)$$<br>Since $\alpha_2(b) - \alpha_2(a) = \sum_{N+1}^\infty c_n \lt  \varepsilon$, by Theorem 6.12(d):<br>$$\left|\int_a^b f d\alpha_2\right| \le M\varepsilon \quad \text{where } M = \sup |f(x)|$$<br>Using $\alpha = \alpha_1 + \alpha_2$ and linearity (Theorem 6.12e):<br>$$\left| \int_a^b f d\alpha - \sum_{n=1}^N c_n f(s_n) \right| = \left| \int_a^b f d\alpha_2 \right| \le M\varepsilon$$<br>Letting $N \to \infty$, we obtain $\int_a^b f d\alpha = \sum_{n=1}^\infty c_n f(s_n)$.
+
+NEW NOTE "Differentiability of Variable of Integration (Rudin 6.17, 6.19)"
+MODE serial
+TAGS analisis, cambio_de_variable, integracion, rudin_ch6
+RETENTION 0.85
+POS 2700.0, 780.0
+
+CARD 1 "Theorem 6.17: Reduction to Riemann Integral — Step 1: Partition & MVT"
+FRONT
+<strong>Theorem 6.17 (Reduction to Riemann Integral):</strong><br>Assume $\alpha$ increases monotonically, $\alpha' \in \mathscr R$ on $[a,b]$, and $f$ is bounded on $[a,b]$.<br>Prove that $f \in \mathscr R(\alpha) \iff f\alpha' \in \mathscr R$, and in that case $\int_a^b f d\alpha = \int_a^b f(x)\alpha'(x) dx$.<br><br>Paso 1: Aplicar el Criterio de Integrabilidad a $\alpha'$ y el Teorema del Valor Medio:
+BACK
+Given $\varepsilon \gt  0$, apply Theorem 6.6 to $\alpha'$: there is a partition $P = \{x_0, \dots, x_n\}$ of $[a,b]$ such that:<br>$$U(P, \alpha') - L(P, \alpha') \lt  \varepsilon$$<br>By the Mean Value Theorem applied to $\alpha$ on $[x_{i-1}, x_i]$, there exist points $t_i \in [x_{i-1}, x_i]$ such that:<br>$$\Delta\alpha_i = \alpha'(t_i) \Delta x_i \quad (i = 1, \dots, n)$$
+
+CARD 2 "Theorem 6.17: Reduction to Riemann Integral — Step 2: Bounding Sums"
+FRONT
+<strong>Theorem 6.17:</strong> Paso 2: Acotar la diferencia entre la suma de Riemann-Stieltjes y la suma de Riemann para $f\alpha'$:
+BACK
+If $s_i \in [x_{i-1}, x_i]$, then $\sum_{i=1}^n |\alpha'(s_i) - \alpha'(t_i)| \Delta x_i \lt  \varepsilon$ (by $U(P,\alpha') - L(P,\alpha') \lt  \varepsilon$).<br><br>Put $M = \sup |f(x)|$. Since $\sum_{i=1}^n f(s_i) \Delta\alpha_i = \sum_{i=1}^n f(s_i)\alpha'(t_i) \Delta x_i$, it follows that:<br>$$\left| \sum_{i=1}^n f(s_i) \Delta\alpha_i - \sum_{i=1}^n f(s_i)\alpha'(s_i) \Delta x_i \right| \le M\varepsilon$$<br>In particular, $\sum_{i=1}^n f(s_i) \Delta\alpha_i \le U(P, f\alpha') + M\varepsilon$ for all choices of $s_i$, so:<br>$$U(P, f, \alpha) \le U(P, f\alpha') + M\varepsilon$$
+
+CARD 3 "Theorem 6.17: Reduction to Riemann Integral — Step 3: Reverse Inequality"
+FRONT
+<strong>Theorem 6.17:</strong> Paso 3: Demostrar la desigualdad inversa y establecer $|U(P, f, \alpha) - U(P, f\alpha')| \le M\varepsilon$:
+BACK
+The same argument applied to the upper sum of $f\alpha'$ yields:<br>$$U(P, f\alpha') \le U(P, f, \alpha) + M\varepsilon$$<br>Combining both inequalities gives:<br>$$|U(P, f, \alpha) - U(P, f\alpha')| \le M\varepsilon$$
+
+CARD 4 "Theorem 6.17: Reduction to Riemann Integral — Step 4: Upper/Lower Integrals Equality"
+FRONT
+<strong>Theorem 6.17:</strong> Paso 4: Extender a refinamientos, igualar las integrales superiores e inferiores y concluir el teorema:
+BACK
+Note that $U(P,\alpha') - L(P,\alpha') \lt  \varepsilon$ remains true if $P$ is replaced by any refinement, so $|U(P, f, \alpha) - U(P, f\alpha')| \le M\varepsilon$ holds for all refinements.<br><br>We conclude that:<br>$$\left| \overline{\int}_a^b f d\alpha - \overline{\int}_a^b f(x)\alpha'(x) dx \right| \le M\varepsilon$$<br>Since $\varepsilon$ is arbitrary:<br>$$\overline{\int}_a^b f d\alpha = \overline{\int}_a^b f(x)\alpha'(x) dx$$<br>The equality of lower integrals follows in exactly the same way. Thus $f \in \mathscr R(\alpha) \iff f\alpha' \in \mathscr R$, and $\int_a^b f d\alpha = \int_a^b f(x)\alpha'(x) dx$.
+
+CARD 5 "Theorem 6.19: Change of Variable — Step 1: Partition Bijection & Sums"
+FRONT
+<strong>Theorem 6.19 (Change of Variable in Riemann-Stieltjes Integrals):</strong><br>Suppose $\varphi$ is a strictly increasing continuous function mapping $[A,B]$ onto $[a,b]$, $\alpha$ is monotonic increasing on $[a,b]$, $f \in \mathscr R(\alpha)$, $\beta(y) = \alpha(\varphi(y))$, $g(y) = f(\varphi(y))$.<br><br>Prove $g \in \mathscr R(\beta)$ and $\int_A^B g d\beta = \int_a^b f d\alpha$.<br>Paso 1: Correspondencia biyectiva entre particiones $P$ y $Q$ y las sumas superiores e inferiores:
+BACK
+To each partition $P = \{x_0, \dots, x_n\}$ of $[a,b]$ corresponds a partition $Q = \{y_0, \dots, y_n\}$ of $[A,B]$ such that $x_i = \varphi(y_i)$.<br><br>Since $\varphi$ is a continuous strictly increasing bijection from $[A,B]$ onto $[a,b]$, all partitions of $[A,B]$ are obtained in this way.<br><br>The values taken by $f$ on $[x_{i-1}, x_i]$ are exactly the same as those taken by $g$ on $[y_{i-1}, y_i]$, and $\Delta\beta_i = \alpha(\varphi(y_i)) - \alpha(\varphi(y_{i-1})) = \alpha(x_i) - \alpha(x_{i-1}) = \Delta\alpha_i$.<br><br>Therefore:<br>$$U(Q, g, \beta) = U(P, f, \alpha), \quad L(Q, g, \beta) = L(P, f, \alpha)$$
+
+CARD 6 "Theorem 6.19: Change of Variable — Step 2: Proof & Classic Formula"
+FRONT
+<strong>Theorem 6.19:</strong> Paso 2: Concluir $\int_A^B g d\beta = \int_a^b f d\alpha$ y deducir la fórmula clásica del cambio de variable para integrales de Riemann:
+BACK
+Since $f \in \mathscr R(\alpha)$, $P$ can be chosen so that both $U(P, f, \alpha)$ and $L(P, f, \alpha)$ are arbitrarily close to $\int_a^b f d\alpha$.<br><br>Combined with $U(Q, g, \beta) = U(P, f, \alpha)$ and Theorem 6.6, this proves $g \in \mathscr R(\beta)$ and:<br>$$\int_A^B g d\beta = \int_a^b f d\alpha$$<br><hr><p><strong>Caso Especial (Cambio de variable de Riemann):</strong><br>Take $\alpha(x) = x \implies \beta = \varphi$. If $\varphi' \in \mathscr R$ on $[A,B]$, applying Theorem 6.17 to the left side yields:<br>$$\int_a^b f(x) dx = \int_A^B f(\varphi(y)) \varphi'(y) dy$$</p>
+
+NEW NOTE "The Fundamental Theorem of Calculus & Integration by Parts (Rudin 6.20 - 6.22)"
+MODE serial
+TAGS analisis, integracion, integracion_por_partes, rudin_ch6, tfc
+RETENTION 0.85
+POS 3000.0, 780.0
+
+CARD 1 "Theorem 6.20: FTC Part I — Step 1: Uniform Continuity of F"
+FRONT
+<strong>Theorem 6.20 (FTC Part I) — Step 1: Uniform Continuity:</strong><br>Let $f \in \mathscr R$ on $[a,b]$. For $a \le x \le b$, put $F(x) = \int_a^x f(t) dt$.<br>Demostrar que $F$ es uniformemente continua en $[a,b]$:
+BACK
+Since $f \in \mathscr R$, $f$ is bounded. Suppose $|f(t)| \le M$ for $a \le t \le b$.<br><br>If $a \le x \lt  y \le b$, then by Theorem 6.12(c) and (d):<br>$$|F(y) - F(x)| = \left| \int_x^y f(t) dt \right| \le M(y - x)$$<br>Given $\varepsilon \gt  0$, we see that $|F(y) - F(x)| \lt  \varepsilon$ provided that $|y - x| \lt  \varepsilon / M$.<br><br>This proves continuity (and in fact, uniform continuity) of $F$ on $[a,b]$.
+
+CARD 2 "Theorem 6.20: FTC Part I — Step 2: Differentiability F'(x0) = f(x0)"
+FRONT
+<strong>Theorem 6.20 (FTC Part I) — Step 2: Differentiability:</strong><br>Demostrar que si $f$ es continua en $x_0 \in [a,b]$, entonces $F$ es derivable en $x_0$ y $F'(x_0) = f(x_0)$:
+BACK
+Given $\varepsilon \gt  0$, since $f$ is continuous at $x_0$, choose $\delta \gt  0$ such that $|f(t) - f(x_0)| \lt  \varepsilon$ if $|t - x_0| \lt  \delta$ and $a \le t \le b$.<br><br>Hence, if $x_0 - \delta \lt  s \le x_0 \le t \lt  x_0 + \delta$ and $a \le s \lt  t \le b$, we have by Theorem 6.12(d):<br>$$\left| \frac{F(t) - F(s)}{t - s} - f(x_0) \right| = \left| \frac{1}{t - s} \int_s^t [f(u) - f(x_0)] du \right| \lt  \varepsilon$$<br>It follows that $F'(x_0) = f(x_0)$.
+
+CARD 3 "Theorem 6.21: The Fundamental Theorem of Calculus (Part II)"
+FRONT
+<strong>Theorem 6.21 (The Fundamental Theorem of Calculus — Part II):</strong><br>If $f \in \mathscr R$ on $[a,b]$ and if there is a differentiable function $F$ on $[a,b]$ such that $F' = f$, prove that:<br>$$\int_a^b f(x) dx = F(b) - F(a)$$
+BACK
+Given $\varepsilon \gt  0$, choose a partition $P = \{x_0, \dots, x_n\}$ of $[a,b]$ so that $U(P,f) - L(P,f) \lt  \varepsilon$.<br><br>The Mean Value Theorem furnishes points $t_i \in [x_{i-1}, x_i]$ such that:<br>$$F(x_i) - F(x_{i-1}) = F'(t_i) \Delta x_i = f(t_i) \Delta x_i \quad (i = 1, \dots, n)$$<br>Summing over $i$:<br>$$\sum_{i=1}^n f(t_i) \Delta x_i = F(b) - F(a)$$<br>Since $\sum f(t_i) \Delta x_i$ and $\int_a^b f(x) dx$ both lie between $L(P,f)$ and $U(P,f)$, Theorem 6.7(c) yields:<br>$$\left| F(b) - F(a) - \int_a^b f(x) dx \right| \lt  \varepsilon$$<br>Since this holds for every $\varepsilon \gt  0$, the proof is complete: $\int_a^b f(x) dx = F(b) - F(a)$.
+
+CARD 4 "Theorem 6.22: Integration by Parts"
+FRONT
+<strong>Theorem 6.22 (Integration by Parts):</strong><br>Suppose $F$ and $G$ are differentiable functions on $[a,b]$, $F' = f \in \mathscr R$, and $G' = g \in \mathscr R$. Prove that:<br>$$\int_a^b F(x)g(x) dx = F(b)G(b) - F(a)G(a) - \int_a^b f(x)G(x) dx$$
+BACK
+Put $H(x) = F(x)G(x)$. By the product rule for derivatives, $H'(x) = F'(x)G(x) + F(x)G'(x) = f(x)G(x) + F(x)g(x)$.<br><br>By Theorem 6.13, products of integrable functions are integrable, so $H' \in \mathscr R$.<br><br>Apply Theorem 6.21 (FTC Part II) to $H$ and its derivative $H'$:<br>$$\int_a^b H'(x) dx = H(b) - H(a) \implies \int_a^b [f(x)G(x) + F(x)g(x)] dx = F(b)G(b) - F(a)G(a)$$<br>By linearity of the integral (Theorem 6.12a):<br>$$\int_a^b F(x)g(x) dx = F(b)G(b) - F(a)G(a) - \int_a^b f(x)G(x) dx$$
+
+NEW NOTE "Serie de funciones."
+MODE standard
+RETENTION 0.85
+POS 0.0, -520.0
+
+CARD 1 "Series de funciones."
+FRONT
+Sean $(f_n)_n$ una secuencia de funciones tales que $\forall n \in \mathbb N.\ f_n:X \to V$ desde un espacio metrico a uno normado. Cual es la serie y cuando hay convergencia?
+BACK
+Definimos $S_n(x) = \sum_{i=1}^n f_i(x)$, entonces $S(x)=\lim_{n\to\infty}S_n(x)$ si este converge.
+
+# Dependency Links
+LINK "Producto Interno" -> "Norma"
+LINK "Norma" -> "Métrica"
+LINK "Producto Interno" -> "Desigualdad de Cauchy-Schwarz"
+LINK "Segmentos e Intervalos" -> "k-celdas"
+LINK "k-celdas" -> "Convexidad"
+LINK "Métrica" -> "Bolas en un Espacio Métrico"
+LINK "Límite de una Secuencia" -> "Subsecuencia y Límite Secuencial"
+LINK "Subsecuencia y Límite Secuencial" -> "Secuencias de Cauchy"
+LINK "Secuencias de Cauchy" -> "Diámetro de un Conjunto"
+LINK "Diámetro de un Conjunto" -> "Espacio Métrico Completo"
+LINK "Secuencia Monótona" -> "Límites Infinitos"
+LINK "Límites Infinitos" -> "Límites Superior e Inferior"
+LINK "Series de Potencias" -> "Convergencia Absoluta"
+LINK "Convergencia Absoluta" -> "Reordenamiento de Series (Rearrangements)"
+LINK "Límite de una Secuencia" -> "Definición del Número e"
+LINK "Sumatoria y Sumas Parciales" -> "Series de Potencias"
+LINK "Demostración sobre la Raíz de 2" -> "Demostración sobre la n-Raíz"
+LINK "Demostraciones Topológicas 1" -> "Demostraciones Topológicas 2 (Cerradura e Intro Compactos)"
+LINK "Demostraciones Topológicas 2 (Cerradura e Intro Compactos)" -> "Demostraciones Topológicas 2.2 (Propiedades de Compactos)"
+LINK "Demostraciones Topológicas 2.2 (Propiedades de Compactos)" -> "Demostraciones Topológicas 3 (Intersecciones y Celdas)"
+LINK "Límite Topológico" -> "Continuidad"
+LINK "Continuidad" -> "Continuidad Uniforme"
+LINK "Vecindarios en el Infinito" -> "Límite Topológico Generalizado a los Reales Extendidos"
+LINK "Derivada" -> "Derivadas de Orden Superior"
+LINK "Derivadas de Orden Superior" -> "Espacios de Funciones Continuamente Diferenciables C^n(I)"
+LINK "Espacio de Funciones Continuas C(X,Y)" -> "Espacio de Funciones Continuas Acotadas C_b(X,Y)"
+LINK "Espacios de Funciones Continuamente Diferenciables C^n(I)" -> "Polinomio de Taylor"
+LINK "Límite de una Secuencia" -> "Secuencia Monótona"
+LINK "Secuencia Monótona" -> "Funciones Monótonas"
+LINK "Límite Puntual" -> "Convergencia Uniforme"
+LINK "Demostraciones Secuenciales 1" -> "Demostraciones Secuenciales 2"
+LINK "Demostraciones Secuenciales 2" -> "Demostraciones Secuenciales 3"
+LINK "Demostraciones Secuenciales 3" -> "Demostraciones Secuenciales 4"
+LINK "Demostraciones Secuenciales 4" -> "Demostraciones Secuenciales 5"
+LINK "Demostraciones Secuenciales 5" -> "Demostraciones Secuenciales 6"
+LINK "Demostraciones Secuenciales 6" -> "Demostraciones Continuas 1"
+LINK "Demostraciones Continuas 1" -> "Demostraciones Continuas 2"
+LINK "Demostraciones Derivables 1" -> "Demostraciones Derivables 2"
+LINK "Demostraciones Derivables 2" -> "Demostraciones Derivables 3"
+LINK "Demostraciones Continuas 2" -> "Demostraciones Continuas 3"
+LINK "Definición del Número e" -> "Límite de (1 + x/n)^n y Serie de Potencias de e^x"
+LINK "Límites Superior e Inferior" -> "Equivalencia de Definiciones de Limsup"
+LINK "Some Special Sequences" -> "Basic Series Theorems"
+LINK "Power Series and Radius of Convergence (Rudin 3.39 - 3.40)" -> "Summation by Parts and Absolute Convergence (Rudin 3.41 - 3.45)"
+LINK "Basic Series Theorems" -> "Series of Non-negative Terms (Rudin 3.26 - 3.29)"
+LINK "Series of Non-negative Terms (Rudin 3.26 - 3.29)" -> "The Root and Ratio Tests (Rudin 3.33, 3.34, 3.37)"
+LINK "The Root and Ratio Tests (Rudin 3.33, 3.34, 3.37)" -> "Power Series and Radius of Convergence (Rudin 3.39 - 3.40)"
+LINK "Summation by Parts and Absolute Convergence (Rudin 3.41 - 3.45)" -> "Addition and Multiplication (Convolution) of Series (Rudin 3.47, 3.50, 3.51)"
+LINK "Addition and Multiplication (Convolution) of Series (Rudin 3.47, 3.50, 3.51)" -> "Rearrangements of Series (Riemann Rearrangement & Dirichlet-Riemann Theorems)"
+LINK "Integración de Riemann-Stieltjes" -> "Integral de Riemann (Clasica)"
+LINK "Bolas en un Espacio Métrico" -> "Conceptos Topológicos en Espacios Métricos"
+LINK "Conceptos Topológicos en Espacios Métricos" -> "Límite Topológico"
+LINK "Métrica" -> "Límite de una Secuencia"
+LINK "Límite de una Secuencia" -> "Sumatoria y Sumas Parciales"
+LINK "Conceptos Topológicos en Espacios Métricos" -> "Máximo y Mínimo Local"
+LINK "Límite Topológico" -> "Límites Laterales (Izquierdo y Derecho)"
+LINK "Continuidad" -> "Vecindarios en el Infinito"
+LINK "Continuidad" -> "Tipos de Discontinuidades"
+LINK "Límite Topológico" -> "Derivada"
+LINK "Continuidad Uniforme" -> "Funciones Lipschitz"
+LINK "Reordenamiento de Series (Rearrangements)" -> "Convolución de Series"
+LINK "Conceptos Topológicos en Espacios Métricos" -> "Mapa Acotado"
+LINK "Mapa Acotado" -> "Espacio de Funciones Acotadas B(X,Y)"
+LINK "Espacio de Funciones Acotadas B(X,Y)" -> "Espacio de Funciones Continuas Acotadas C_b(X,Y)"
+LINK "Continuidad" -> "Espacio de Funciones Continuas C(X,Y)"
+LINK "Espacio de Funciones Acotadas B(X,Y)" -> "Integración de Riemann-Stieltjes"
+LINK "Espacio de Funciones Continuas C(X,Y)" -> "Espacios de Funciones Continuamente Diferenciables C^n(I)"
+LINK "Polinomio de Taylor" -> "Funciones Analíticas"
+LINK "Límite de una Secuencia" -> "Límite Puntual"
+LINK "Métrica Uniforme" -> "Familias Puntual vs Uniformemente Acotadas"
+LINK "Familias Puntual vs Uniformemente Acotadas" -> "Equicontinuidad Puntual y Uniforme"
+LINK "Equicontinuidad Puntual y Uniforme" -> "Álgebra de Funciones"
+LINK "Álgebra de Funciones" -> "Separación de Puntos y Anulación"
+LINK "Convergencia Uniforme" -> "Métrica Uniforme"
+LINK "Espacio de Funciones Acotadas B(X,Y)" -> "Métrica Uniforme"
+LINK "Demostraciones Continuas 3" -> "Demostraciones Derivables 1"
+LINK "Demostraciones Topológicas 3 (Intersecciones y Celdas)" -> "Demostraciones Secuenciales 1"
+LINK "Demostración sobre la n-Raíz" -> "Demostraciones Topológicas 1"
+LINK "Demostraciones Secuenciales 6" -> "Some Special Sequences"
+LINK "Demostraciones Integrales 1" -> "Demostraciones Integrales 2"
+LINK "Rearrangements of Series (Riemann Rearrangement & Dirichlet-Riemann Theorems)" -> "Demostraciones Integrales 1"
+LINK "Demostraciones Derivables 3" -> "Demostraciones Integrales 1"
+LINK "Demostraciones Integrales 2" -> "Teoremas de Integrabilidad de Riemann-Stieltjes (Rudin 6.8 - 6.11)"
+LINK "Teoremas de Integrabilidad de Riemann-Stieltjes (Rudin 6.8 - 6.11)" -> "Properties of the Integral (Rudin 6.12, 6.13, 6.16)"
+LINK "Properties of the Integral (Rudin 6.12, 6.13, 6.16)" -> "Differentiability of Variable of Integration (Rudin 6.17, 6.19)"
+LINK "Differentiability of Variable of Integration (Rudin 6.17, 6.19)" -> "The Fundamental Theorem of Calculus & Integration by Parts (Rudin 6.20 - 6.22)"
+LINK "Límite Puntual" -> "Serie de funciones."
+LINK "Sumatoria y Sumas Parciales" -> "Serie de funciones."

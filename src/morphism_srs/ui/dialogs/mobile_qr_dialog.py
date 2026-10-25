@@ -64,14 +64,14 @@ class MobileQRDialog(QDialog):
         root.setContentsMargins(18, 18, 18, 18)
         root.setSpacing(12)
 
-        title = QLabel("📱 Ephemeral Mobile Companion Active", container)
+        title = QLabel("📱 Mobile APK Full Data Sync", container)
         set_widget_props(title, role="title")
         root.addWidget(title)
 
         desc = QLabel(
-            "Scan the QR code below with your phone's camera (on the same Wi-Fi/LAN) to review live "
-            "or use 'Check-Out Offline' to download your queue and sync back later.\n"
-            "The server runs ONLY while this window remains open.",
+            "Escanea este código QR desde la App Móvil Morphism SRS (o ingresa la URL de abajo) "
+            "para sincronizar tus cursos, notas, grafo DAG y repasos FSRS bidireccionalmente.\n\n"
+            "⚠️ IMPORTANTE: Mantén esta ventana ABIERTA en el PC durante la sincronización (el servidor se detiene automáticamente al cerrarla).",
             container,
         )
         desc.setWordWrap(True)

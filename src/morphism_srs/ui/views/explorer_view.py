@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from pathlib import Path
 import sqlite3
 
 from PySide6.QtCore import QLineF, QPointF, QRectF, Qt
@@ -9,15 +10,18 @@ from PySide6.QtGui import (
     QColor,
     QFont,
     QKeyEvent,
+    QKeySequence,
     QLinearGradient,
     QPainter,
     QPainterPath,
     QPen,
     QPolygonF,
+    QShortcut,
     QWheelEvent,
 )
 from PySide6.QtWidgets import (
     QComboBox,
+    QFileDialog,
     QFrame,
     QGraphicsItem,
     QGraphicsLineItem,
@@ -27,6 +31,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QInputDialog,
     QLabel,
+    QLineEdit,
     QMenu,
     QMessageBox,
     QPushButton,
@@ -34,13 +39,14 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from morphism_srs.config import AppConfig
+from morphism_srs.config import AppConfig, get_project_root
 from morphism_srs.controllers.event_bus import EventBus
 from morphism_srs.controllers.explorer_controller import ExplorerController
 from morphism_srs.controllers.review_controller import CustomStudyConfig, ReviewController
 from morphism_srs.domain.enums import NoteReviewMode
 from morphism_srs.domain.models import EdgeModel, NoteMetrics, NoteModel
 from morphism_srs.domain.scheduler_engine import SchedulerEngine
+from morphism_srs.services.dsl_compiler.compiler import DSLCompiler
 from morphism_srs.storage.media_vault import MediaVault
 from morphism_srs.storage.repositories.course_repo import CourseRepository
 from morphism_srs.storage.repositories.folder_repo import FolderRepository
@@ -229,6 +235,13 @@ class GraphNodeItem(QGraphicsItem):
         )
         self.setZValue(1.0)
         self.setCacheMode(QGraphicsItem.CacheMode.DeviceCoordinateCache)
+        self.setToolTip(
+            f"<b>{self.note.title}</b><br>"
+            f"Mode: {self.note.review_mode.value.upper()}<br>"
+            f"Cards: {self.metrics.card_count} (Due: {self.metrics.due_count}, New: {self.metrics.new_count})<br>"
+            f"<i>• Shift+Click two nodes to link prerequisite</i><br>"
+            f"<i>• Double-click to study</i>"
+        )
 
     def cardinal_extents(self) -> tuple[float, float]:
         """Return (half_width, half_height) of the exact cardinal attachment points."""
@@ -338,6 +351,9 @@ class GraphNodeItem(QGraphicsItem):
     def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value):
         if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange and self.scene() is not None:
             if self.explorer_view.snapping_enabled:
+                sel = [it for it in self.scene().selectedItems() if isinstance(it, GraphNodeItem)]
+                if len(sel) > 1:
+                    return value
                 new_pos: QPointF = value
                 snapped_x = round(new_pos.x() / self.GRID_X) * self.GRID_X
                 snapped_y = round(new_pos.y() / self.GRID_Y) * self.GRID_Y
@@ -375,7 +391,8 @@ class GraphCanvasView(QGraphicsView):
         self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
         self.setTransformationAnchor(QGraphicsView.ViewportAnchor.AnchorUnderMouse)
         self.setResizeAnchor(QGraphicsView.ViewportAnchor.AnchorUnderMouse)
-        self.setViewportUpdateMode(QGraphicsView.ViewportUpdateMode.FullViewportUpdate)
+        self.setViewportUpdateMode(QGraphicsView.ViewportUpdateMode.BoundingRectViewportUpdate)
+        self.setSceneRect(-25000, -25000, 50000, 50000)
 
         self._middle_panning = False
         self._pan_start = QPointF()
@@ -385,6 +402,13 @@ class GraphCanvasView(QGraphicsView):
         # Interactive Prerequisite Linking Mode (from Right-Click -> Add Prerequisite)
         self.prereq_target_node: GraphNodeItem | None = None
         self.temp_prereq_line: QGraphicsLineItem | None = None
+
+    def _node_at_viewport_pos(self, pos: QPoint) -> GraphNodeItem | None:
+        scene_pt = self.mapToScene(pos)
+        for it in self.scene().items(scene_pt):
+            if isinstance(it, GraphNodeItem):
+                return it
+        return None
 
     def set_hand_pan_mode(self, hand_pan: bool) -> None:
         if hand_pan:
@@ -402,6 +426,8 @@ class GraphCanvasView(QGraphicsView):
         pen = QPen(QColor("#facc15"), 2.5, Qt.PenStyle.DashLine)
         self.temp_prereq_line.setPen(pen)
         self.temp_prereq_line.setZValue(10.0)
+        self.temp_prereq_line.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
+        self.temp_prereq_line.setEnabled(False)
         self.scene().addItem(self.temp_prereq_line)
         self.explorer_view.event_bus.status_message.emit(
             f"Click a prerequisite node to link it into '{target_node.note.title}' (Right-click or Esc to cancel).",
@@ -425,9 +451,9 @@ class GraphCanvasView(QGraphicsView):
     def mousePressEvent(self, event) -> None:
         if self.prereq_target_node is not None:
             if event.button() == Qt.MouseButton.LeftButton:
-                item = self.itemAt(event.position().toPoint())
+                item = self._node_at_viewport_pos(event.position().toPoint())
                 if (
-                    isinstance(item, GraphNodeItem)
+                    item is not None
                     and item is not self.prereq_target_node
                     and item.note.id is not None
                     and self.prereq_target_node.note.id is not None
@@ -449,17 +475,19 @@ class GraphCanvasView(QGraphicsView):
             event.accept()
             return
 
-        item = self.itemAt(event.position().toPoint())
-        if isinstance(item, GraphNodeItem) and (event.modifiers() & Qt.KeyboardModifier.ShiftModifier):
+        item = self._node_at_viewport_pos(event.position().toPoint())
+        if item is not None and (event.modifiers() & Qt.KeyboardModifier.ShiftModifier):
             if self._shift_link_source_id is None and item.note.id is not None:
                 self._shift_link_source_id = item.note.id
+                self.start_prereq_linking_mode(item)
                 self.explorer_view.event_bus.status_message.emit(
-                    f"Linking from '{item.note.title}' — Shift+Click target node to connect prerequisite edge.",
-                    4000,
+                    f"Linking from '{item.note.title}' — Click destination node to connect prerequisite edge.",
+                    5000,
                 )
             elif self._shift_link_source_id is not None and item.note.id is not None:
                 src_id = self._shift_link_source_id
                 self._shift_link_source_id = None
+                self.cancel_prereq_linking_mode()
                 if src_id != item.note.id:
                     self.explorer_view.create_prerequisite_edge(src_id, item.note.id)
             event.accept()
@@ -607,6 +635,21 @@ class ExplorerView(QWidget):
         set_widget_props(undo_btn, variant="ghost")
         undo_btn.clicked.connect(lambda: self.explorer_controller.undo_last_action())
         toolbar.addWidget(undo_btn)
+
+        export_btn = QPushButton("📤 Export Course...", container)
+        export_btn.setToolTip("Export this course as .mdsl, .mpkg, or .json")
+        export_btn.clicked.connect(self._on_export_current_course)
+        toolbar.addWidget(export_btn)
+
+        self.quick_search = QLineEdit(container)
+        self.quick_search.setPlaceholderText("🔍 Filter (Ctrl+F)...")
+        self.quick_search.setClearButtonEnabled(True)
+        self.quick_search.setFixedWidth(170)
+        self.quick_search.textChanged.connect(self._on_quick_filter_changed)
+        toolbar.addWidget(self.quick_search)
+
+        find_shortcut = QShortcut(QKeySequence("Ctrl+F"), self)
+        find_shortcut.activated.connect(self.quick_search.setFocus)
 
         toolbar.addStretch(1)
         root.addLayout(toolbar)
@@ -953,8 +996,8 @@ class ExplorerView(QWidget):
         note = self.explorer_controller.note_repo.get_by_id(note_id, include_children=True)
         if note is None:
             return
-        course = self.course_repo.get_by_id(note.course_id)
-        retention = note.desired_retention or (course.desired_retention if course else 0.90)
+        course = self.course_repo.get_by_id(note.course_id) if note.course_id else None
+        retention = note.desired_retention or (course.desired_retention if course else 0.80)
         weights = self.folder_repo.resolve_effective_fsrs_weights(course.folder_id if course else None)
         engine = SchedulerEngine(desired_retention=retention, weights_json=weights)
 
@@ -1037,17 +1080,87 @@ class ExplorerView(QWidget):
         if sel and self.current_course_id is not None:
             self.explorer_controller.bulk_suspend_notes(self.current_course_id, sel, suspended)
 
+    def _on_quick_filter_changed(self, text: str) -> None:
+        q = text.strip().lower()
+        first_match = None
+        for nid, item in self._node_items.items():
+            if not q:
+                item.setOpacity(1.0)
+            else:
+                matches = q in item.note.title.lower() or any(q in t.lower() for t in item.note.tags)
+                item.setOpacity(1.0 if matches else 0.22)
+                if matches and first_match is None:
+                    first_match = item
+        if first_match is not None:
+            self.canvas.centerOn(first_match)
+
+    def _on_export_current_course(self) -> None:
+        if self.current_course_id is None:
+            QMessageBox.information(self, "No Course", "Please select a course to export.")
+            return
+        course = self.course_repo.get_by_id(self.current_course_id)
+        if not course:
+            return
+        fmt_choices = ["Morphism DSL (.mdsl)", "Morphism Package (.mpkg)", "Course JSON (.json)"]
+        chosen_fmt_str, ok = QInputDialog.getItem(
+            self,
+            f"Export '{course.name}'",
+            "Choose export format:",
+            fmt_choices,
+            0,
+            False,
+        )
+        if not ok or not chosen_fmt_str:
+            return
+        fmt = "mdsl" if "mdsl" in chosen_fmt_str else ("mpkg" if "mpkg" in chosen_fmt_str else "json")
+        safe_name = course.name.replace(" ", "_").lower()
+        export_dir = get_project_root() / "to_export"
+        export_dir.mkdir(parents=True, exist_ok=True)
+        default_file = str(export_dir / f"{safe_name}.{fmt}")
+
+        if fmt == "mpkg":
+            path_str, _ = QFileDialog.getSaveFileName(self, "Export .mpkg Deck", default_file, "Morphism Package (*.mpkg)")
+            if path_str:
+                from morphism_srs.services.import_export.mpkg_service import MpkgService
+                MpkgService(self.conn, self.media_vault).export_mpkg(self.current_course_id, Path(path_str), include_scheduling=True)
+                QMessageBox.information(self, "Export Complete", f"Exported course to '{path_str}'.")
+        elif fmt == "json":
+            path_str, _ = QFileDialog.getSaveFileName(self, "Export .json Deck", default_file, "JSON (*.json)")
+            if path_str:
+                from morphism_srs.services.import_export.json_service import JsonImportExportService
+                JsonImportExportService(self.conn).export_course_file(self.current_course_id, Path(path_str), include_scheduling=True)
+                QMessageBox.information(self, "Export Complete", f"Exported course to '{path_str}'.")
+        elif fmt == "mdsl":
+            path_str, _ = QFileDialog.getSaveFileName(self, "Export .mdsl Source", default_file, "Morphism DSL (*.mdsl)")
+            if path_str:
+                notes = self.explorer_controller.note_repo.list_by_course(self.current_course_id, include_children=True)
+                edges = self.explorer_controller.note_repo.list_edges_by_course(self.current_course_id)
+                mdsl_str = DSLCompiler.decompile_course(course, notes, edges)
+                Path(path_str).write_text(mdsl_str, encoding="utf-8")
+                QMessageBox.information(self, "Export Complete", f"Exported course to '{path_str}'.")
+
     def _on_bulk_delete(self) -> None:
         sel = self._selected_note_ids()
         if not sel or self.current_course_id is None:
             return
         dlg = DeleteNoteDialog(note_count=len(sel), parent=self)
         if dlg.exec():
-            self.explorer_controller.bulk_delete_notes(self.current_course_id, sel, bridge_edges=dlg.bridge_edges)
-            self.event_bus.courses_updated.emit()
+            if dlg.is_unlink_only:
+                with UnitOfWork(self.conn):
+                    for nid in sel:
+                        self.explorer_controller.note_repo.unlink_from_course(self.current_course_id, nid)
+                self.event_bus.notes_updated.emit(self.current_course_id)
+                self.event_bus.courses_updated.emit()
+                self.event_bus.status_message.emit(
+                    f"Unlinked {len(sel)} note(s) from this course (preserved in database and Note Browser).",
+                    4000,
+                )
+            else:
+                self.explorer_controller.bulk_delete_notes(self.current_course_id, sel, bridge_edges=dlg.bridge_edges)
+                self.event_bus.courses_updated.emit()
 
     def _on_canvas_context_menu(self, pos) -> None:
-        item = self.canvas.itemAt(pos)
+        item = self.canvas._node_at_viewport_pos(pos)
         menu = QMenu(self)
         if isinstance(item, GraphNodeItem) and item.note.id is not None:
             nid = item.note.id
@@ -1057,11 +1170,12 @@ class ExplorerView(QWidget):
             edit_act = menu.addAction("✏️ Edit Note")
             metrics_act = menu.addAction("📈 Info / Retrievability Plot")
             menu.addSeparator()
-            add_prereq_act = menu.addAction("🔗 Add Prerequisite (Click parent node)")
+            add_prereq_act = menu.addAction("🔗 Add Prerequisite (or Shift+Click 2 nodes)")
             rm_prereq_act = menu.addAction("✂️ Remove Prerequisites...")
             resched_act = menu.addAction("🔄 Reschedule Note FSRS State")
             menu.addSeparator()
-            del_act = menu.addAction("🗑️ Delete Note")
+            unlink_act = menu.addAction("🔗 Unlink from Course (Soft-Delete)")
+            del_act = menu.addAction("🗑️ Delete Permanently from Database")
 
             chosen = menu.exec(self.canvas.viewport().mapToGlobal(pos))
             if chosen == study_act:
@@ -1078,6 +1192,16 @@ class ExplorerView(QWidget):
                 self._on_remove_prerequisites_dialog(nid)
             elif chosen == resched_act:
                 self._on_reschedule_note(nid)
+            elif chosen == unlink_act:
+                if self.current_course_id is not None:
+                    with UnitOfWork(self.conn):
+                        self.explorer_controller.note_repo.unlink_from_course(self.current_course_id, nid)
+                    self.event_bus.notes_updated.emit(self.current_course_id)
+                    self.event_bus.courses_updated.emit()
+                    self.event_bus.status_message.emit(
+                        f"Unlinked '{item.note.title}' from this course (preserved in Note Browser).",
+                        4000,
+                    )
             elif chosen == del_act:
                 self.scene.clearSelection()
                 item.setSelected(True)

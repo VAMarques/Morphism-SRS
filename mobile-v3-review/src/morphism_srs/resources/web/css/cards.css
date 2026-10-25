@@ -1,0 +1,268 @@
+/* ==========================================================================
+   Morphism SRS v2 — Unified WebEngine Stylesheet (cards.css)
+   Applies to ReviewView, NodeEditor Live Preview, Browser Preview, and Charts
+   ========================================================================== */
+
+:root {
+    --bg-canvas: #11111b;
+    --bg-primary: #1e1e2e;
+    --bg-secondary: #181825;
+    --bg-surface-0: #313244;
+    --bg-surface-1: #45475a;
+    --bg-surface-2: #585b70;
+    --text-primary: #cdd6f4;
+    --text-secondary: #bac2de;
+    --text-muted: #a6adc8;
+    --accent-primary: #89b4fa;
+    --accent-secondary: #cba6f7;
+    --semantic-success: #a6e3a1;
+    --semantic-warning: #f9e2af;
+    --semantic-danger: #f38ba8;
+    --semantic-info: #89dceb;
+    --border-subtle: #313244;
+    --font-ui: "Segoe UI", Inter, system-ui, sans-serif;
+    --font-mono: "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+}
+
+* {
+    box-sizing: border-box;
+    transition: none !important;
+    animation: none !important;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+.review-shell {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 20px 24px 36px 24px;
+}
+
+/* Header & Tag Chips */
+.note-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.note-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.mode-badge {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background-color: var(--bg-surface-0);
+    color: var(--accent-primary);
+    font-weight: 700;
+}
+
+.tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.tag-chip {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background-color: var(--bg-surface-0);
+    color: var(--accent-secondary);
+    border: 1px solid var(--border-subtle);
+}
+
+/* Premise Box */
+.premise-box {
+    background-color: var(--bg-secondary);
+    border-left: 4px solid var(--accent-secondary);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+}
+
+.premise-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-secondary);
+    margin-bottom: 4px;
+}
+
+/* Conditioning Siblings (Serial j < i and Cloze j != i) */
+.siblings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.siblings-container:empty {
+    display: none;
+    margin-bottom: 0;
+}
+
+.sibling-step {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--semantic-info);
+    border-radius: 8px;
+    padding: 10px 14px;
+    opacity: 0.88;
+}
+
+.sibling-header {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--semantic-info);
+    margin-bottom: 4px;
+}
+
+.sibling-front {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+}
+
+.sibling-back {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--border-subtle);
+    color: var(--text-primary);
+}
+
+/* Active Target Card */
+.active-card-box {
+    background-color: var(--bg-surface-0);
+    border: 1px solid var(--accent-primary);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin: 14px 0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.active-card-step-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent-primary);
+    margin-bottom: 6px;
+}
+
+.card-front {
+    font-size: 1.08rem;
+    color: var(--text-primary);
+}
+
+.card-hint {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: var(--bg-secondary);
+    border-left: 3px solid var(--semantic-warning);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.answer-divider {
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+    margin: 16px 0;
+}
+
+.card-back {
+    font-size: 1.05rem;
+    color: var(--text-primary);
+}
+
+/* Tag-Driven Semantic Math Boxes */
+.math-box-theorem, .math-box-definition, .math-box-proof, .math-box-lemma {
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 10px 0;
+    background-color: var(--bg-secondary);
+}
+
+.math-box-theorem { border-left: 4px solid var(--accent-primary); }
+.math-box-definition { border-left: 4px solid var(--semantic-success); }
+.math-box-proof { border-left: 4px solid var(--accent-secondary); }
+.math-box-lemma { border-left: 4px solid var(--semantic-info); }
+
+/* SVG & Image Support */
+img, svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.commutative-diagram, img[src$=".svg"] {
+    display: block;
+    margin: 12px auto;
+    max-height: 360px;
+}
+
+mjx-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+}
+
+mjx-container[jax="SVG"] {
+    display: inline-block;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    vertical-align: middle;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin: 0.8em 0;
+    padding: 4px 0;
+}
+
+mjx-container::-webkit-scrollbar {
+    height: 4px;
+}
+
+mjx-container::-webkit-scrollbar-thumb {
+    background: var(--bg-surface-2);
+    border-radius: 4px;
+}
+
+code, pre {
+    font-family: var(--font-mono);
+    background-color: var(--bg-secondary);
+    border-radius: 4px;
+}
+
+code {
+    padding: 2px 5px;
+    font-size: 0.9em;
+}
+
+pre {
+    padding: 10px 14px;
+    overflow-x: auto;
+}

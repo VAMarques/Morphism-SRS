@@ -7,6 +7,18 @@ from typing import Any
 
 
 @dataclass
+class BrowserNoteRowItem:
+    note_id: int
+    uuid: str
+    title: str
+    review_mode: str
+    card_count: int
+    desired_retention: float | None
+    created_at: str
+    tags_csv: str
+
+
+@dataclass
 class BrowserRowItem:
     card_id: int
     note_id: int
@@ -164,21 +176,21 @@ class BrowserRepository:
             SELECT
                 c.id AS card_id,
                 n.id AS note_id,
-                co.id AS course_id,
-                co.name AS course_name,
+                COALESCE(co.id, 0) AS course_id,
+                COALESCE(co.name, '—') AS course_name,
                 n.title AS note_title,
                 n.review_mode AS review_mode,
                 c.step_order AS step_order,
                 c.title AS card_title,
                 c.front_html AS front_html,
                 c.back_html AS back_html,
-                cs.state AS state,
+                COALESCE(cs.state, 0) AS state,
                 cs.stability AS stability,
                 cs.difficulty AS difficulty,
-                cs.due_at AS due_at,
+                COALESCE(cs.due_at, c.created_at) AS due_at,
                 cs.last_review_at AS last_review_at,
-                cs.lapses AS lapses,
-                cs.is_suspended AS is_suspended,
+                COALESCE(cs.lapses, 0) AS lapses,
+                COALESCE(cs.is_suspended, 0) AS is_suspended,
                 COALESCE((
                     SELECT GROUP_CONCAT(tg.name, ', ')
                     FROM note_tags nt
@@ -187,10 +199,10 @@ class BrowserRepository:
                 ), '') AS tags_csv
             FROM cards c
             JOIN notes n ON n.id = c.note_id
-            JOIN courses co ON co.id = n.course_id
-            JOIN card_schedules cs ON cs.card_id = c.id
+            LEFT JOIN courses co ON co.id = n.course_id
+            LEFT JOIN card_schedules cs ON cs.card_id = c.id
             WHERE {where_sql}
-            ORDER BY co.display_order ASC, n.title ASC, c.step_order ASC
+            ORDER BY n.title ASC, c.step_order ASC
             LIMIT ?;
             """,
             params,
@@ -215,6 +227,79 @@ class BrowserRepository:
                 last_review_at=str(r["last_review_at"]) if r["last_review_at"] is not None else None,
                 lapses=int(r["lapses"]),
                 is_suspended=bool(r["is_suspended"]),
+                tags_csv=str(r["tags_csv"]),
+            )
+            for r in rows
+        ]
+
+    def search_notes(
+        self,
+        query_text: str = "",
+        tag_filter: str | None = None,
+        review_mode_filter: str | None = None,
+        limit: int = 2000,
+    ) -> list[BrowserNoteRowItem]:
+        clauses: list[str] = ["1=1"]
+        params: list[Any] = []
+
+        q = query_text.strip()
+        if tag_filter:
+            clauses.append(
+                """
+                EXISTS (
+                    SELECT 1 FROM note_tags nt
+                    JOIN tags tg ON tg.id = nt.tag_id
+                    WHERE nt.note_id = n.id AND tg.name = ?
+                )
+                """
+            )
+            params.append(tag_filter.lower())
+
+        if review_mode_filter:
+            clauses.append("n.review_mode = ?")
+            params.append(review_mode_filter.lower())
+
+        if q:
+            clauses.append("(LOWER(n.title) LIKE ? OR LOWER(n.uuid) LIKE ?)")
+            like_s = f"%{q.lower()}%"
+            params.extend([like_s, like_s])
+
+        where_sql = " AND ".join(clauses)
+        params.append(limit)
+
+        rows = self.conn.execute(
+            f"""
+            SELECT
+                n.id AS note_id,
+                n.uuid AS uuid,
+                n.title AS title,
+                n.review_mode AS review_mode,
+                (SELECT COUNT(*) FROM cards c WHERE c.note_id = n.id) AS card_count,
+                n.desired_retention AS desired_retention,
+                n.created_at AS created_at,
+                COALESCE((
+                    SELECT GROUP_CONCAT(tg.name, ', ')
+                    FROM note_tags nt
+                    JOIN tags tg ON tg.id = nt.tag_id
+                    WHERE nt.note_id = n.id
+                ), '') AS tags_csv
+            FROM notes n
+            WHERE {where_sql}
+            ORDER BY n.title ASC
+            LIMIT ?;
+            """,
+            params,
+        ).fetchall()
+
+        return [
+            BrowserNoteRowItem(
+                note_id=int(r["note_id"]),
+                uuid=str(r["uuid"]),
+                title=str(r["title"]),
+                review_mode=str(r["review_mode"]),
+                card_count=int(r["card_count"]),
+                desired_retention=float(r["desired_retention"]) if r["desired_retention"] is not None else None,
+                created_at=str(r["created_at"])[:10],
                 tags_csv=str(r["tags_csv"]),
             )
             for r in rows

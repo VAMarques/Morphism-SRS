@@ -311,7 +311,10 @@ class ReviewView(QWidget):
         self.review_controller.submit_rating(rating)
 
     def _on_undo(self) -> None:
-        self.review_controller.undo_last_review()
+        msg = self.review_controller.undo_last_review()
+        if msg:
+            self._answer_shown = True
+            self._render_current_card()
 
     def _on_edit_current_note(self) -> None:
         ctx = self.review_controller.current_prompt_context()

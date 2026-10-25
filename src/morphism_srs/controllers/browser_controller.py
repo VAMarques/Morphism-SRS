@@ -3,7 +3,7 @@ from __future__ import annotations
 import sqlite3
 
 from morphism_srs.controllers.event_bus import EventBus
-from morphism_srs.storage.repositories.browser_repo import BrowserRepository, BrowserRowItem
+from morphism_srs.storage.repositories.browser_repo import BrowserNoteRowItem, BrowserRepository, BrowserRowItem
 from morphism_srs.storage.repositories.card_repo import CardRepository
 from morphism_srs.storage.repositories.note_repo import NoteRepository
 from morphism_srs.storage.unit_of_work import UnitOfWork
@@ -37,6 +37,18 @@ class BrowserController:
             state_filter=state_filter,
             review_mode_filter=review_mode_filter,
             suspended_filter=suspended_filter,
+        )
+
+    def search_notes(
+        self,
+        query_text: str = "",
+        tag_filter: str | None = None,
+        review_mode_filter: str | None = None,
+    ) -> list[BrowserNoteRowItem]:
+        return self.browser_repo.search_notes(
+            query_text=query_text,
+            tag_filter=tag_filter,
+            review_mode_filter=review_mode_filter,
         )
 
     def suspend_cards(self, card_ids: list[int], suspended: bool) -> None:

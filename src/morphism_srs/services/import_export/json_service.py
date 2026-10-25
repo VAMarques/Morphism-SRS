@@ -158,7 +158,7 @@ class JsonImportExportService:
                         name=c_name,
                         description=str(course_data.get("description") or ""),
                         color_hex=str(course_data.get("color_hex") or "#89b4fa"),
-                        desired_retention=float(course_data.get("desired_retention") or 0.90),
+                        desired_retention=float(course_data.get("desired_retention") or 0.80),
                         display_order=int(course_data.get("display_order") or 0),
                     )
                 )

@@ -16,6 +16,13 @@ from morphism_srs.web_engine.web_profile import WebEngineProfileManager
 
 def main(argv: list[str] | None = None) -> int:
     """Bootstrap sequence for Morphism SRS Prototype 2."""
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("morphism.srs.proto2")
+        except Exception:
+            pass
+
     # 1. Register morphism:// scheme before QApplication is created
     register_morphism_scheme()
 
@@ -29,6 +36,13 @@ def main(argv: list[str] | None = None) -> int:
     # 2. Initialize AppPaths & AppConfig
     paths = AppPaths.resolve()
     config = AppConfig(paths)
+
+    ico_path = paths.icons_dir / "icon.ico"
+    png_path = paths.icons_dir / "icon.png"
+    icon_to_use = ico_path if ico_path.exists() else png_path
+    if icon_to_use.exists():
+        from PySide6.QtGui import QIcon
+        app.setWindowIcon(QIcon(str(icon_to_use)))
 
     # 3. Initialize SQLite v2 Database, schema_v2.sql, and 2,000 standard tags
     db_manager = DatabaseManager(

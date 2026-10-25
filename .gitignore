@@ -67,3 +67,5 @@ logs/
 .idea/
 *.swp
 *.swo
+
+.build_cache/

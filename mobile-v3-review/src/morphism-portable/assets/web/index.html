@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#000000">
+    <title>Morphism SRS</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --surface-bg: #0B0710;
+            --card-bg: #171019;
+            --border-color: #3D2148;
+            --accent: #F02A8C;
+            --accent-hover: #FF70B7;
+            --text-color: #F7F1F8;
+            --text-muted: #806F86;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header */
+        header {
+            height: 52px;
+            background: var(--surface-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            font-weight: 800;
+            font-size: 15px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+        }
+
+        .header-course-badge {
+            font-size: 11px;
+            font-weight: bold;
+            background: rgba(240, 42, 140, 0.15);
+            color: var(--accent);
+            padding: 3px 8px;
+            border-radius: 12px;
+            border: 1px solid var(--accent);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 140px;
+            cursor: pointer;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Main View Container */
+        main {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .view-page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none !important;
+            flex-direction: column;
+            background: var(--bg-color);
+        }
+
+        .view-page.active {
+            display: flex !important;
+        }
+
+        .scrollable-view {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Graph Page */
+        .graph-search-bar {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            z-index: 10;
+            background: rgba(11, 7, 16, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .graph-search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 13px;
+            width: 100%;
+            outline: none;
+        }
+
+        #graph-canvas {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            display: block;
+            touch-action: none;
+        }
+
+        .graph-action-dock {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            background: rgba(11, 7, 16, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 6px 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        .dock-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 16px;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .dock-btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #ffffff;
+        }
+
+        /* Review Page */
+        .review-progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        .review-progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.25s ease;
+        }
+
+        .review-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .review-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 18px;
+            user-select: text;
+        }
+
+        .card-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .card-type-chip {
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+        }
+
+        .card-type-chip.standard {
+            background: rgba(128, 214, 163, 0.15);
+            color: #80D6A3;
+            border: 1px solid #80D6A3;
+        }
+
+        .card-type-chip.serial {
+            background: rgba(240, 42, 140, 0.15);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .card-type-chip.cloze {
+            background: rgba(180, 122, 208, 0.15);
+            color: #B47AD0;
+            border: 1px solid #B47AD0;
+        }
+
+        .conditioning-context {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 14px;
+        }
+
+        .context-title {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .sibling-step {
+            margin-bottom: 10px;
+            padding: 8px 10px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .sibling-header {
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .sibling-back {
+            color: #A5E6BC;
+            margin-top: 4px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 4px;
+        }
+
+        .active-step-badge {
+            display: inline-block;
+            font-weight: bold;
+            font-size: 13px;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .answer-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 16px 0;
+        }
+
+        .answer-box {
+            background: rgba(128, 214, 163, 0.05);
+            border: 1px solid rgba(128, 214, 163, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .answer-title {
+            font-size: 11px;
+            font-weight: bold;
+            color: #80D6A3;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .review-controls {
+            padding: 12px 16px;
+            background: var(--surface-bg);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border: none;
+            color: #ffffff;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-rating-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .btn-rating {
+            border: 1px solid transparent;
+            border-radius: 10px;
+            padding: 8px 4px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .btn-again {
+            background: #2a0b14;
+            color: #FF667D;
+            border-color: #FF667D;
+        }
+
+        .btn-hard {
+            background: #281a0b;
+            color: #FFB347;
+            border-color: #FFB347;
+        }
+
+        .btn-good {
+            background: #0f2d1a;
+            color: #80D6A3;
+            border-color: #80D6A3;
+        }
+
+        .btn-easy {
+            background: #0b2230;
+            color: #70C0FF;
+            border-color: #70C0FF;
+        }
+
+        .forecast {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        .btn-undo {
+            background: transparent;
+            border: 1px dashed var(--border-color);
+            color: var(--text-muted);
+            border-radius: 8px;
+            padding: 6px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        /* Courses Page */
+        .course-card-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .course-card-item.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(240, 42, 140, 0.2);
+        }
+
+        /* Stats Page */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .stat-lbl {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        /* Scratchbook Page */
+        .math-palette {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+        }
+
+        .math-chip {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 8px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* Bottom Nav */
+        nav {
+            height: 56px;
+            background: var(--surface-bg);
+            border-top: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .nav-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-tab.active {
+            color: var(--accent);
+        }
+
+        .nav-tab .icon {
+            font-size: 18px;
+        }
+
+        .tab-badge {
+            position: absolute;
+            top: 6px;
+            right: 18%;
+            background: var(--accent);
+            color: #ffffff;
+            font-size: 9px;
+            border-radius: 10px;
+            padding: 1px 5px;
+            display: none;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 440px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .modal-close-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 14px;
+            width: 100%;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .theme-option-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: left;
+        }
+        .modal-overlay#modal-node { align-items: flex-end; }
+        #graph-canvas { touch-action:none; }
+        body.syncing main, body.syncing nav, body.syncing header { pointer-events:none; opacity:0.6; }
+        [hidden] { display:none !important; }
+        .premise-box:empty { display:none; }
+        #node-content img, .card-front img, .card-back img { max-width:100%; }
+    </style>
+
+<link rel="stylesheet" href="css/cards.css">
+    <script src="mathjax_init.js"></script>
+    <script defer src="vendor/mathjax/tex-svg-full.js"></script>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="header-title">
+            <span>⚡ Morphism SRS</span>
+            <span class="header-course-badge" id="lbl-active-course" title="Toca para ver cursos">Sin Curso</span>
+        </div>
+        <div class="header-actions">
+            <button class="header-btn" id="btn-open-sync">🔄 Sincronizar</button>
+            <button class="header-btn" id="btn-theme-selector">🎨 Tema</button>
+            <button class="header-btn" id="btn-open-guide">❓ Ayuda</button>
+        </div>
+    </header>
+
+    <!-- Main View Pages -->
+    <main>
+        <!-- 1. Graph Explorer Page -->
+        <div class="view-page active" id="view-graph">
+            <div class="graph-search-bar">
+                <span style="margin-right:8px; opacity:0.6;">🔍</span>
+                <input type="text" id="txt-graph-search" placeholder="Buscar conceptos o fórmulas...">
+            </div>
+
+            <canvas id="graph-canvas"></canvas>
+
+            <div class="graph-action-dock">
+                <button class="dock-btn dock-btn-primary" id="btn-review-due">
+                    🎯 Repasar (<span id="fab-due-count">0</span>)
+                </button>
+                <button class="dock-btn" id="btn-auto-layout" title="Organizar de forma jerárquica">
+                    ⚡ Auto
+                </button>
+                <button class="dock-btn" id="btn-fit-graph" title="Encuadrar todo en pantalla">
+                    ⛶ Centrar
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. Review Page -->
+        <div class="view-page" id="view-review">
+            <div class="review-progress-bar">
+                <div class="review-progress-fill" id="review-progress-fill"></div>
+            </div>
+
+            <div class="review-container">
+                <div id="review-empty-state" style="text-align:center; padding:50px 20px;">
+                    <div style="font-size:42px; margin-bottom:12px;">☕</div>
+                    <div style="font-size:18px; font-weight:bold; color:var(--accent);">No hay repaso activo</div>
+                    <div class="empty-msg" style="font-size:13px; color:var(--text-muted); margin-top:8px; line-height:1.5;">
+                        Toca cualquier concepto en el <b>Grafo</b> para repasar esa nota o presiona <b>🎯 Repasar</b>.
+                    </div>
+                    <button class="btn-primary" style="margin-top:20px; width:auto; padding:10px 24px;" onclick="window.app.switchTab('graph')">🗺️ Ir al Grafo</button>
+                </div>
+
+                <div class="review-card" id="review-card-container" style="display:none;">
+                    <div class="card-header-bar">
+                        <span id="review-card-note-title" style="font-size:13px; font-weight:bold; color:var(--text-muted);">Nota</span>
+                        <span class="card-type-chip" id="review-card-type-chip">STANDARD</span>
+                    </div>
+                    <div id="review-front-content"></div>
+                    <div id="review-back-content" style="display:none;"></div>
+                </div>
+            </div>
+
+            <div class="review-controls" id="review-bottom-controls" style="display:none;">
+                <button class="btn-primary" id="btn-show-answer">👁️ Mostrar Solución</button>
+
+                <div class="btn-rating-grid" id="rating-buttons-row" style="display:none;">
+                    <button class="btn-rating btn-again" id="btn-again">
+                        Again
+                        <span class="forecast" id="forecast-again">1d</span>
+                    </button>
+                    <button class="btn-rating btn-hard" id="btn-hard">
+                        Hard
+                        <span class="forecast" id="forecast-hard">2d</span>
+                    </button>
+                    <button class="btn-rating btn-good" id="btn-good">
+                        Good
+                        <span class="forecast" id="forecast-good">4d</span>
+                    </button>
+                    <button class="btn-rating btn-easy" id="btn-easy">
+                        Easy
+                        <span class="forecast" id="forecast-easy">7d</span>
+                    </button>
+                </div>
+
+                <button class="btn-undo" id="btn-undo" disabled>↩ Deshacer Última Calificación (Undo)</button>
+            </div>
+        </div>
+
+        <!-- 3. Courses Page -->
+        <div class="view-page" id="view-courses">
+            <div class="scrollable-view">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <h3 style="margin:0; color:var(--accent);">📚 Cursos</h3>
+                </div>
+
+                <div id="courses-list-container"></div>
+            </div>
+        </div>
+
+        <!-- 4. Stats Page -->
+        <div class="view-page" id="view-stats">
+            <div class="scrollable-view">
+                <h3 style="margin-top:0; color:var(--accent);">📈 Rendimiento FSRS</h3>
+                <div class="stat-card"><span id="stat-due-today">0</span> vencidas hoy</div><p id="stat-states"></p><div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-val" id="stat-total-cards">0</div>
+                        <div class="stat-lbl">Tarjetas Totales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-val" id="stat-notes-count">0</div>
+                        <div class="stat-lbl">Nodos / Conceptos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-val" id="stat-retention">80%</div>
+                        <div class="stat-lbl">Retención Deseada</div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="text-align:left; margin-bottom:16px;">
+                    <div style="font-weight:bold; font-size:13px; margin-bottom:8px;">Actividad de Repaso Reciente</div>
+                    <div id="stats-heatmap-grid" style="display:grid; grid-template-columns:repeat(14, 1fr); gap:4px;"></div>
+                </div>
+            </div>
+        </div>    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav>
+        <button class="nav-tab active" data-tab="graph">
+            <span class="icon">🗺️</span>
+            <span>Grafo</span>
+        </button>
+        <button class="nav-tab" data-tab="review">
+            <span class="icon">📝</span>
+            <span>Repaso</span>
+            <span class="tab-badge" id="badge-due-count">0</span>
+        </button>
+        <button class="nav-tab" data-tab="courses">
+            <span class="icon">📚</span>
+            <span>Cursos</span>
+        </button>
+        <button class="nav-tab" data-tab="stats">
+            <span class="icon">📈</span>
+            <span>Stats</span>
+        </button>
+    </nav>
+
+    <!-- Modal: Theme Selector -->
+    <div class="modal-overlay" id="modal-theme">
+        <div class="modal-box">
+            <div class="modal-title">🎨 Seleccionar Tema</div>
+            <div class="theme-grid">
+                <button class="theme-option-btn" data-theme="bisexual_midnight">💖 Bisexual Midnight</button>
+                <button class="theme-option-btn" data-theme="catppuccin_mocha">☕ Catppuccin Mocha</button>
+                <button class="theme-option-btn" data-theme="dracula">🧛 Dracula</button>
+                <button class="theme-option-btn" data-theme="nord">❄️ Nord</button>
+                <button class="theme-option-btn" data-theme="tokyo_night">🌃 Tokyo Night</button>
+                <button class="theme-option-btn" data-theme="solarized_dark">☀️ Solarized Dark</button>
+                <button class="theme-option-btn" data-theme="github_light">☀️ GitHub Light</button>
+            </div>
+            <button class="modal-close-btn" onclick="window.app.closeModal('modal-theme')">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Modal: Sync with PC -->
+    <div class="modal-overlay" id="modal-sync">
+        <div class="modal-box">
+            <div class="modal-title">🔄 Sincronización Bidireccional PC</div>
+            <p style="font-size:12px; color:var(--text-muted); line-height:1.5;">
+                Escanea el QR o ingresa la URL de sesi&#243;n generada en el diálogo <b>QR Móvil</b> de la versión de escritorio de Morphism SRS en tu red Wi-Fi:
+            </p>
+            <input type="text" id="sync-endpoint-url" placeholder="morphism-sync://192.168.1.X:8765/#key=..." style="width:100%; background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-color); padding:10px; border-radius:8px; font-size:12px; margin-bottom:12px; outline:none;">
+            <button class="btn-primary" id="btn-scan-qr">Escanear QR con c&#225;mara</button>
+            <button class="btn-primary" id="btn-run-sync">Sincronizar Ahora</button>
+            <div id="sync-status-msg" style="margin-top:12px; font-size:12px; line-height:1.4;"></div>
+            <button class="modal-close-btn" onclick="window.app.closeModal('modal-sync')">Cerrar</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-node"><div class="modal-box" style="max-height:80vh;overflow:auto;">
+        <div class="modal-title" id="node-title"></div><div id="node-content"></div>
+        <button class="btn-primary" id="btn-node-review">Repasar vencidas de esta nota</button>
+        <button class="modal-close-btn" onclick="window.app.closeModal('modal-node')">Cerrar</button>
+    </div></div>
+    <!-- Modal: Guide -->
+    <div class="modal-overlay" id="modal-guide">
+        <div class="modal-box">
+            <div class="modal-title">❓ Guía de Morphism SRS</div>
+            <div style="font-size:13px; color:var(--text-color); line-height:1.6;">
+                <p><b>📐 Grafo de Conocimiento:</b> Los conceptos y teoremas están conectados mediante dependencias causales (DAG). Toca un nodo para estudiarlo o pulsa <b>🎯 Repasar</b>.</p>
+                <p><b>⚡ Secuencias Seriales:</b> Al repasar una demostración paso a paso, los pasos anteriores $j &lt; i$ se muestran resueltos como contexto condicionante $P(A_i \mid A_j, j &lt; i)$.</p>
+                <p><b>✂️ Tarjetas Cloze:</b> Los pasos circundantes $j \neq i$ se proporcionan como contexto del teorema.</p>
+                <p><b>📈 FSRS v5:</b> Programación con retención deseada del 80% sin pasos de aprendizaje innecesarios.</p>
+            </div>
+            <button class="modal-close-btn" onclick="window.app.closeModal('modal-guide')">Entendido</button>
+        </div>
+    </div>
+
+    <!-- Application Controller -->
+    <script src="graph_canvas.js"></script>
+    <script src="portable_ui.js"></script>
+</body>
+</html>

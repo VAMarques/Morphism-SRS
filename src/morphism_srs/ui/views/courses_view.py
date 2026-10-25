@@ -132,7 +132,7 @@ class CoursesView(QWidget):
         self.note_repo = NoteRepository(conn)
         self.mpkg_service = MpkgService(conn, media_vault)
         self.json_service = JsonImportExportService(conn)
-        self.dsl_compiler = DSLCompiler(conn)
+        self.dsl_compiler = DSLCompiler(conn, media_vault)
 
         self._build_ui()
         self.event_bus.courses_updated.connect(self.refresh_tree)
@@ -171,6 +171,10 @@ class CoursesView(QWidget):
         import_btn = QPushButton("📥 Import (to_import/ .mdsl / .json / .mpkg)...", container)
         import_btn.clicked.connect(self._on_import_deck)
         header_row.addWidget(import_btn)
+
+        export_btn = QPushButton("📤 Export Course...", container)
+        export_btn.clicked.connect(self._on_export_button_clicked)
+        header_row.addWidget(export_btn)
 
         custom_study_btn = QPushButton("Custom Study...", container)
         set_widget_props(custom_study_btn, variant="ghost")
@@ -332,6 +336,8 @@ class CoursesView(QWidget):
                     p.read_text(encoding="utf-8"),
                     target_course_id=selected_course_id,
                     auto_layout=True,
+                    source_dir=p.parent,
+                    media_vault=self.media_vault,
                 )
                 if res.has_errors:
                     QMessageBox.critical(self, "DSL Import Error", res.diagnostics[0].message)
@@ -344,26 +350,76 @@ class CoursesView(QWidget):
         except Exception as exc:
             QMessageBox.critical(self, "Import Failed", str(exc))
 
+    def _on_export_button_clicked(self) -> None:
+        kind, item_id = self._selected_type_and_id()
+        selected_cid = int(item_id) if kind == "course" and item_id is not None else None
+        all_courses = self.course_repo.list_all()
+        if not all_courses:
+            QMessageBox.information(self, "No Courses", "There are no courses in the database to export.")
+            return
+
+        if selected_cid is None:
+            c_names = [c.name for c in all_courses]
+            chosen_name, ok = QInputDialog.getItem(self, "Export Course", "Select Course to export:", c_names, 0, False)
+            if not ok or not chosen_name:
+                return
+            course = next((c for c in all_courses if c.name == chosen_name), None)
+            if not course or course.id is None:
+                return
+            selected_cid = course.id
+
+        course = self.course_repo.get_by_id(selected_cid)
+        if not course:
+            return
+
+        fmt_choices = ["Morphism DSL (.mdsl)", "Morphism Package (.mpkg)", "Course JSON (.json)"]
+        chosen_fmt_str, ok = QInputDialog.getItem(
+            self,
+            f"Export '{course.name}'",
+            "Choose export format:",
+            fmt_choices,
+            0,
+            False,
+        )
+        if not ok or not chosen_fmt_str:
+            return
+
+        if "mdsl" in chosen_fmt_str:
+            fmt = "mdsl"
+        elif "mpkg" in chosen_fmt_str:
+            fmt = "mpkg"
+        else:
+            fmt = "json"
+
+        self._on_export_course(selected_cid, fmt)
+
     def _on_export_course(self, course_id: int, fmt: str) -> None:
         course = self.course_repo.get_by_id(course_id)
         if course is None:
             return
         safe_name = course.name.replace(" ", "_").lower()
+        export_dir = get_project_root() / "to_export"
+        export_dir.mkdir(parents=True, exist_ok=True)
+        default_file = str(export_dir / f"{safe_name}.{fmt}")
+
         if fmt == "mpkg":
-            path_str, _ = QFileDialog.getSaveFileName(self, "Export .mpkg Deck", f"{safe_name}.mpkg", "Morphism Package (*.mpkg)")
+            path_str, _ = QFileDialog.getSaveFileName(self, "Export .mpkg Deck", default_file, "Morphism Package (*.mpkg)")
             if path_str:
                 self.mpkg_service.export_mpkg(course_id, Path(path_str), include_scheduling=True)
+                QMessageBox.information(self, "Export Complete", f"Exported course to '{path_str}'.")
         elif fmt == "json":
-            path_str, _ = QFileDialog.getSaveFileName(self, "Export .json Deck", f"{safe_name}.json", "JSON (*.json)")
+            path_str, _ = QFileDialog.getSaveFileName(self, "Export .json Deck", default_file, "JSON (*.json)")
             if path_str:
                 self.json_service.export_course_file(course_id, Path(path_str), include_scheduling=True)
+                QMessageBox.information(self, "Export Complete", f"Exported course to '{path_str}'.")
         elif fmt == "mdsl":
-            path_str, _ = QFileDialog.getSaveFileName(self, "Export .mdsl Source", f"{safe_name}.mdsl", "Morphism DSL (*.mdsl)")
+            path_str, _ = QFileDialog.getSaveFileName(self, "Export .mdsl Source", default_file, "Morphism DSL (*.mdsl)")
             if path_str:
                 notes = self.note_repo.list_by_course(course_id, include_children=True)
                 edges = self.note_repo.list_edges_by_course(course_id)
                 mdsl_str = DSLCompiler.decompile_course(course, notes, edges)
                 Path(path_str).write_text(mdsl_str, encoding="utf-8")
+                QMessageBox.information(self, "Export Complete", f"Exported course to '{path_str}'.")
 
     def _on_context_menu(self, pos) -> None:
         item = self.tree.itemAt(pos)

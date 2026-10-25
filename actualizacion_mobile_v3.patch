@@ -1,0 +1,1216 @@
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -10,6 +10,7 @@
+ requires-python = ">=3.11"
+ license = {text = "GPL-3.0-or-later"}
+ dependencies = [
++    "cryptography>=42",
+     "PySide6>=6.6.0",
+     "fsrs>=5.1.3,<6",
+     "platformdirs>=4.0.0",
+--- a/src/morphism-portable/AndroidManifest.xml
++++ b/src/morphism-portable/AndroidManifest.xml
+@@ -1,14 +1,16 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+     package="org.morphism.srs"
+-    android:versionCode="3"
+-    android:versionName="0.3.0">
++    android:versionCode="4"
++    android:versionName="0.4.0">
+ 
+     <uses-sdk
+         android:minSdkVersion="26"
+         android:targetSdkVersion="34" />
+ 
+     <uses-permission android:name="android.permission.INTERNET" />
++    <uses-permission android:name="android.permission.CAMERA" />
++    <uses-feature android:name="android.hardware.camera" android:required="false" />
+ 
+     <application
+         android:allowBackup="false"
+@@ -20,6 +22,7 @@
+         android:usesCleartextTraffic="true"
+         android:theme="@style/AppTheme">
+ 
++        <activity android:name="org.morphism.srs.portable.QrScannerActivity" android:exported="false" android:screenOrientation="portrait" />
+         <activity
+             android:name="org.morphism.srs.portable.MainActivity"
+             android:theme="@style/AppTheme"
+--- a/src/morphism-portable/assets/web/graph_canvas.js
++++ b/src/morphism-portable/assets/web/graph_canvas.js
+@@ -33,6 +33,12 @@
+         this.nodeWidth = 210;
+         this.nodeHeight = 72;
+ 
++        this.resizeObserver = new ResizeObserver(() => { this.resize(); if(this.needsFit) this.fitAll(); });
++        this.resizeObserver.observe(this.canvas);
++        this.labelsLayer=document.createElement("div");
++        this.labelsLayer.style.cssText="position:absolute;inset:0;overflow:hidden;pointer-events:none";
++        this.canvas.insertAdjacentElement("afterend",this.labelsLayer);
++        this.labelNodes=new Map();
+         this._setupEvents();
+         this.resize();
+     }
+@@ -47,8 +53,19 @@
+     }
+ 
+     setData(notes, edges) {
++        this.needsFit=true;
+         this.notes = notes || [];
+         this.edges = edges || [];
++        if(window.MathJax?.typesetClear) window.MathJax.typesetClear([this.labelsLayer]);
++        this.labelsLayer.replaceChildren(); this.labelNodes.clear();
++        this.notes.forEach(note => {
++            const label=document.createElement("div");
++            label.className="graph-node-title";
++            label.textContent=note.title || "Sin titulo";
++            label.style.cssText=`position:absolute;left:0;top:0;width:${this.nodeWidth-28}px;height:28px;overflow:hidden;white-space:nowrap;font:bold 13px sans-serif;transform-origin:0 0`;
++            this.labelsLayer.append(label); this.labelNodes.set(note.id,label);
++        });
++        if(typeof typeset==="function") typeset([...this.labelNodes.values()]);
+         this.render();
+     }
+ 
+@@ -213,7 +230,8 @@
+         const boundsW = (maxX - minX) + 120;
+         const boundsH = (maxY - minY) + 120;
+ 
+-        this.scale = Math.max(this.minScale, Math.min(1.2, Math.min(w / boundsW, h / boundsH)));
++        this.needsFit=false;
++        this.scale = Math.max(0.01, Math.min(1.2, Math.min(w / boundsW, h / boundsH)));
+         this.offsetX = (w - boundsW * this.scale) / 2 - minX * this.scale + 60 * this.scale;
+         this.offsetY = (h - boundsH * this.scale) / 2 - minY * this.scale + 60 * this.scale;
+         this.render();
+@@ -429,7 +447,12 @@
+             ctx.fillStyle = theme.text || "#F7F1F8";
+             ctx.font = "bold 13px -apple-system, BlinkMacSystemFont, Roboto, sans-serif";
+             const title = note.title || "Untitled";
+-            this._drawTruncatedText(ctx, title, nx + 14, ny + 24, isDue ? this.nodeWidth - 62 : this.nodeWidth - 28);
++            const label=this.labelNodes.get(note.id);
++            if(label) {
++                label.style.color=theme.text;
++                label.style.width=`${isDue ? this.nodeWidth-62 : this.nodeWidth-28}px`;
++                label.style.transform=`translate(${this.canvas.offsetLeft+this.offsetX+(nx+14)*this.scale}px,${this.canvas.offsetTop+this.offsetY+(ny+8)*this.scale}px) scale(${this.scale})`;
++            }
+ 
+             // Subtitle (Mode + cards count)
+             const cardCount = Array.isArray(note.cards) ? note.cards.length : (note.card_count || 1);
+--- a/src/morphism-portable/assets/web/index.html
++++ b/src/morphism-portable/assets/web/index.html
+@@ -761,9 +761,10 @@
+         <div class="modal-box">
+             <div class="modal-title">🔄 Sincronización Bidireccional PC</div>
+             <p style="font-size:12px; color:var(--text-muted); line-height:1.5;">
+-                Ingresa la URL y token generados en el diálogo <b>QR Móvil</b> de la versión de escritorio de Morphism SRS en tu red Wi-Fi:
++                Escanea el QR o ingresa la URL de sesi&#243;n generada en el diálogo <b>QR Móvil</b> de la versión de escritorio de Morphism SRS en tu red Wi-Fi:
+             </p>
+-            <input type="text" id="sync-endpoint-url" placeholder="http://192.168.1.X:8765/?token=..." style="width:100%; background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-color); padding:10px; border-radius:8px; font-size:12px; margin-bottom:12px; outline:none;">
++            <input type="text" id="sync-endpoint-url" placeholder="morphism-sync://192.168.1.X:8765/#key=..." style="width:100%; background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-color); padding:10px; border-radius:8px; font-size:12px; margin-bottom:12px; outline:none;">
++            <button class="btn-primary" id="btn-scan-qr">Escanear QR con c&#225;mara</button>
+             <button class="btn-primary" id="btn-run-sync">Sincronizar Ahora</button>
+             <div id="sync-status-msg" style="margin-top:12px; font-size:12px; line-height:1.4;"></div>
+             <button class="modal-close-btn" onclick="window.app.closeModal('modal-sync')">Cerrar</button>
+--- a/src/morphism-portable/assets/web/portable_ui.js
++++ b/src/morphism-portable/assets/web/portable_ui.js
+@@ -188,7 +188,7 @@
+         this.busy=false; $("btn-run-sync").disabled=false;
+         document.body.classList.remove("syncing");
+         $("sync-status-msg").textContent=result.ok ? "Sincronización completada." : "Error: "+result.error;
+-        if(result.ok) { this.queue=[]; this.undo=[]; this.refresh(); this.renderCurrentReviewCard(); this.switchTab("graph"); this.graphView.fitAll(); }
++        if(result.ok) { this.activeCourseId=Number(native("getSetting","active_course_id")) || 0; this.applyTheme(native("getSetting","active_theme_id") || "dark_slate"); this.queue=[]; this.undo=[]; this.refresh(); this.renderCurrentReviewCard(); this.switchTab("graph"); this.graphView.fitAll(); }
+     }
+     openModal(id) { $(id).classList.add("active"); }
+     closeModal(id) { $(id).classList.remove("active"); }
+@@ -201,13 +201,14 @@
+         $("txt-graph-search").oninput=e=>this.graphView.setSearchQuery(e.target.value);
+         $("lbl-active-course").onclick=()=>this.switchTab("courses");
+         $("btn-open-sync").onclick=()=>{ $("sync-endpoint-url").value=native("getSetting","sync_last_url"); this.openModal("modal-sync"); };
++        $("btn-scan-qr").onclick=()=>{ if(!this.busy) window.MorphismNative.scanQr(); };
+         $("btn-run-sync").onclick=()=>this.performSync(); $("btn-open-guide").onclick=()=>this.openModal("modal-guide");
+         $("btn-theme-selector").onclick=()=>this.openModal("modal-theme");
+         const grid=document.querySelector(".theme-grid"); grid.replaceChildren();
+         this.themes.forEach(theme=>{const b=document.createElement("button");b.className="theme-option-btn";b.textContent=theme.name;
+             b.onclick=()=>{this.applyTheme(theme.id);this.closeModal("modal-theme");};grid.append(b);});
+         document.querySelectorAll(".modal-overlay").forEach(m=>m.onclick=e=>{if(e.target===m)this.closeModal(m.id);});
+-        window.addEventListener("morphism-mathjax-ready",()=>typeset([$("review-front-content"),$("node-content")]));
++        window.addEventListener("morphism-mathjax-ready",()=>typeset([$("review-front-content"),$("node-content"),...this.graphView.labelNodes.values()]));
+     }
+ }
+ window.onPortableSyncResult=result=>window.app.syncFinished(result);
+@@ -230,3 +231,8 @@
+ } else {
+     initMorphismApp();
+ }
++
++window.onPortableQrResult = result => {
++    if(result.error) $("sync-status-msg").textContent=result.error;
++    if(result.url) { $("sync-endpoint-url").value=result.url; window.app.performSync(); }
++};
+--- a/src/morphism-portable/build_portable.py
++++ b/src/morphism-portable/build_portable.py
+@@ -169,12 +169,13 @@
+     jdk, kotlin, build, android = tools()
+     java = jdk / "bin" / ("java.exe" if WINDOWS else "java")
+     jar = CACHE / "portable.jar"
++    zxing = download("https://repo.maven.apache.org/maven2/com/google/zxing/core/3.5.3/core-3.5.3.jar", CACHE / "zxing-core-3.5.3.jar")
+     sources = sorted((HERE / "kotlin").rglob("*.kt"))
+     run(java, "-cp", kotlin / "lib/kotlin-compiler.jar", "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler",
+-        "-kotlin-home", kotlin, "-no-reflect", "-classpath", android, "-jvm-target", "1.8", "-include-runtime", "-d", jar, *sources)
++        "-kotlin-home", kotlin, "-no-reflect", "-classpath", str(android)+os.pathsep+str(zxing), "-jvm-target", "1.8", "-include-runtime", "-d", jar, *sources)
+     dex = CACHE / "dex"
+     dex.mkdir(exist_ok=True)
+-    run(java, "-cp", build / "lib/d8.jar", "com.android.tools.r8.D8", "--min-api", "26", "--lib", android, "--output", dex, jar)
++    run(java, "-cp", build / "lib/d8.jar", "com.android.tools.r8.D8", "--min-api", "26", "--lib", android, "--output", dex, jar, zxing)
+     exe = ".exe" if WINDOWS else ""
+     compiled = CACHE / "resources.zip"
+     if compiled.exists():
+--- a/src/morphism-portable/kotlin/org/morphism/srs/portable/bridge/MorphismJsBridge.kt
++++ b/src/morphism-portable/kotlin/org/morphism/srs/portable/bridge/MorphismJsBridge.kt
+@@ -9,10 +9,11 @@
+ import java.util.concurrent.Executors
+ 
+ class MorphismJsBridge(private val context: Context, private val web: WebView) {
+-    private val store=PortableDatabase(context)
+-    private val graph=CourseGraphDao(store)
+-    private val review=ReviewQueueDao(store,graph)
+-    private val sync=DeltaSyncEngine(store,MediaSyncStore(context))
++    private val profiles=context.getSharedPreferences("portable_profiles",Context.MODE_PRIVATE)
++    private var store=PortableDatabase(context,profiles.getString("active_db","morphism_portable.db")!!)
++    private var graph=CourseGraphDao(store)
++    private var review=ReviewQueueDao(store,graph)
++    private var sync=DeltaSyncEngine(store,MediaSyncStore(context))
+     private val worker=Executors.newSingleThreadExecutor()
+     @Volatile private var syncing=false
+     private val guard=Any()
+@@ -30,17 +31,56 @@
+     @JavascriptInterface fun updateNodePosition(courseId: Int,noteId: Int,x: Double,y: Double)=result { graph.updateNodePosition(courseId,noteId,x,y); true }
+     @JavascriptInterface fun stats(courseId: Int)=result { review.stats(courseId) }
+     @JavascriptInterface fun getSetting(key: String)=result { require(key in SETTINGS); store.meta(key) }
+-    @JavascriptInterface fun setSetting(key: String,value: String)=result { require(key in SETTINGS && key!="sync_last_url"); store.setMeta(key,value); true }
++    @JavascriptInterface fun setSetting(key: String,value: String)=result { require(key in setOf("active_course_id","active_theme_id")); store.setMeta(key,value); true }
+     @JavascriptInterface fun themes()=result { org.json.JSONArray().also { list -> context.assets.list("web/themes").orEmpty().filter { it.endsWith(".json") }.sorted().forEach {
+         list.put(JSONObject(context.assets.open("web/themes/$it").bufferedReader().use { reader -> reader.readText() })) } } }
+     @JavascriptInterface fun synchronize(url: String) {
+         synchronized(guard) { if(syncing) return; syncing=true }
+         worker.execute {
+-            val response=try { sync.sync(url) } catch(e: Exception) { JSONObject().put("ok",false).put("error",e.message) }
+-            synchronized(guard) { syncing=false }
+-            web.post { web.evaluateJavascript("window.onPortableSyncResult(${response});",null) }
++            try {
++                val uri=java.net.URI(url)
++                val fields=uri.rawFragment.orEmpty().split('&').associate { val p=it.split('=',limit=2); p[0] to java.net.URLDecoder.decode(p.getOrElse(1){""},"UTF-8") }
++                val target=fields["uuid"].orEmpty()
++                java.util.UUID.fromString(target)
++                val current=store.meta("sync_pc_db_uuid")
++                val currentName=store.meta("sync_profile_name")
++                if(current.isNotBlank() && current!=target) {
++                    web.post {
++                        android.app.AlertDialog.Builder(context).setTitle("Cambiar de perfil")
++                            .setMessage("Este QR pertenece a ${fields["user"]?.take(80) ?: target.take(8)}. Se abrirá una colección independiente. Los repasos pendientes de ${currentName} se conservarán en su perfil.")
++                            .setPositiveButton("Abrir perfil") { _,_ -> worker.execute { finishSync(url,target) } }
++                            .setNegativeButton("Cancelar") { _,_ -> report(JSONObject().put("ok",false).put("error","Cambio de perfil cancelado")) }
++                            .setOnCancelListener { report(JSONObject().put("ok",false).put("error","Cambio de perfil cancelado")) }.show()
++                    }
++                } else finishSync(url,null)
++            } catch(e: Exception) { report(JSONObject().put("ok",false).put("error",e.message)) }
+         }
+     }
++    private fun finishSync(url: String,target: String?) {
++        var candidate: PortableDatabase?=null
++        val response=try {
++            if(target==null) {
++                sync.sync(url).also { profiles.edit().putString("profile:"+store.meta("sync_pc_db_uuid"),store.fileName).apply() }
++            } else {
++                val next=PortableDatabase(context,profiles.getString("profile:$target","profile-$target.db")!!)
++                candidate=next
++                val result=DeltaSyncEngine(next,MediaSyncStore(context)).sync(url)
++                store.close(); store=next; candidate=null
++                graph=CourseGraphDao(store); review=ReviewQueueDao(store,graph); sync=DeltaSyncEngine(store,MediaSyncStore(context))
++                profiles.edit().putString("active_db",store.fileName).putString("profile:$target",store.fileName).apply()
++                result
++            }
++        } catch(e: Exception) { JSONObject().put("ok",false).put("error",e.message) }
++        finally { candidate?.close() }
++        report(response)
++    }
++    private fun report(response: JSONObject) {
++        synchronized(guard) { syncing=false }
++        web.post { web.evaluateJavascript("window.onPortableSyncResult(${response});",null) }
++    }
++    @JavascriptInterface fun scanQr() {
++        web.post { (context as android.app.Activity).startActivityForResult(android.content.Intent(context,org.morphism.srs.portable.QrScannerActivity::class.java),70) }
++    }
+     fun close() { worker.execute { store.close() }; worker.shutdown() }
+-    companion object { val SETTINGS=setOf("active_course_id","active_theme_id","sync_last_url") }
++    companion object { val SETTINGS=setOf("active_course_id","active_theme_id","sync_last_url","sync_profile_name","sync_pc_db_uuid") }
+ }
+--- a/src/morphism-portable/kotlin/org/morphism/srs/portable/db/PortableDatabase.kt
++++ b/src/morphism-portable/kotlin/org/morphism/srs/portable/db/PortableDatabase.kt
+@@ -7,7 +7,7 @@
+ import org.json.JSONArray
+ import org.json.JSONObject
+ 
+-class PortableDatabase(context: Context) : SQLiteOpenHelper(context, "morphism_portable.db", null, 1) {
++class PortableDatabase(private val context: Context, val fileName: String = "morphism_portable.db") : SQLiteOpenHelper(context, fileName, null, 1) {
+     private val assets = context.assets
+     init { setWriteAheadLoggingEnabled(true) }
+     override fun onConfigure(db: SQLiteDatabase) {
+@@ -90,6 +90,38 @@
+         if (table == "review_logs") db.delete(table, "uuid=? AND id<>?", arrayOf(row.getString("uuid"), row.get("id").toString()))
+         if (db.update(table, values, where, args) == 0) db.insertOrThrow(table, null, values)
+     }
++    @Synchronized fun installSnapshot(compressed: ByteArray, uuid: String, profile: String, fetchMedia: (JSONArray) -> Unit) {
++        val target=context.getDatabasePath(fileName)
++        val temp=java.io.File(target.parentFile,"snapshot-${java.util.UUID.randomUUID()}.db")
++        val preserved=listOf("sync_device_id","active_course_id","active_theme_id").associateWith { meta(it) }
++        try {
++            java.util.zip.GZIPInputStream(compressed.inputStream()).use { input ->
++                java.io.FileOutputStream(temp).use { output ->
++                    val buffer=ByteArray(65536); var total=0L
++                    while(true) { val n=input.read(buffer); if(n<0) break; total+=n
++                        require(total<=256L*1024*1024) { "Snapshot demasiado grande" }; output.write(buffer,0,n) }
++                    output.fd.sync()
++                }
++            }
++            val manifest=SQLiteDatabase.openDatabase(temp.path,null,SQLiteDatabase.OPEN_READONLY).use { db ->
++                db.rawQuery("PRAGMA integrity_check",null).use { check(it.moveToFirst() && it.getString(0)=="ok") { "Snapshot SQLite dañado" } }
++                db.rawQuery("PRAGMA foreign_key_check",null).use { check(!it.moveToFirst()) }
++                fun value(key: String)=db.rawQuery("SELECT value_json FROM app_meta WHERE key=?",arrayOf(key)).use { check(it.moveToFirst()); JSONArray("[${it.getString(0)}]").get(0).toString() }
++                require(value("sync_pc_db_uuid")==uuid && value("sync_profile_id")==profile && value("sync_snapshot_version")=="3") { "Identidad de snapshot inválida" }
++                require(value("sync_last_pc_seq").toLong()>=0)
++                (TABLE_KEYS.keys+listOf("portable_outbox","portable_undo","portable_undone")).forEach { db.rawQuery("SELECT * FROM $it LIMIT 0",null).close() }
++                db.rawQuery("SELECT * FROM media_assets",null).use { c -> JSONArray().also { list ->
++                    while(c.moveToNext()) { val row=JSONObject(); c.columnNames.forEachIndexed { i,key -> row.put(key,if(c.isNull(i)) JSONObject.NULL else c.getString(i)) }; list.put(row) }
++                } }
++            }
++            fetchMedia(manifest)
++            require(rows("SELECT 1 FROM portable_outbox LIMIT 1").length()==0 && rows("SELECT 1 FROM portable_undone LIMIT 1").length()==0) { "Hay repasos pendientes; sincronízalos antes de reemplazar la base" }
++            writableDatabase.rawQuery("PRAGMA wal_checkpoint(TRUNCATE)",null).use { check(it.moveToFirst() && it.getInt(0)==0) }
++            close()
++            java.nio.file.Files.move(temp.toPath(),target.toPath(),java.nio.file.StandardCopyOption.ATOMIC_MOVE,java.nio.file.StandardCopyOption.REPLACE_EXISTING)
++            preserved.filterValues { it.isNotBlank() }.forEach { (key,value) -> setMeta(key,value) }
++        } finally { temp.delete() }
++    }
+     companion object {
+         val TABLE_KEYS = linkedMapOf("course_folders" to listOf("id"), "courses" to listOf("id"), "notes" to listOf("id"),
+             "course_notes" to listOf("course_id", "note_id"), "cards" to listOf("id"), "card_schedules" to listOf("card_id"),
+--- a/src/morphism-portable/kotlin/org/morphism/srs/portable/db/ReviewQueueDao.kt
++++ b/src/morphism-portable/kotlin/org/morphism/srs/portable/db/ReviewQueueDao.kt
+@@ -8,6 +8,7 @@
+ 
+ class ReviewQueueDao(private val store: PortableDatabase, private val graph: CourseGraphDao) {
+     fun buildDueQueue(courseId: Int, noteId: Int = 0): JSONArray {
++        store.writableDatabase.execSQL("INSERT OR IGNORE INTO card_schedules(card_id) SELECT id FROM cards")
+         val data = graph.getCourseGraphJson(courseId)
+         val nodes = data.getJSONArray("nodes")
+         val ids = (0 until nodes.length()).map { nodes.getJSONObject(it).getInt("id") }
+@@ -52,6 +53,7 @@
+         for(i in 0 until siblings.length()) { val s=siblings.getJSONObject(i)
+             if(s.getInt("id")==cardId) { after=true; continue }
+             if(mode=="cloze" || mode=="serial" && !after) conditioning.put(s.put("position",if(after) "after" else "before")) }
++        store.writableDatabase.execSQL("INSERT OR IGNORE INTO card_schedules(card_id) SELECT id FROM cards WHERE id=?",arrayOf(cardId))
+         val schedule=store.rows("SELECT * FROM card_schedules WHERE card_id=?",cardId).getJSONObject(0)
+         val intervals=JSONObject(); val now=Instant.now(); val engine=scheduler(courseId,note)
+         for(rating in 1..4) intervals.put(rating.toString(),"${engine.rate(CourseGraphDao.schedule(schedule),rating,now).days}d")
+--- a/src/morphism-portable/kotlin/org/morphism/srs/portable/MainActivity.kt
++++ b/src/morphism-portable/kotlin/org/morphism/srs/portable/MainActivity.kt
+@@ -49,6 +49,15 @@
+             if (handled != "true") finish()
+         }
+     }
++    @Deprecated("Android activity result callback")
++    override fun onActivityResult(requestCode: Int,resultCode: Int,data: android.content.Intent?) {
++        super.onActivityResult(requestCode,resultCode,data)
++        if(requestCode==70) {
++            val value=org.json.JSONObject().put("url",if(resultCode==RESULT_OK) data?.getStringExtra("url") else "")
++                .put("error",data?.getStringExtra("error") ?: "")
++            web.evaluateJavascript("window.onPortableQrResult($value)",null)
++        }
++    }
+     override fun onPause() { web.onPause(); super.onPause() }
+     override fun onResume() { super.onResume(); web.onResume() }
+     override fun onDestroy() {
+--- /dev/null
++++ b/src/morphism-portable/kotlin/org/morphism/srs/portable/QrScannerActivity.kt
+@@ -0,0 +1,90 @@
++package org.morphism.srs.portable
++
++import android.Manifest
++import android.app.Activity
++import android.content.Intent
++import android.content.pm.PackageManager
++import android.hardware.Camera
++import android.os.Bundle
++import android.view.SurfaceHolder
++import android.view.SurfaceView
++import android.widget.FrameLayout
++import android.widget.TextView
++import android.graphics.Color
++import com.google.zxing.BinaryBitmap
++import com.google.zxing.PlanarYUVLuminanceSource
++import com.google.zxing.common.HybridBinarizer
++import com.google.zxing.qrcode.QRCodeReader
++import java.util.concurrent.Executors
++
++/** Bundled, offline QR decoding, including devices without Google Play Services. */
++@Suppress("DEPRECATION")
++class QrScannerActivity: Activity(), SurfaceHolder.Callback {
++    private lateinit var preview: SurfaceView
++    private lateinit var hint: TextView
++    private var camera: Camera?=null
++    private var surfaceReady=false
++    private val decoder=Executors.newSingleThreadExecutor()
++    @Volatile private var decoding=false
++    @Volatile private var finished=false
++    override fun onCreate(state: Bundle?) {
++        super.onCreate(state)
++        preview=SurfaceView(this)
++        hint=TextView(this).apply { text="Apunta al QR de Morphism en el PC. Atrás para cancelar."; setTextColor(Color.WHITE); setBackgroundColor(0x99000000.toInt()); setPadding(20,20,20,20) }
++        setContentView(FrameLayout(this).apply { addView(preview); addView(hint) })
++        preview.holder.addCallback(this)
++        if(checkSelfPermission(Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED) requestPermissions(arrayOf(Manifest.permission.CAMERA),1)
++    }
++    override fun onRequestPermissionsResult(code: Int, permissions: Array<out String>, results: IntArray) {
++        super.onRequestPermissionsResult(code,permissions,results)
++        if(code==1 && results.firstOrNull()==PackageManager.PERMISSION_GRANTED) startCamera()
++        else { setResult(RESULT_CANCELED,Intent().putExtra("error","Permiso de cámara denegado. Puedes pegar la URL.")); finish() }
++    }
++    override fun surfaceCreated(holder: SurfaceHolder) { surfaceReady=true; startCamera() }
++    override fun surfaceChanged(holder: SurfaceHolder,format: Int,width: Int,height: Int) {}
++    override fun surfaceDestroyed(holder: SurfaceHolder) { surfaceReady=false; stopCamera() }
++    private fun startCamera() {
++        if(!surfaceReady || camera!=null || finished || checkSelfPermission(Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED) return
++        try {
++            val index=(0 until Camera.getNumberOfCameras()).first { i -> Camera.CameraInfo().also { Camera.getCameraInfo(i,it) }.facing==Camera.CameraInfo.CAMERA_FACING_BACK }
++            val device=Camera.open(index); camera=device
++            val params=device.parameters
++            val size=params.supportedPreviewSizes.filter { it.width<=1280 }.maxByOrNull { it.width*it.height } ?: params.previewSize
++            params.setPreviewSize(size.width,size.height)
++            if(params.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) params.focusMode=Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE
++            device.parameters=params
++            val info=Camera.CameraInfo().also { Camera.getCameraInfo(index,it) }
++            device.setDisplayOrientation((info.orientation-windowManager.defaultDisplay.rotation*90+360)%360)
++            device.setPreviewDisplay(preview.holder)
++            device.setPreviewCallback { data, cam ->
++                if(data!=null && !decoding && !finished && !decoder.isShutdown) {
++                    decoding=true; val frame=data.clone(); val dimensions=cam.parameters.previewSize
++                    decoder.execute {
++                        try {
++                            val source=PlanarYUVLuminanceSource(frame,dimensions.width,dimensions.height,0,0,dimensions.width,dimensions.height,false)
++                            val text=QRCodeReader().decode(BinaryBitmap(HybridBinarizer(source))).text
++                            if(text.startsWith("morphism-sync://")) {
++                                finished=true
++                                runOnUiThread { setResult(RESULT_OK,Intent().putExtra("url",text)); finish() }
++                            } else runOnUiThread { hint.text="Este QR no es de Morphism. Escanea el del PC." }
++                        } catch(_: com.google.zxing.ReaderException) { /* Next camera frame retries. */ }
++                        finally { decoding=false }
++                    }
++                }
++            }
++            device.startPreview()
++        } catch(_: Exception) {
++            stopCamera(); setResult(RESULT_CANCELED,Intent().putExtra("error","No se pudo abrir la cámara. Puedes pegar la URL.")); finish()
++        }
++    }
++    private fun stopCamera() {
++        val device=camera; camera=null
++        if(device!=null) {
++            runCatching { device.setPreviewCallback(null); device.stopPreview() }
++            runCatching { device.release() }
++        }
++    }
++    override fun onPause() { stopCamera(); super.onPause() }
++    override fun onResume() { super.onResume(); startCamera() }
++    override fun onDestroy() { finished=true; stopCamera(); decoder.shutdown(); super.onDestroy() }
++}
+--- a/src/morphism-portable/kotlin/org/morphism/srs/portable/sync/DeltaSyncEngine.kt
++++ b/src/morphism-portable/kotlin/org/morphism/srs/portable/sync/DeltaSyncEngine.kt
+@@ -6,37 +6,49 @@
+ import java.net.HttpURLConnection
+ import java.net.URI
+ import java.net.URL
+-import java.net.URLEncoder
+ import java.util.UUID
+ 
+ class DeltaSyncEngine(private val store: PortableDatabase, private val media: MediaSyncStore) {
+     fun sync(rawUrl: String): JSONObject {
+         val uri=URI(rawUrl)
+-        require(uri.scheme in listOf("http","https") && uri.host!=null && uri.userInfo==null) { "URL de sincronización inválida" }
+-        val token=uri.rawQuery.orEmpty().split('&').firstOrNull { it.startsWith("token=") }?.substringAfter('=')?.let { java.net.URLDecoder.decode(it,"UTF-8") } ?: ""
+-        require(token.isNotBlank()) { "Falta el token del PC" }
+-        val base="${uri.scheme}://${uri.rawAuthority}"
++        require(uri.scheme=="morphism-sync" && uri.host!=null && uri.port in 1..65535 && uri.userInfo==null) { "Escanea un QR v3 del PC" }
++        val fields=uri.rawFragment.orEmpty().split('&').associate { val parts=it.split('=',limit=2); parts[0] to java.net.URLDecoder.decode(parts.getOrElse(1){""},"UTF-8") }
++        val key=android.util.Base64.decode(fields["key"].orEmpty(),android.util.Base64.URL_SAFE or android.util.Base64.NO_WRAP or android.util.Base64.NO_PADDING)
++        require(key.size==32) { "Clave de sesión inválida" }
++        val expectedUuid=fields["uuid"].orEmpty(); val expectedProfile=fields["profile"] ?: expectedUuid
++        require(expectedUuid.isNotBlank() && expectedProfile.isNotBlank()) { "Falta la identidad de la colección" }
++        val paired=store.meta("sync_pc_db_uuid"); val profile=store.meta("sync_profile_id")
++        require(paired.isBlank() || paired==expectedUuid && (profile.isBlank() || profile==expectedProfile)) { "Este móvil pertenece a otra colección (${store.meta("sync_profile_name")}). No se enviaron repasos." }
++        val base="http://${uri.rawAuthority}"
+         fun request(path: String, body: JSONObject?=null): ByteArray {
+-            val connection=URL(base+path+(if('?' in path) "&" else "?")+"token="+URLEncoder.encode(token,"UTF-8")).openConnection() as HttpURLConnection
++            val aad="${if(body==null) "GET" else "POST"} $path".toByteArray(Charsets.UTF_8)
++            val proof=SyncCrypto.seal(key,byteArrayOf(),aad)
++            val connection=URL(base+path).openConnection() as HttpURLConnection
+             connection.connectTimeout=15000; connection.readTimeout=60000; connection.instanceFollowRedirects=false
++            connection.setRequestProperty("X-Morphism-Auth",android.util.Base64.encodeToString(proof,android.util.Base64.URL_SAFE or android.util.Base64.NO_WRAP or android.util.Base64.NO_PADDING))
+             try {
+                 if(body!=null) { connection.requestMethod="POST"; connection.doOutput=true
+-                    connection.setRequestProperty("Content-Type","application/json")
+-                    connection.outputStream.use { it.write(body.toString().toByteArray(Charsets.UTF_8)) } }
+-                check(connection.responseCode==200) { "PC HTTP ${connection.responseCode}: ${connection.errorStream?.bufferedReader()?.readText().orEmpty().take(300)}" }
+-                return connection.inputStream.use { it.readBytes() }
++                    connection.setRequestProperty("Content-Type","application/vnd.morphism.encrypted")
++                    connection.outputStream.use { it.write(SyncCrypto.seal(key,body.toString().toByteArray(Charsets.UTF_8),aad+" body ".toByteArray()+proof)) } }
++                check(connection.responseCode==200) { "PC HTTP ${connection.responseCode}. Reabre el QR si la sesión caducó." }
++                val bytes=connection.inputStream.use { input ->
++                    val output=java.io.ByteArrayOutputStream(); val buffer=ByteArray(65536); var total=0
++                    while(true) { val n=input.read(buffer); if(n<0) break; total+=n; require(total<=64*1024*1024) { "Respuesta demasiado grande" }; output.write(buffer,0,n) }; output.toByteArray()
++                }
++                return SyncCrypto.open(key,bytes,aad+" response ".toByteArray()+proof)
+             } finally { connection.disconnect() }
+         }
+-        val ping=JSONObject(String(request("/api/v2/sync/ping"),Charsets.UTF_8))
+-        val pcUuid=ping.getString("db_uuid"); val paired=store.meta("sync_pc_db_uuid")
+-        require(paired.isBlank() || paired==pcUuid) { "Este móvil está vinculado a otra base de datos del PC." }
++        val ping=JSONObject(String(request("/api/v3/sync/ping"),Charsets.UTF_8))
++        val pcUuid=ping.getString("db_uuid"); val pcProfile=ping.getString("profile_id")
++        require(pcUuid==expectedUuid && pcProfile==expectedProfile && ping.getInt("protocol")==3) { "El servidor no corresponde al QR" }
+         val device=store.meta("sync_device_id").ifBlank { UUID.randomUUID().toString().also { store.setMeta("sync_device_id",it) } }
+         if(paired.isNotBlank()) {
++            do {
+             val pending=store.rows("""SELECT l.*,c.uuid card_uuid,o.seq local_id FROM portable_outbox o
+-                JOIN review_logs l ON l.uuid=o.log_uuid JOIN cards c ON c.id=l.card_id ORDER BY o.seq""")
+-            val undoneRows=store.rows("SELECT uuid FROM portable_undone"); val undone=JSONArray()
++                JOIN review_logs l ON l.uuid=o.log_uuid JOIN cards c ON c.id=l.card_id ORDER BY o.seq LIMIT 250""")
++            val undoneRows=store.rows("SELECT uuid FROM portable_undone LIMIT 250"); val undone=JSONArray()
+             for(i in 0 until undoneRows.length()) undone.put(undoneRows.getJSONObject(i).getString("uuid"))
+-            val response=JSONObject(String(request("/api/v2/sync/push_delta",JSONObject().put("db_uuid",paired)
++            val response=JSONObject(String(request("/api/v3/sync/push_delta",JSONObject().put("db_uuid",paired)
+                 .put("device_id",device).put("new_review_logs",pending).put("undone_log_uuids",undone)),Charsets.UTF_8))
+             store.transaction { db ->
+                 val seq=response.getLong("max_local_log_id")
+@@ -53,10 +65,16 @@
+                 for(i in 0 until undone.length()) db.delete("portable_undone","uuid=?",arrayOf(undone.getString(i)))
+                 store.setMeta("sync_last_pushed_log_id",maxOf(seq,store.meta("sync_last_pushed_log_id","0").toLong()))
+             }
++            } while(store.rows("SELECT 1 FROM portable_outbox LIMIT 1").length()>0 || store.rows("SELECT 1 FROM portable_undone LIMIT 1").length()>0)
+         }
++        fun downloadSnapshot() {
++            store.installSnapshot(request("/api/v3/sync/snapshot"),pcUuid,pcProfile) { manifest -> media.synchronize(manifest) { request(it) } }
++        }
++        if(paired.isBlank()) downloadSnapshot()
+         val since=store.meta("sync_last_pc_seq","0").toLong()
+-        val delta=JSONObject(String(request("/api/v2/sync/pull_delta?since_seq=$since"),Charsets.UTF_8))
++        val delta=JSONObject(String(request("/api/v3/sync/pull_delta?since_seq=$since"),Charsets.UTF_8))
+         require(delta.getString("db_uuid")==pcUuid)
++        if(delta.optBoolean("snapshot_required")) { downloadSnapshot(); store.setMeta("sync_profile_name",ping.getString("profile_name")); store.setMeta("sync_last_url",rawUrl); return JSONObject().put("ok",true).put("current_seq",store.meta("sync_last_pc_seq")) }
+         // Fetch before advancing the cursor. Interrupted media transfer retries safely.
+         media.synchronize(delta.getJSONArray("media_manifest")) { request(it) }
+         store.transaction { db ->
+@@ -97,6 +115,9 @@
+             db.rawQuery("PRAGMA foreign_key_check",null).use { check(!it.moveToFirst()) { "Referencias SQL inválidas" } }
+             db.delete("sync_oplog",null,null)
+             db.execSQL("DELETE FROM portable_undo WHERE card_uuid NOT IN (SELECT uuid FROM cards)")
++            db.execSQL("INSERT OR IGNORE INTO card_schedules(card_id) SELECT id FROM cards")
++            store.setMeta("sync_profile_id",pcProfile)
++            store.setMeta("sync_profile_name",ping.getString("profile_name"))
+             store.setMeta("sync_pc_db_uuid",pcUuid)
+             store.setMeta("global_fsrs_weights",delta.opt("global_fsrs_weights") ?: JSONObject.NULL)
+             store.setMeta("sync_last_pc_seq",delta.getLong("current_seq"))
+--- /dev/null
++++ b/src/morphism-portable/kotlin/org/morphism/srs/portable/sync/SyncCrypto.kt
+@@ -0,0 +1,23 @@
++package org.morphism.srs.portable.sync
++
++import java.security.SecureRandom
++import javax.crypto.Cipher
++import javax.crypto.spec.GCMParameterSpec
++import javax.crypto.spec.SecretKeySpec
++
++object SyncCrypto {
++    fun seal(key: ByteArray, plain: ByteArray, aad: ByteArray): ByteArray {
++        val nonce=ByteArray(12).also { SecureRandom().nextBytes(it) }
++        val cipher=Cipher.getInstance("AES/GCM/NoPadding")
++        cipher.init(Cipher.ENCRYPT_MODE,SecretKeySpec(key,"AES"),GCMParameterSpec(128,nonce))
++        cipher.updateAAD(aad)
++        return nonce+cipher.doFinal(plain)
++    }
++    fun open(key: ByteArray, sealed: ByteArray, aad: ByteArray): ByteArray {
++        require(sealed.size>=28) { "Respuesta cifrada incompleta" }
++        val cipher=Cipher.getInstance("AES/GCM/NoPadding")
++        cipher.init(Cipher.DECRYPT_MODE,SecretKeySpec(key,"AES"),GCMParameterSpec(128,sealed.copyOfRange(0,12)))
++        cipher.updateAAD(aad)
++        return cipher.doFinal(sealed.copyOfRange(12,sealed.size))
++    }
++}
+--- a/src/morphism-portable/README.md
++++ b/src/morphism-portable/README.md
+@@ -27,26 +27,37 @@
+ `.build_cache/portable/portable-debug.keystore`: consérvala para instalar futuras
+ actualizaciones. El builder no reutiliza un APK de otra aplicación.
+ 
+-## Sincronizar
++## Sincronizar (protocolo v3)
+ 
+-1. Instala el APK y conecta ambos equipos a la misma red.
+-2. En el PC abre el diálogo **QR Móvil** y mantenlo abierto.
+-3. En Android pulsa **Sincronizar** y pega la URL completa que incluye el token.
+-4. Sincroniza antes de estudiar y nuevamente al terminar. El estudio funciona
+-   sin conexión entre sincronizaciones; los cambios estructurales se hacen en PC.
++1. Instala el APK v3 y conecta ambos equipos a la misma red.
++2. Abre el diálogo QR Móvil en PC y mantenlo abierto.
++3. En Android pulsa Sincronizar, luego Escanear QR con cámara. También puedes
++   pegar la URL completa `morphism-sync://.../#key=...&uuid=...`.
++4. Sincroniza antes y después de estudiar. El estudio funciona sin conexión.
+ 
+-La primera sincronización replica todas las tablas y vincula el móvil al UUID
+-de esa base del PC. Las siguientes envían únicamente repasos pendientes y
+-deshacer; reciben cambios y borrados desde el cursor `sync_oplog`. Las imágenes
+-faltantes se descargan y verifican con SHA-256 antes de confirmar el cursor.
+-Un error de red permite repetir la operación sin duplicar repasos. Si ambos
+-dispositivos repasan una tarjeta, el PC recompone su horario reproduciendo todos
+-los registros por fecha y UUID con FSRS 5. Los horarios arbitrarios recibidos del
+-cliente no reemplazan el historial autoritativo.
++La primera transferencia es un snapshot SQLite comprimido, compatible con Android.
++Los siguientes intercambios envían repasos y deshacer pendientes en lotes de 250;
++reciben cambios, borrados y medios modificados desde el cursor del PC. Si hay más
++de 2.000 operaciones o 512 KiB de JSON, se descarga otro snapshot después de
++confirmar el envío de los repasos locales. El reemplazo del snapshot elimina
++el historial local de deshacer de esa colección; conserva sus repasos confirmados.
++Los medios se verifican con SHA-256 antes de avanzar el cursor.
+ 
+-El móvil rechaza otra identidad de PC para evitar mezclar dos bases. Para
+-vincularlo a una colección diferente, sincroniza los repasos pendientes con el
+-PC original y luego borra los datos de la aplicación en Ajustes de Android.
++Cada colección usa un perfil con identidad persistente y nombre editable en PC.
++Escanear otra colección solicita confirmación y abre una base independiente,
++conservando el perfil anterior y sus repasos pendientes. El nombre se obtiene
++mediante la respuesta autenticada del servidor; el QR compacto contiene la clave
++y el UUID. Son perfiles locales, no cuentas de un servicio remoto.
++
++La sesión usa AES-256-GCM, pruebas de autenticación no reutilizables y caduca
++a los 30 minutos o al cerrar el diálogo. Las URLs antiguas con token no sirven
++para el compañero nuevo. El PC desactiva las rutas sin cifrado por defecto.
++El escáner usa Camera y ZXing 3.5.3 incluido en el APK, sin Play Services;
++el builder descarga el JAR desde Maven Central en la primera compilación.
++
++Los reintentos no duplican repasos. Si ambos dispositivos estudian una tarjeta,
++el PC reconstruye su horario desde el historial ordenado por fecha y UUID.
++El móvil comprueba la identidad antes de enviar sus repasos.
+ 
+ ## Datos y compatibilidad
+ 
+--- a/src/morphism_srs/services/delta_sync.py
++++ b/src/morphism_srs/services/delta_sync.py
+@@ -49,7 +49,7 @@
+     return json.loads(conn.execute("SELECT value_json FROM app_meta WHERE key='sync_db_uuid'").fetchone()[0])
+ 
+ 
+-def pull_delta(conn, since_seq: int):
++def pull_delta(conn, since_seq: int, *, bootstrap: bool = True):
+     if since_seq < 0:
+         raise ValueError("since_seq must be nonnegative")
+     db_uuid = database_uuid(conn)
+@@ -58,10 +58,13 @@
+         current = conn.execute("SELECT coalesce(max(id),0) FROM sync_oplog").fetchone()[0]
+         if since_seq > current:
+             raise ValueError("Cursor ahead of PC database; pair again")
+-        result = {"db_uuid": db_uuid, "current_seq": current, "protocol": 2}
++        result = {"db_uuid": db_uuid, "current_seq": current, "protocol": 2 if bootstrap else 3}
++        if not bootstrap and conn.execute("SELECT count(*) FROM (SELECT id FROM sync_oplog WHERE id>? LIMIT 2001)",(since_seq,)).fetchone()[0] > 2000:
++            conn.execute("COMMIT")
++            return {**result, "snapshot_required": True}
+         config = conn.execute("SELECT value_json FROM app_meta WHERE key='global_fsrs_weights'").fetchone()
+         result["global_fsrs_weights"] = json.loads(config[0]) if config else None
+-        if since_seq == 0:
++        if since_seq == 0 and bootstrap:
+             result.update(mode="bootstrap", tables={
+                 table: [dict(r) for r in conn.execute(f"SELECT * FROM {table}")]
+                 for table in TABLE_KEYS
+@@ -84,7 +87,9 @@
+                 row = conn.execute(f"SELECT * FROM {table} WHERE {where}", values).fetchone()
+                 (upserts[table] if row else deletes[table]).append(dict(row) if row else key)
+             result.update(mode="delta", upserts=upserts, deletes=deletes)
+-        result["media_manifest"] = [dict(r) for r in conn.execute("SELECT * FROM media_assets")]
++        result["media_manifest"] = ([dict(r) for r in conn.execute("SELECT * FROM media_assets")] if result["mode"] == "bootstrap" else result["upserts"]["media_assets"])
++        if not bootstrap and len(json.dumps(result).encode()) > 512 * 1024:
++            result = {"db_uuid": db_uuid, "current_seq": current, "protocol": 3, "snapshot_required": True}
+         conn.execute("COMMIT")
+         return result
+     except Exception:
+--- a/src/morphism_srs/services/mobile_server.py
++++ b/src/morphism_srs/services/mobile_server.py
+@@ -9,7 +9,12 @@
+ import socket
+ import sqlite3
+ import threading
+-from urllib.parse import parse_qs, urlparse
++import getpass
++import time
++from urllib.parse import parse_qs, urlparse, urlencode
++from cryptography.exceptions import InvalidTag
++from morphism_srs.services.sync_crypto import seal, open_sealed, encode, decode
++from morphism_srs.services.sync_snapshot import snapshot
+ 
+ from morphism_srs.controllers.event_bus import EventBus
+ from morphism_srs.controllers.review_controller import ReviewController
+@@ -40,8 +45,8 @@
+ 
+ class EphemeralMobileServer:
+     """
+-    Lightweight HTTP sync server for full bidirectional data sync between
+-    PC Morphism SRS and the standalone mobile Android APK via LAN and QR token authentication.
++    Ephemeral LAN sync authenticated by a QR-shared AES-256 key.
++    Legacy plaintext routes require an explicit compatibility opt-in.
+     """
+ 
+     def __init__(
+@@ -51,6 +56,7 @@
+         media_vault: MediaVault,
+         event_bus: EventBus,
+         mathjax_js_bytes: bytes = b"",
++        allow_legacy: bool = False,
+     ) -> None:
+         self.conn = conn
+         self.review_controller = review_controller
+@@ -58,6 +64,14 @@
+         self.event_bus = event_bus
+         self.mathjax_js_bytes = mathjax_js_bytes
+         self.token = secrets.token_urlsafe(16)
++        self.allow_legacy = allow_legacy
++        self.session_key = secrets.token_bytes(32)
++        self._seen_requests = set()
++        self._expires = time.monotonic() + 1800
++        self.db_uuid = database_uuid(conn)
++        self.profile_id = self.db_uuid
++        row = conn.execute("SELECT value_json FROM app_meta WHERE key='sync_profile_name'").fetchone()
++        self.profile_name = json.loads(row[0]) if row else getpass.getuser()
+         self.port: int = 0
+         self._httpd: ThreadingHTTPServer | None = None
+         self._thread: threading.Thread | None = None
+@@ -71,6 +85,30 @@
+                 pass
+ 
+             def _check_token(self) -> bool:
++                self.secure = self.path.startswith("/api/v3/") or self.path.startswith("/media/") and bool(self.headers.get("X-Morphism-Auth"))
++                if self.secure:
++                    try:
++                        path = urlparse(self.path).path
++                        allowed = {"GET": {"/api/v3/sync/ping", "/api/v3/sync/pull_delta", "/api/v3/sync/snapshot"},
++                                   "POST": {"/api/v3/sync/push_delta"}}
++                        if path not in allowed.get(self.command, set()) and not (self.command == "GET" and path.startswith("/media/")):
++                            return False
++                        auth = self.headers.get("X-Morphism-Auth", "")
++                        self.aad = f"{self.command} {self.path}".encode()
++                        proof = decode(auth)
++                        if open_sealed(parent.session_key, proof, self.aad) != b"":
++                            return False
++                        with parent._lock:
++                            if time.monotonic() > parent._expires or auth in parent._seen_requests or len(parent._seen_requests) >= 100000:
++                                return False
++                            parent._seen_requests.add(auth)
++                        self.request_proof = proof
++                        self.response_aad = self.aad + b" response " + proof
++                        return True
++                    except (ValueError, InvalidTag):
++                        return False
++                if not parent.allow_legacy:
++                    return False
+                 parsed = urlparse(self.path)
+                 params = parse_qs(parsed.query)
+                 token_param = params.get("token", [""])[0]
+@@ -79,8 +117,15 @@
+ 
+             def _send_json(self, data: dict, status: HTTPStatus = HTTPStatus.OK) -> None:
+                 body = json.dumps(data, ensure_ascii=False).encode("utf-8")
++                self._send_bytes(body, "application/json; charset=utf-8", status)
++
++            def _send_bytes(self, body, content_type, status=HTTPStatus.OK):
++                if self.secure:
++                    body = seal(parent.session_key, body, self.response_aad)
++                    content_type = "application/vnd.morphism.encrypted"
+                 self.send_response(status)
+-                self.send_header("Content-Type", "application/json; charset=utf-8")
++                self.send_header("Content-Type", content_type)
++                self.send_header("Cache-Control", "no-store")
+                 self.send_header("Content-Length", str(len(body)))
+                 self.send_header("Access-Control-Allow-Origin", "*")
+                 self.send_header("Access-Control-Allow-Headers", "*")
+@@ -102,12 +147,19 @@
+ 
+                 parsed = urlparse(self.path)
+                 path = parsed.path.rstrip("/")
++                path = path.replace("/api/v3/", "/api/v2/", 1)
++
++                if path == "/api/v2/sync/snapshot":
++                    with parent._lock, sync_connection(parent.conn) as conn:
++                        body = snapshot(conn, parent.profile_id, parent.profile_name)
++                    self._send_bytes(body, "application/gzip")
++                    return
+ 
+                 if path == "/api/v2/sync/pull_delta":
+                     try:
+                         since = int(parse_qs(parsed.query).get("since_seq", ["0"])[0])
+                         with parent._lock, sync_connection(parent.conn) as conn:
+-                            result = pull_delta(conn, since)
++                            result = pull_delta(conn, since, bootstrap=not self.secure)
+                         self._send_json(result)
+                     except (ValueError, KeyError, sqlite3.Error) as exc:
+                         self._send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+@@ -116,7 +168,8 @@
+                 if path == "/api/v2/sync/ping":
+                     with parent._lock, sync_connection(parent.conn) as conn:
+                         db_uuid = database_uuid(conn)
+-                    self._send_json({"ok": True, "app": "Morphism SRS", "version": "0.3.0", "db_uuid": db_uuid})
++                    self._send_json({"ok": True, "protocol": 3, "app": "Morphism SRS", "version": "0.4.0", "db_uuid": db_uuid,
++                                     "profile_id": parent.profile_id, "profile_name": parent.profile_name})
+                     return
+ 
+                 if path == "/api/checkout":
+@@ -182,12 +235,7 @@
+                     if file_path.exists() and file_path.is_file():
+                         data = file_path.read_bytes()
+                         content_type = parent.media_vault.get_mime_type(file_path)
+-                        self.send_response(HTTPStatus.OK)
+-                        self.send_header("Content-Type", content_type)
+-                        self.send_header("Content-Length", str(len(data)))
+-                        self.send_header("Access-Control-Allow-Origin", "*")
+-                        self.end_headers()
+-                        self.wfile.write(data)
++                        self._send_bytes(data, content_type)
+                         return
+ 
+                 self.send_error(HTTPStatus.NOT_FOUND)
+@@ -199,6 +247,7 @@
+ 
+                 parsed = urlparse(self.path)
+                 path = parsed.path.rstrip("/")
++                path = path.replace("/api/v3/", "/api/v2/", 1)
+                 try:
+                     length = int(self.headers.get("Content-Length", "0"))
+                     if length < 0 or length > 64 * 1024 * 1024:
+@@ -207,9 +256,12 @@
+                 except ValueError:
+                     self.send_error(HTTPStatus.BAD_REQUEST, "Invalid Content-Length")
+                     return
++                self.connection.settimeout(60)
+                 raw = self.rfile.read(length) if length > 0 else b"{}"
+ 
+                 try:
++                    if self.secure:
++                        raw = open_sealed(parent.session_key, raw, self.aad + b" body " + self.request_proof)
+                     payload = json.loads(raw.decode("utf-8"))
+                 except Exception:
+                     self.send_error(HTTPStatus.BAD_REQUEST, "Invalid JSON payload")
+@@ -330,11 +382,14 @@
+ 
+                 self.send_error(HTTPStatus.NOT_FOUND)
+ 
++        class SyncHTTPServer(ThreadingHTTPServer):
++            allow_reuse_address = False
++
+         DEFAULT_PORT = 8765
+         try:
+-            self._httpd = ThreadingHTTPServer(("0.0.0.0", DEFAULT_PORT), Handler)
++            self._httpd = SyncHTTPServer(("0.0.0.0", DEFAULT_PORT), Handler)
+         except OSError:
+-            self._httpd = ThreadingHTTPServer(("0.0.0.0", 0), Handler)
++            self._httpd = SyncHTTPServer(("0.0.0.0", 0), Handler)
+         self.port = int(self._httpd.server_address[1])
+         self._thread = threading.Thread(target=self._httpd.serve_forever, daemon=True)
+         self._thread.start()
+@@ -343,16 +398,16 @@
+     @property
+     def url(self) -> str:
+         ip = get_lan_ip()
+-        return f"http://{ip}:{self.port}/api/v2/sync/pull_delta?token={self.token}"
++        fragment = urlencode({"key": encode(self.session_key), "uuid": self.db_uuid})
++        return f"morphism-sync://{ip}:{self.port}/#{fragment}"
+ 
+     @property
+     def connect_info(self) -> dict:
+         ip = get_lan_ip()
+         return {
++            "protocol": 3, "pairing_url": self.url, "db_uuid": self.db_uuid,
++            "profile_id": self.profile_id, "profile_name": self.profile_name,
+             "server": f"http://{ip}:{self.port}",
+-            "token": self.token,
+-            "pull_url": f"http://{ip}:{self.port}/api/v2/sync/pull_delta?token={self.token}",
+-            "push_url": f"http://{ip}:{self.port}/api/v2/sync/push_delta?token={self.token}",
+         }
+ 
+     def stop(self) -> None:
+--- a/src/morphism_srs/services/qr_generator.py
++++ b/src/morphism_srs/services/qr_generator.py
+@@ -78,8 +78,7 @@
+             ver = v
+             break
+     else:
+-        ver = 6
+-        payload = payload[:134]
++        raise ValueError("QR payload exceeds 134 UTF-8 bytes; refusing to truncate credentials")
+ 
+     total_data_cw, ec_cw_per_block, num_blocks, align_centers = _VERSION_SPECS[ver]
+ 
+--- /dev/null
++++ b/src/morphism_srs/services/sync_crypto.py
+@@ -0,0 +1,23 @@
++"""v3 wire format: nonce[12] || AES-GCM ciphertext || tag[16]."""
++import base64
++import secrets
++from cryptography.hazmat.primitives.ciphers.aead import AESGCM
++
++
++def seal(key, data, aad):
++    nonce = secrets.token_bytes(12)
++    return nonce + AESGCM(key).encrypt(nonce, data, aad)
++
++
++def open_sealed(key, data, aad):
++    if len(data) < 28:
++        raise ValueError("Truncated encrypted message")
++    return AESGCM(key).decrypt(data[:12], data[12:], aad)
++
++
++def encode(data):
++    return base64.urlsafe_b64encode(data).decode().rstrip("=")
++
++
++def decode(data):
++    return base64.urlsafe_b64decode(data + "=" * (-len(data) % 4))
+--- /dev/null
++++ b/src/morphism_srs/services/sync_snapshot.py
+@@ -0,0 +1,45 @@
++"""Portable SQLite snapshots; deliberately exclude desktop FTS and private metadata."""
++import gzip
++import json
++from pathlib import Path
++import sqlite3
++import tempfile
++
++from morphism_srs.services.delta_sync import TABLE_KEYS, database_uuid
++
++
++def snapshot(conn, profile_id, profile_name):
++    database_uuid(conn)
++    with tempfile.TemporaryDirectory(prefix="morphism-snapshot-") as directory:
++        path = Path(directory) / "portable.db"
++        target = sqlite3.connect(path)
++        conn.execute("BEGIN")
++        try:
++            for table in (*TABLE_KEYS, "app_meta", "sync_oplog"):
++                sql = conn.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone()[0]
++                target.execute(sql.replace(") STRICT", ")"))
++            for table in TABLE_KEYS:
++                cursor = conn.execute(f"SELECT * FROM {table}")
++                target.executemany(f"INSERT INTO {table} VALUES ({','.join('?' for _ in cursor.description)})", cursor)
++            seq = conn.execute("SELECT coalesce(max(id),0) FROM sync_oplog").fetchone()[0]
++            config = conn.execute("SELECT value_json FROM app_meta WHERE key='global_fsrs_weights'").fetchone()
++            meta = {"sync_pc_db_uuid": database_uuid(conn), "sync_last_pc_seq": seq,
++                    "sync_profile_id": profile_id, "sync_profile_name": profile_name,
++                    "sync_snapshot_version": 3, "global_fsrs_weights": json.loads(config[0]) if config else None}
++            target.executemany("INSERT INTO app_meta VALUES (?,?)", ((k, json.dumps(v)) for k, v in meta.items()))
++            # Repair imported cards without schedules, also used by the native queue.
++            target.execute("INSERT OR IGNORE INTO card_schedules(card_id) SELECT id FROM cards")
++            target.execute("CREATE TABLE portable_outbox(seq INTEGER PRIMARY KEY AUTOINCREMENT, log_uuid TEXT UNIQUE NOT NULL)")
++            target.execute("CREATE TABLE portable_undo(uuid TEXT PRIMARY KEY, schedule_json TEXT NOT NULL, card_uuid TEXT NOT NULL)")
++            target.execute("CREATE TABLE portable_undone(uuid TEXT PRIMARY KEY)")
++            for row in conn.execute("SELECT tbl_name,sql FROM sqlite_master WHERE type='index' AND sql IS NOT NULL"):
++                if row[0] in TABLE_KEYS:
++                    target.execute(row[1])
++            target.execute("PRAGMA user_version=1")
++            if target.execute("PRAGMA foreign_key_check").fetchone():
++                raise ValueError("Snapshot contains invalid references")
++            target.commit()
++        finally:
++            conn.execute("ROLLBACK")
++            target.close()
++        return gzip.compress(path.read_bytes(), mtime=0)
+--- a/src/morphism_srs/ui/dialogs/mobile_qr_dialog.py
++++ b/src/morphism_srs/ui/dialogs/mobile_qr_dialog.py
+@@ -64,7 +64,7 @@
+         root.setContentsMargins(18, 18, 18, 18)
+         root.setSpacing(12)
+ 
+-        title = QLabel("📱 Mobile APK Full Data Sync", container)
++        title = QLabel("📱 Morphism Mobile ? Sync v3", container)
+         set_widget_props(title, role="title")
+         root.addWidget(title)
+ 
+@@ -90,15 +90,30 @@
+ 
+         qr_label = QLabel(card)
+         qr_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+-        qr_pix = render_qr_pixmap(url, module_px=5, border_modules=3)
++        qr_pix = render_qr_pixmap(url, module_px=5, border_modules=4)
+         qr_label.setPixmap(qr_pix)
++        profile_edit = QLineEdit(self.server.profile_name, card)
++        profile_edit.setPlaceholderText("Nombre de este perfil / colecci?n")
++        def update_profile():
++            import json
++            name = profile_edit.text().strip()[:80]
++            if not name:
++                return
++            self.server.profile_name = name
++            self.server.conn.execute("INSERT OR REPLACE INTO app_meta VALUES ('sync_profile_name', ?)", (json.dumps(name),))
++            new_url = self.server.url
++            self.url_edit.setText(new_url)
++            qr_label.setPixmap(render_qr_pixmap(new_url, module_px=5, border_modules=4))
++            status_lbl.setText(f"{name} ? {self.server.db_uuid[:8]} ? AES-256-GCM ? sesi?n de 30 min")
++        profile_edit.editingFinished.connect(update_profile)
++        card_layout.addWidget(profile_edit)
+         card_layout.addWidget(qr_label, 0, Qt.AlignmentFlag.AlignCenter)
+ 
+         url_row = QHBoxLayout()
+         self.url_edit = QLineEdit(url, card)
+         self.url_edit.setReadOnly(True)
+         copy_btn = QPushButton("Copy URL", card)
+-        copy_btn.clicked.connect(lambda: QGuiApplication.clipboard().setText(url))
++        copy_btn.clicked.connect(lambda: QGuiApplication.clipboard().setText(self.url_edit.text()))
+         url_row.addWidget(self.url_edit, 1)
+         url_row.addWidget(copy_btn)
+         card_layout.addLayout(url_row)
+--- a/tests/test_delta_sync_and_portable.py
++++ b/tests/test_delta_sync_and_portable.py
+@@ -169,7 +169,7 @@
+         bus = EventBus()
+         vault = MediaVault(self.conn, self.root / "media")
+         _, name = vault.store_bytes(b'<svg xmlns="http://www.w3.org/2000/svg"/>', "test.svg")
+-        server = EphemeralMobileServer(self.conn, ReviewController(self.conn, bus), vault, bus)
++        server = EphemeralMobileServer(self.conn, ReviewController(self.conn, bus), vault, bus, allow_legacy=True)
+         server.start()
+         try:
+             base = f"http://127.0.0.1:{server.port}"
+--- /dev/null
++++ b/tests/test_mobile_sync_v3.py
+@@ -0,0 +1,136 @@
++"""Wire-level tests against a real LAN HTTP server and a portable SQLite snapshot."""
++import unittest
++from contextlib import closing
++import gzip
++import json
++import sqlite3
++import time
++from urllib.error import HTTPError
++from urllib.parse import parse_qs, urlparse
++from urllib.request import Request, urlopen
++
++import test_delta_sync_and_portable as fixtures
++from morphism_srs.controllers.event_bus import EventBus
++from morphism_srs.controllers.review_controller import ReviewController
++from morphism_srs.services.mobile_server import EphemeralMobileServer
++from morphism_srs.services.delta_sync import pull_delta, TABLE_KEYS
++from morphism_srs.services.sync_crypto import seal, open_sealed, encode, decode
++from morphism_srs.storage.media_vault import MediaVault
++from cryptography.exceptions import InvalidTag
++from morphism_srs.services.qr_generator import encode_qr_matrix
++
++
++class TestMobileV3(unittest.TestCase):
++    log = fixtures.TestDeltaSync.log
++    batch = fixtures.TestDeltaSync.batch
++    def setUp(self):
++        fixtures.TestDeltaSync.setUp(self)
++        self.bus = EventBus()
++        self.vault = MediaVault(self.conn, self.root / "media")
++        self.server = EphemeralMobileServer(self.conn, ReviewController(self.conn, self.bus), self.vault, self.bus)
++        self.server.start()
++        self.base = f"http://127.0.0.1:{self.server.port}"
++
++    def tearDown(self):
++        self.server.stop()
++        fixtures.TestDeltaSync.tearDown(self)
++
++    def request(self, path, body=None, *, key=None):
++        key = key or self.server.session_key
++        aad = f"{'GET' if body is None else 'POST'} {path}".encode()
++        proof = seal(key, b"", aad)
++        data = None if body is None else seal(key, json.dumps(body).encode(), aad + b" body " + proof)
++        req = Request(self.base + path, data=data, headers={"X-Morphism-Auth": encode(proof)})
++        with urlopen(req, timeout=5) as response:
++            self.assertEqual(response.headers["Content-Type"], "application/vnd.morphism.encrypted")
++            result = open_sealed(key, response.read(), aad + b" response " + proof)
++        return result, req
++
++    def test_pairing_and_authenticated_encrypted_response(self):
++        fields = parse_qs(urlparse(self.server.url).fragment)
++        self.assertEqual(decode(fields["key"][0]), self.server.session_key)
++        self.assertEqual(fields["uuid"][0], self.bootstrap["db_uuid"])
++        raw, req = self.request("/api/v3/sync/ping")
++        self.assertEqual(json.loads(raw)["protocol"], 3)
++        # A recorded request must not be accepted a second time.
++        with self.assertRaises(HTTPError) as error:
++            urlopen(req, timeout=5)
++        self.assertEqual(error.exception.code, 403)
++        with self.assertRaises(HTTPError):
++            self.request("/api/v3/sync/ping", key=b"x" * 32)
++        with self.assertRaises(HTTPError):
++            urlopen(self.base + "/api/v2/sync/pull?token=" + self.server.token, timeout=5)
++        with self.assertRaises(HTTPError):
++            self.request("/api/v3/sync/pull")
++        with self.assertRaises(HTTPError):
++            self.request("/api/v3/sync/push", {"card_schedules": []})
++
++    def test_snapshot_is_portable_private_and_cursor_matches(self):
++        self.conn.execute("INSERT OR REPLACE INTO app_meta VALUES ('private_secret', '\"never-export\"')")
++        raw, _ = self.request("/api/v3/sync/snapshot")
++        path = self.root / "download.db"
++        path.write_bytes(gzip.decompress(raw))
++        with closing(sqlite3.connect(path)) as db:
++            self.assertEqual(db.execute("PRAGMA integrity_check").fetchone()[0], "ok")
++            self.assertFalse(db.execute("PRAGMA foreign_key_check").fetchall())
++            self.assertFalse(db.execute("SELECT 1 FROM sqlite_master WHERE name='cards_fts'").fetchall())
++            self.assertFalse(db.execute("SELECT 1 FROM app_meta WHERE key='private_secret'").fetchall())
++            for table in TABLE_KEYS:
++                self.assertEqual(db.execute(f"SELECT count(*) FROM {table}").fetchone()[0], self.conn.execute(f"SELECT count(*) FROM {table}").fetchone()[0])
++            seq = json.loads(db.execute("SELECT value_json FROM app_meta WHERE key='sync_last_pc_seq'").fetchone()[0])
++        delta, _ = self.request(f"/api/v3/sync/pull_delta?since_seq={seq}")
++        delta = json.loads(delta)
++        self.assertEqual(delta["mode"], "delta")
++        self.assertFalse(any(delta["upserts"].values()))
++        self.assertEqual(delta["media_manifest"], [])
++
++    def test_encrypted_push_retry_wrong_collection_and_body_tampering(self):
++        log = self.log()
++        body = self.batch(log)
++        for _ in range(2):
++            result, _ = self.request("/api/v3/sync/push_delta", body)
++            self.assertIn(log["uuid"], json.loads(result)["log_ids"])
++        self.assertEqual(self.conn.execute("SELECT count(*) FROM review_logs").fetchone()[0], 1)
++        with self.assertRaises(HTTPError) as error:
++            self.request("/api/v3/sync/push_delta", {**body, "db_uuid": "wrong"})
++        self.assertEqual(error.exception.code, 400)
++        aad = b"POST /api/v3/sync/push_delta"
++        proof = seal(self.server.session_key, b"", aad)
++        bad = bytearray(seal(self.server.session_key, b"{}", aad + b" body " + proof)); bad[-1] ^= 1
++        req = Request(self.base + "/api/v3/sync/push_delta", data=bytes(bad), headers={"X-Morphism-Auth": encode(proof)})
++        with self.assertRaises(HTTPError):
++            urlopen(req, timeout=5)
++
++    def test_empty_cursor_stays_delta_and_large_changes_require_snapshot(self):
++        self.assertEqual(pull_delta(self.conn, 0, bootstrap=False)["mode"], "delta")
++        seq = self.bootstrap["current_seq"]
++        self.conn.executemany("UPDATE notes SET title=? WHERE id=?", ((str(i), self.note.id) for i in range(2001)))
++        result = pull_delta(self.conn, seq, bootstrap=False)
++        self.assertTrue(result["snapshot_required"])
++        self.assertNotIn("upserts", result)
++
++    def test_expired_session_and_aad_binding(self):
++        key = self.server.session_key
++        sealed = seal(key, b"data", b"GET /one")
++        with self.assertRaises(InvalidTag):
++            open_sealed(key, sealed, b"GET /two")
++        self.server._expires = time.monotonic() - 1
++        with self.assertRaises(HTTPError):
++            self.request("/api/v3/sync/ping")
++
++    def test_qr_keeps_complete_key_and_identity(self):
++        # Worst-case IPv4/port still fits the built-in version 6 encoder.
++        url = "morphism-sync://255.255.255.255:65535/#key=" + encode(self.server.session_key) + "&uuid=" + self.server.db_uuid
++        self.assertLessEqual(len(url.encode()), 134)
++        matrix = encode_qr_matrix(url)
++        self.assertEqual(len(matrix), 41)
++        with self.assertRaises(ValueError):
++            encode_qr_matrix("a" * 135)
++        try:
++            import cv2
++            import numpy as np
++        except ImportError:
++            return  # Independent decoder is optional; no OpenCV app dependency.
++        pixels = np.array(matrix, dtype=np.uint8)
++        image = np.pad(255 * (1 - pixels), 4, constant_values=255).repeat(8, 0).repeat(8, 1)
++        self.assertEqual(cv2.QRCodeDetector().detectAndDecode(image)[0], url)
+--- a/tests/test_mpkg_and_mobile.py
++++ b/tests/test_mpkg_and_mobile.py
+@@ -107,6 +107,7 @@
+             media_vault=self.vault,
+             mathjax_js_bytes=b"// mathjax stub",
+             event_bus=bus,
++            allow_legacy=True,
+         )
+         server.start()
+         try:
+--- /dev/null
++++ b/tests/test_portable_sync_crypto.py
+@@ -0,0 +1,47 @@
++"""Run the actual Kotlin AES-GCM codec and verify Python interoperability."""
++import base64
++import os
++from pathlib import Path
++import subprocess
++import tempfile
++import unittest
++from cryptography.hazmat.primitives.ciphers.aead import AESGCM
++
++ROOT = Path(__file__).resolve().parents[1]
++
++
++class TestPortableSyncCrypto(unittest.TestCase):
++    def test_python_kotlin_interoperability_and_tamper_rejection(self):
++        cache = ROOT / ".build_cache/portable"
++        compiler = cache / "kotlin/kotlinc/lib/kotlin-compiler.jar"
++        java = Path(os.environ["JAVA_HOME"]) / "bin/java.exe" if os.environ.get("JAVA_HOME") else None
++        if java is None or not java.exists():
++            found = list((cache / "jdk").rglob("java.exe" if os.name == "nt" else "java"))
++            java = found[0] if found else None
++        if java is None or not compiler.exists():
++            self.skipTest("Prepare Kotlin/JDK toolchain or set JAVA_HOME")
++        key = bytes(range(32)); nonce = bytes(range(12)); aad = b"POST /sync body request-proof"
++        plain = b"review-uuid:123"
++        wire = nonce + AESGCM(key).encrypt(nonce, plain, aad)
++        with tempfile.TemporaryDirectory() as directory:
++            harness = Path(directory) / "CryptoCheck.kt"
++            jar = Path(directory) / "crypto.jar"
++            harness.write_text('''import org.morphism.srs.portable.sync.SyncCrypto
++import java.util.Base64
++fun main(args: Array<String>) {
++    val key=ByteArray(32) { it.toByte() }
++    val aad="POST /sync body request-proof".toByteArray()
++    val wire=Base64.getDecoder().decode(args[0])
++    check(String(SyncCrypto.open(key,wire,aad))=="review-uuid:123")
++    val tampered=wire.clone(); tampered[tampered.lastIndex]=(tampered.last().toInt() xor 1).toByte()
++    check(runCatching { SyncCrypto.open(key,tampered,aad) }.isFailure)
++    check(runCatching { SyncCrypto.open(key,wire,"wrong route".toByteArray()) }.isFailure)
++    println(Base64.getEncoder().encodeToString(SyncCrypto.seal(key,"from-kotlin".toByteArray(),aad)))
++}''', encoding="utf-8")
++            source = ROOT / "src/morphism-portable/kotlin/org/morphism/srs/portable/sync/SyncCrypto.kt"
++            subprocess.run([str(java), "-cp", str(compiler), "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler",
++                            "-kotlin-home", str(compiler.parent.parent), "-no-reflect", "-jvm-target", "1.8",
++                            "-include-runtime", "-d", str(jar), str(source), str(harness)], check=True, capture_output=True)
++            result = subprocess.run([str(java), "-jar", str(jar), base64.b64encode(wire).decode()], check=True, capture_output=True, text=True)
++            response = base64.b64decode(result.stdout.strip())
++            self.assertEqual(AESGCM(key).decrypt(response[:12], response[12:], aad), b"from-kotlin")
+--- a/tests/test_portable_web.py
++++ b/tests/test_portable_web.py
+@@ -63,7 +63,7 @@
+         page=Page(profile,view); view.setPage(page)
+         themes=[json.loads(p.read_text(encoding="utf-8")) for p in (ROOT / "src/morphism_srs/resources/themes").glob("*.json")]
+         fixture = r'''
+-const note={id:1,title:"Cloze",premise_html:"$\\bm{x}$",review_mode:"cloze",pos_x:0,pos_y:0,due_count:1};
++const note={id:1,title:"$\\mathbb{R}^n$",premise_html:"$\\bm{x}$",review_mode:"cloze",pos_x:-2100,pos_y:-650,due_count:1};
+ const cards=[1,2,3].map((id)=>({id,note_id:1,step_order:id-1,title:"Step "+id,front_html:"$x_"+id+"$",back_html:"$\\cancel{x_"+id+"}$"}));
+ let undoCard=0;
+ const methods={getSetting:()=>"",setSetting:()=>true,themes:()=>THEMES,
+@@ -94,6 +94,9 @@
+             self.assertEqual(js("document.querySelectorAll('.theme-option-btn').length"),10)
+             self.assertEqual(js("window.getComputedStyle(document.querySelector('#view-graph')).display"), "flex")
+             self.assertEqual(js("window.getComputedStyle(document.querySelector('#view-review')).display"), "none")
++            wait_for("document.querySelectorAll('.graph-node-title mjx-container').length===1")
++            self.assertTrue(js("(()=>{const g=app.graphView,n=g.notes[0],r=g.canvas.getBoundingClientRect();const x=g.offsetX+(n.pos_x+g.nodeWidth/2)*g.scale,y=g.offsetY+(n.pos_y+g.nodeHeight/2)*g.scale;return x>0&&x<r.width&&y>0&&y<r.height;})()"))
++            self.assertTrue(js("!!document.querySelector('#btn-scan-qr')"))
+             js("app.switchTab('review')")
+             self.assertEqual(js("window.getComputedStyle(document.querySelector('#view-review')).display"), "flex")
+             self.assertEqual(js("window.getComputedStyle(document.querySelector('#view-graph')).display"), "none")
+--- a/tests/test_remerge_v2_features.py
++++ b/tests/test_remerge_v2_features.py
+@@ -258,6 +258,7 @@
+             review_controller=rev_ctrl,
+             media_vault=self.vault,
+             event_bus=bus,
++            allow_legacy=True,
+         )
+         server.start()
+         try:

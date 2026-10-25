@@ -306,7 +306,7 @@ class ScratchbookDialog(QDialog):
         title = self._pages[self._current_row].title if (0 <= self._current_row < len(self._pages)) else "Scratchpad"
         payload = {
             "title": title,
-            "content_html": sanitize_math_html(raw),
+            "content_html": raw,
         }
         self.web_view.page().runJavaScript(
             f"if (window.MorphismPreview && window.MorphismPreview.renderScratchPreview) "

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
+    QButtonGroup,
     QCheckBox,
     QDialog,
     QHBoxLayout,
@@ -9,6 +10,7 @@ from PySide6.QtWidgets import (
     QListWidget,
     QListWidgetItem,
     QPushButton,
+    QRadioButton,
     QVBoxLayout,
     QWidget,
 )
@@ -18,23 +20,39 @@ from morphism_srs.ui.window_sizing import apply_relative_geometry
 
 
 class DeleteNoteDialog(QDialog):
-    """Confirmation dialog when deleting DAG nodes, offering prerequisite edge bridging."""
+    """Confirmation dialog when removing DAG nodes, offering soft-delete (unlink) vs hard-delete."""
 
     def __init__(self, note_count: int = 1, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self.setWindowTitle("Delete Note(s)")
-        apply_relative_geometry(self, width_ratio=0.38, height_ratio=0.30, min_width=420, min_height=220)
+        self.setWindowTitle("Remove / Delete Note(s)")
+        apply_relative_geometry(self, width_ratio=0.42, height_ratio=0.34, min_width=460, min_height=260)
 
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(16, 16, 16, 16)
+        layout.setContentsMargins(18, 16, 18, 16)
         layout.setSpacing(12)
 
         lbl = QLabel(
-            f"Are you sure you want to permanently delete {note_count} selected note(s) and their cards?",
+            f"What would you like to do with the {note_count} selected note(s)?",
             self,
         )
         lbl.setWordWrap(True)
         layout.addWidget(lbl)
+
+        self.unlink_rb = QRadioButton(
+            "🔗 <b>Unlink from this Course (Soft-Delete)</b><br>"
+            "<span style='color:#a6adc8;'>Removes the node(s) from this course DAG, but keeps notes, cards, "
+            "and review schedules intact in the database and accessible via the Note Browser.</span>",
+            self,
+        )
+        self.unlink_rb.setChecked(True)
+        layout.addWidget(self.unlink_rb)
+
+        self.hard_del_rb = QRadioButton(
+            "🗑️ <b>Delete Permanently from Database (Hard-Delete)</b><br>"
+            "<span style='color:#f38ba8;'>Completely deletes the note(s), all their cards, and review history from the database.</span>",
+            self,
+        )
+        layout.addWidget(self.hard_del_rb)
 
         self.bridge_cb = QCheckBox(
             "Bridge prerequisite edges (connect parent prerequisites directly to child dependents)",
@@ -48,12 +66,16 @@ class DeleteNoteDialog(QDialog):
         row.addStretch(1)
         cancel_btn = QPushButton("Cancel", self)
         cancel_btn.clicked.connect(self.reject)
-        del_btn = QPushButton("Delete", self)
-        set_widget_props(del_btn, variant="danger")
-        del_btn.clicked.connect(self.accept)
+        confirm_btn = QPushButton("Confirm", self)
+        set_widget_props(confirm_btn, variant="primary")
+        confirm_btn.clicked.connect(self.accept)
         row.addWidget(cancel_btn)
-        row.addWidget(del_btn)
+        row.addWidget(confirm_btn)
         layout.addLayout(row)
+
+    @property
+    def is_unlink_only(self) -> bool:
+        return self.unlink_rb.isChecked()
 
     @property
     def bridge_edges(self) -> bool:

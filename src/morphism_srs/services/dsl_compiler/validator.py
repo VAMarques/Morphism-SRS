@@ -47,17 +47,17 @@ class DSLValidator:
                     DSLDiagnostic(
                         severity="error",
                         line_num=note.line_num,
-                        message=f"Note '{note.external_key}' has no cards (define Q: and A: blocks).",
+                        message=f"Note '{note.external_key}' has no cards.",
                     )
                 )
             else:
                 for c in note.cards:
-                    if not c.front.strip() or not c.back.strip():
+                    if not c.front.strip() and not c.back.strip():
                         diagnostics.append(
                             DSLDiagnostic(
-                                severity="error",
+                                severity="warning",
                                 line_num=c.line_num,
-                                message=f"Card step {c.step_order + 1} in note '{note.external_key}' is missing Q: or A:.",
+                                message=f"Card step {c.step_order + 1} in note '{note.external_key}' has empty FRONT and BACK.",
                             )
                         )
 
