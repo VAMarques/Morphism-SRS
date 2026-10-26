@@ -1,0 +1,33 @@
+{
+  "name": "GitHub Light",
+  "id": "github_light",
+  "is_dark": false,
+  "tokens": {
+    "bg_canvas": "#F6F8FA",
+    "bg_primary": "#FFFFFF",
+    "bg_secondary": "#F6F8FA",
+    "bg_surface_0": "#EAEEF2",
+    "bg_surface_1": "#D0D7DE",
+    "bg_surface_2": "#AFB8C1",
+    "text_primary": "#1F2328",
+    "text_secondary": "#424A53",
+    "text_muted": "#656D76",
+    "accent_primary": "#0969DA",
+    "accent_primary_hover": "#0550AE",
+    "accent_secondary": "#8250DF",
+    "semantic_success": "#1A7F37",
+    "semantic_warning": "#9A6700",
+    "semantic_danger": "#CF222E",
+    "semantic_info": "#0969DA",
+    "border_subtle": "#D0D7DE",
+    "border_focus": "#0969DA",
+    "node_due_border": "#CF222E",
+    "node_learned_border": "#1A7F37",
+    "node_new_border": "#AFB8C1",
+    "font_ui": "Segoe UI, Inter, system-ui, sans-serif",
+    "font_mono": "Cascadia Code, JetBrains Mono, Consolas, monospace",
+    "radius_sm": "6px",
+    "radius_md": "10px",
+    "radius_lg": "14px"
+  }
+}
