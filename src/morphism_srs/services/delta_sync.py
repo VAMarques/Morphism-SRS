@@ -49,7 +49,7 @@ def database_uuid(conn):
     return json.loads(conn.execute("SELECT value_json FROM app_meta WHERE key='sync_db_uuid'").fetchone()[0])
 
 
-def pull_delta(conn, since_seq: int):
+def pull_delta(conn, since_seq: int, *, bootstrap: bool = True):
     if since_seq < 0:
         raise ValueError("since_seq must be nonnegative")
     db_uuid = database_uuid(conn)
@@ -58,10 +58,13 @@ def pull_delta(conn, since_seq: int):
         current = conn.execute("SELECT coalesce(max(id),0) FROM sync_oplog").fetchone()[0]
         if since_seq > current:
             raise ValueError("Cursor ahead of PC database; pair again")
-        result = {"db_uuid": db_uuid, "current_seq": current, "protocol": 2}
+        result = {"db_uuid": db_uuid, "current_seq": current, "protocol": 2 if bootstrap else 3}
+        if not bootstrap and conn.execute("SELECT count(*) FROM (SELECT id FROM sync_oplog WHERE id>? LIMIT 2001)",(since_seq,)).fetchone()[0] > 2000:
+            conn.execute("COMMIT")
+            return {**result, "snapshot_required": True}
         config = conn.execute("SELECT value_json FROM app_meta WHERE key='global_fsrs_weights'").fetchone()
         result["global_fsrs_weights"] = json.loads(config[0]) if config else None
-        if since_seq == 0:
+        if since_seq == 0 and bootstrap:
             result.update(mode="bootstrap", tables={
                 table: [dict(r) for r in conn.execute(f"SELECT * FROM {table}")]
                 for table in TABLE_KEYS
@@ -84,7 +87,9 @@ def pull_delta(conn, since_seq: int):
                 row = conn.execute(f"SELECT * FROM {table} WHERE {where}", values).fetchone()
                 (upserts[table] if row else deletes[table]).append(dict(row) if row else key)
             result.update(mode="delta", upserts=upserts, deletes=deletes)
-        result["media_manifest"] = [dict(r) for r in conn.execute("SELECT * FROM media_assets")]
+        result["media_manifest"] = ([dict(r) for r in conn.execute("SELECT * FROM media_assets")] if result["mode"] == "bootstrap" else result["upserts"]["media_assets"])
+        if not bootstrap and len(json.dumps(result).encode()) > 512 * 1024:
+            result = {"db_uuid": db_uuid, "current_seq": current, "protocol": 3, "snapshot_required": True}
         conn.execute("COMMIT")
         return result
     except Exception:

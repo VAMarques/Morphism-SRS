@@ -169,7 +169,7 @@ class TestDeltaSync(unittest.TestCase):
         bus = EventBus()
         vault = MediaVault(self.conn, self.root / "media")
         _, name = vault.store_bytes(b'<svg xmlns="http://www.w3.org/2000/svg"/>', "test.svg")
-        server = EphemeralMobileServer(self.conn, ReviewController(self.conn, bus), vault, bus)
+        server = EphemeralMobileServer(self.conn, ReviewController(self.conn, bus), vault, bus, allow_legacy=True)
         server.start()
         try:
             base = f"http://127.0.0.1:{server.port}"

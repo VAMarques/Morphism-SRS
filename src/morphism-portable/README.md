@@ -27,26 +27,37 @@ El resultado es `morphism-srs.apk` en la raíz, alineado y firmado con v1/v2
 `.build_cache/portable/portable-debug.keystore`: consérvala para instalar futuras
 actualizaciones. El builder no reutiliza un APK de otra aplicación.
 
-## Sincronizar
+## Sincronizar (protocolo v3)
 
-1. Instala el APK y conecta ambos equipos a la misma red.
-2. En el PC abre el diálogo **QR Móvil** y mantenlo abierto.
-3. En Android pulsa **Sincronizar** y pega la URL completa que incluye el token.
-4. Sincroniza antes de estudiar y nuevamente al terminar. El estudio funciona
-   sin conexión entre sincronizaciones; los cambios estructurales se hacen en PC.
+1. Instala el APK v3 y conecta ambos equipos a la misma red.
+2. Abre el diálogo QR Móvil en PC y mantenlo abierto.
+3. En Android pulsa Sincronizar, luego Escanear QR con cámara. También puedes
+   pegar la URL completa `morphism-sync://.../#key=...&uuid=...`.
+4. Sincroniza antes y después de estudiar. El estudio funciona sin conexión.
 
-La primera sincronización replica todas las tablas y vincula el móvil al UUID
-de esa base del PC. Las siguientes envían únicamente repasos pendientes y
-deshacer; reciben cambios y borrados desde el cursor `sync_oplog`. Las imágenes
-faltantes se descargan y verifican con SHA-256 antes de confirmar el cursor.
-Un error de red permite repetir la operación sin duplicar repasos. Si ambos
-dispositivos repasan una tarjeta, el PC recompone su horario reproduciendo todos
-los registros por fecha y UUID con FSRS 5. Los horarios arbitrarios recibidos del
-cliente no reemplazan el historial autoritativo.
+La primera transferencia es un snapshot SQLite comprimido, compatible con Android.
+Los siguientes intercambios envían repasos y deshacer pendientes en lotes de 250;
+reciben cambios, borrados y medios modificados desde el cursor del PC. Si hay más
+de 2.000 operaciones o 512 KiB de JSON, se descarga otro snapshot después de
+confirmar el envío de los repasos locales. El reemplazo del snapshot elimina
+el historial local de deshacer de esa colección; conserva sus repasos confirmados.
+Los medios se verifican con SHA-256 antes de avanzar el cursor.
 
-El móvil rechaza otra identidad de PC para evitar mezclar dos bases. Para
-vincularlo a una colección diferente, sincroniza los repasos pendientes con el
-PC original y luego borra los datos de la aplicación en Ajustes de Android.
+Cada colección usa un perfil con identidad persistente y nombre editable en PC.
+Escanear otra colección solicita confirmación y abre una base independiente,
+conservando el perfil anterior y sus repasos pendientes. El nombre se obtiene
+mediante la respuesta autenticada del servidor; el QR compacto contiene la clave
+y el UUID. Son perfiles locales, no cuentas de un servicio remoto.
+
+La sesión usa AES-256-GCM, pruebas de autenticación no reutilizables y caduca
+a los 30 minutos o al cerrar el diálogo. Las URLs antiguas con token no sirven
+para el compañero nuevo. El PC desactiva las rutas sin cifrado por defecto.
+El escáner usa Camera y ZXing 3.5.3 incluido en el APK, sin Play Services;
+el builder descarga el JAR desde Maven Central en la primera compilación.
+
+Los reintentos no duplican repasos. Si ambos dispositivos estudian una tarjeta,
+el PC reconstruye su horario desde el historial ordenado por fecha y UUID.
+El móvil comprueba la identidad antes de enviar sus repasos.
 
 ## Datos y compatibilidad
 

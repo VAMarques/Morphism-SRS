@@ -78,8 +78,7 @@ def encode_qr_matrix(text: str) -> list[list[bool]]:
             ver = v
             break
     else:
-        ver = 6
-        payload = payload[:134]
+        raise ValueError("QR payload exceeds 134 UTF-8 bytes; refusing to truncate credentials")
 
     total_data_cw, ec_cw_per_block, num_blocks, align_centers = _VERSION_SPECS[ver]
 

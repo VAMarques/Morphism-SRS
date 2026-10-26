@@ -49,6 +49,15 @@ class MainActivity: Activity() {
             if (handled != "true") finish()
         }
     }
+    @Deprecated("Android activity result callback")
+    override fun onActivityResult(requestCode: Int,resultCode: Int,data: android.content.Intent?) {
+        super.onActivityResult(requestCode,resultCode,data)
+        if(requestCode==70) {
+            val value=org.json.JSONObject().put("url",if(resultCode==RESULT_OK) data?.getStringExtra("url") else "")
+                .put("error",data?.getStringExtra("error") ?: "")
+            web.evaluateJavascript("window.onPortableQrResult($value)",null)
+        }
+    }
     override fun onPause() { web.onPause(); super.onPause() }
     override fun onResume() { super.onResume(); web.onResume() }
     override fun onDestroy() {

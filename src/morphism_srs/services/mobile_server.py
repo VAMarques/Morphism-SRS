@@ -9,7 +9,12 @@ import secrets
 import socket
 import sqlite3
 import threading
-from urllib.parse import parse_qs, urlparse
+import getpass
+import time
+from urllib.parse import parse_qs, urlparse, urlencode
+from cryptography.exceptions import InvalidTag
+from morphism_srs.services.sync_crypto import seal, open_sealed, encode, decode
+from morphism_srs.services.sync_snapshot import snapshot
 
 from morphism_srs.controllers.event_bus import EventBus
 from morphism_srs.controllers.review_controller import ReviewController
@@ -40,8 +45,8 @@ def _fetch_table_dicts(conn: sqlite3.Connection, query: str, params: tuple = ())
 
 class EphemeralMobileServer:
     """
-    Lightweight HTTP sync server for full bidirectional data sync between
-    PC Morphism SRS and the standalone mobile Android APK via LAN and QR token authentication.
+    Ephemeral LAN sync authenticated by a QR-shared AES-256 key.
+    Legacy plaintext routes require an explicit compatibility opt-in.
     """
 
     def __init__(
@@ -51,6 +56,7 @@ class EphemeralMobileServer:
         media_vault: MediaVault,
         event_bus: EventBus,
         mathjax_js_bytes: bytes = b"",
+        allow_legacy: bool = False,
     ) -> None:
         self.conn = conn
         self.review_controller = review_controller
@@ -58,6 +64,14 @@ class EphemeralMobileServer:
         self.event_bus = event_bus
         self.mathjax_js_bytes = mathjax_js_bytes
         self.token = secrets.token_urlsafe(16)
+        self.allow_legacy = allow_legacy
+        self.session_key = secrets.token_bytes(32)
+        self._seen_requests = set()
+        self._expires = time.monotonic() + 1800
+        self.db_uuid = database_uuid(conn)
+        self.profile_id = self.db_uuid
+        row = conn.execute("SELECT value_json FROM app_meta WHERE key='sync_profile_name'").fetchone()
+        self.profile_name = json.loads(row[0]) if row else getpass.getuser()
         self.port: int = 0
         self._httpd: ThreadingHTTPServer | None = None
         self._thread: threading.Thread | None = None
@@ -71,6 +85,30 @@ class EphemeralMobileServer:
                 pass
 
             def _check_token(self) -> bool:
+                self.secure = self.path.startswith("/api/v3/") or self.path.startswith("/media/") and bool(self.headers.get("X-Morphism-Auth"))
+                if self.secure:
+                    try:
+                        path = urlparse(self.path).path
+                        allowed = {"GET": {"/api/v3/sync/ping", "/api/v3/sync/pull_delta", "/api/v3/sync/snapshot"},
+                                   "POST": {"/api/v3/sync/push_delta"}}
+                        if path not in allowed.get(self.command, set()) and not (self.command == "GET" and path.startswith("/media/")):
+                            return False
+                        auth = self.headers.get("X-Morphism-Auth", "")
+                        self.aad = f"{self.command} {self.path}".encode()
+                        proof = decode(auth)
+                        if open_sealed(parent.session_key, proof, self.aad) != b"":
+                            return False
+                        with parent._lock:
+                            if time.monotonic() > parent._expires or auth in parent._seen_requests or len(parent._seen_requests) >= 100000:
+                                return False
+                            parent._seen_requests.add(auth)
+                        self.request_proof = proof
+                        self.response_aad = self.aad + b" response " + proof
+                        return True
+                    except (ValueError, InvalidTag):
+                        return False
+                if not parent.allow_legacy:
+                    return False
                 parsed = urlparse(self.path)
                 params = parse_qs(parsed.query)
                 token_param = params.get("token", [""])[0]
@@ -79,8 +117,15 @@ class EphemeralMobileServer:
 
             def _send_json(self, data: dict, status: HTTPStatus = HTTPStatus.OK) -> None:
                 body = json.dumps(data, ensure_ascii=False).encode("utf-8")
+                self._send_bytes(body, "application/json; charset=utf-8", status)
+
+            def _send_bytes(self, body, content_type, status=HTTPStatus.OK):
+                if self.secure:
+                    body = seal(parent.session_key, body, self.response_aad)
+                    content_type = "application/vnd.morphism.encrypted"
                 self.send_response(status)
-                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Type", content_type)
+                self.send_header("Cache-Control", "no-store")
                 self.send_header("Content-Length", str(len(body)))
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.send_header("Access-Control-Allow-Headers", "*")
@@ -102,12 +147,19 @@ class EphemeralMobileServer:
 
                 parsed = urlparse(self.path)
                 path = parsed.path.rstrip("/")
+                path = path.replace("/api/v3/", "/api/v2/", 1)
+
+                if path == "/api/v2/sync/snapshot":
+                    with parent._lock, sync_connection(parent.conn) as conn:
+                        body = snapshot(conn, parent.profile_id, parent.profile_name)
+                    self._send_bytes(body, "application/gzip")
+                    return
 
                 if path == "/api/v2/sync/pull_delta":
                     try:
                         since = int(parse_qs(parsed.query).get("since_seq", ["0"])[0])
                         with parent._lock, sync_connection(parent.conn) as conn:
-                            result = pull_delta(conn, since)
+                            result = pull_delta(conn, since, bootstrap=not self.secure)
                         self._send_json(result)
                     except (ValueError, KeyError, sqlite3.Error) as exc:
                         self._send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
@@ -116,7 +168,8 @@ class EphemeralMobileServer:
                 if path == "/api/v2/sync/ping":
                     with parent._lock, sync_connection(parent.conn) as conn:
                         db_uuid = database_uuid(conn)
-                    self._send_json({"ok": True, "app": "Morphism SRS", "version": "0.3.0", "db_uuid": db_uuid})
+                    self._send_json({"ok": True, "protocol": 3, "app": "Morphism SRS", "version": "0.4.0", "db_uuid": db_uuid,
+                                     "profile_id": parent.profile_id, "profile_name": parent.profile_name})
                     return
 
                 if path == "/api/checkout":
@@ -182,12 +235,7 @@ class EphemeralMobileServer:
                     if file_path.exists() and file_path.is_file():
                         data = file_path.read_bytes()
                         content_type = parent.media_vault.get_mime_type(file_path)
-                        self.send_response(HTTPStatus.OK)
-                        self.send_header("Content-Type", content_type)
-                        self.send_header("Content-Length", str(len(data)))
-                        self.send_header("Access-Control-Allow-Origin", "*")
-                        self.end_headers()
-                        self.wfile.write(data)
+                        self._send_bytes(data, content_type)
                         return
 
                 self.send_error(HTTPStatus.NOT_FOUND)
@@ -199,6 +247,7 @@ class EphemeralMobileServer:
 
                 parsed = urlparse(self.path)
                 path = parsed.path.rstrip("/")
+                path = path.replace("/api/v3/", "/api/v2/", 1)
                 try:
                     length = int(self.headers.get("Content-Length", "0"))
                     if length < 0 or length > 64 * 1024 * 1024:
@@ -207,9 +256,12 @@ class EphemeralMobileServer:
                 except ValueError:
                     self.send_error(HTTPStatus.BAD_REQUEST, "Invalid Content-Length")
                     return
+                self.connection.settimeout(60)
                 raw = self.rfile.read(length) if length > 0 else b"{}"
 
                 try:
+                    if self.secure:
+                        raw = open_sealed(parent.session_key, raw, self.aad + b" body " + self.request_proof)
                     payload = json.loads(raw.decode("utf-8"))
                 except Exception:
                     self.send_error(HTTPStatus.BAD_REQUEST, "Invalid JSON payload")
@@ -330,11 +382,14 @@ class EphemeralMobileServer:
 
                 self.send_error(HTTPStatus.NOT_FOUND)
 
+        class SyncHTTPServer(ThreadingHTTPServer):
+            allow_reuse_address = False
+
         DEFAULT_PORT = 8765
         try:
-            self._httpd = ThreadingHTTPServer(("0.0.0.0", DEFAULT_PORT), Handler)
+            self._httpd = SyncHTTPServer(("0.0.0.0", DEFAULT_PORT), Handler)
         except OSError:
-            self._httpd = ThreadingHTTPServer(("0.0.0.0", 0), Handler)
+            self._httpd = SyncHTTPServer(("0.0.0.0", 0), Handler)
         self.port = int(self._httpd.server_address[1])
         self._thread = threading.Thread(target=self._httpd.serve_forever, daemon=True)
         self._thread.start()
@@ -343,16 +398,16 @@ class EphemeralMobileServer:
     @property
     def url(self) -> str:
         ip = get_lan_ip()
-        return f"http://{ip}:{self.port}/api/v2/sync/pull_delta?token={self.token}"
+        fragment = urlencode({"key": encode(self.session_key), "uuid": self.db_uuid})
+        return f"morphism-sync://{ip}:{self.port}/#{fragment}"
 
     @property
     def connect_info(self) -> dict:
         ip = get_lan_ip()
         return {
+            "protocol": 3, "pairing_url": self.url, "db_uuid": self.db_uuid,
+            "profile_id": self.profile_id, "profile_name": self.profile_name,
             "server": f"http://{ip}:{self.port}",
-            "token": self.token,
-            "pull_url": f"http://{ip}:{self.port}/api/v2/sync/pull_delta?token={self.token}",
-            "push_url": f"http://{ip}:{self.port}/api/v2/sync/push_delta?token={self.token}",
         }
 
     def stop(self) -> None:

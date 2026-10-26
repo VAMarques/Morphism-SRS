@@ -169,12 +169,13 @@ def main():
     jdk, kotlin, build, android = tools()
     java = jdk / "bin" / ("java.exe" if WINDOWS else "java")
     jar = CACHE / "portable.jar"
+    zxing = download("https://repo.maven.apache.org/maven2/com/google/zxing/core/3.5.3/core-3.5.3.jar", CACHE / "zxing-core-3.5.3.jar")
     sources = sorted((HERE / "kotlin").rglob("*.kt"))
     run(java, "-cp", kotlin / "lib/kotlin-compiler.jar", "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler",
-        "-kotlin-home", kotlin, "-no-reflect", "-classpath", android, "-jvm-target", "1.8", "-include-runtime", "-d", jar, *sources)
+        "-kotlin-home", kotlin, "-no-reflect", "-classpath", str(android)+os.pathsep+str(zxing), "-jvm-target", "1.8", "-include-runtime", "-d", jar, *sources)
     dex = CACHE / "dex"
     dex.mkdir(exist_ok=True)
-    run(java, "-cp", build / "lib/d8.jar", "com.android.tools.r8.D8", "--min-api", "26", "--lib", android, "--output", dex, jar)
+    run(java, "-cp", build / "lib/d8.jar", "com.android.tools.r8.D8", "--min-api", "26", "--lib", android, "--output", dex, jar, zxing)
     exe = ".exe" if WINDOWS else ""
     compiled = CACHE / "resources.zip"
     if compiled.exists():

@@ -33,6 +33,12 @@ class TouchGraphView {
         this.nodeWidth = 210;
         this.nodeHeight = 72;
 
+        this.resizeObserver = new ResizeObserver(() => { this.resize(); if(this.needsFit) this.fitAll(); });
+        this.resizeObserver.observe(this.canvas);
+        this.labelsLayer=document.createElement("div");
+        this.labelsLayer.style.cssText="position:absolute;inset:0;overflow:hidden;pointer-events:none";
+        this.canvas.insertAdjacentElement("afterend",this.labelsLayer);
+        this.labelNodes=new Map();
         this._setupEvents();
         this.resize();
     }
@@ -47,8 +53,19 @@ class TouchGraphView {
     }
 
     setData(notes, edges) {
+        this.needsFit=true;
         this.notes = notes || [];
         this.edges = edges || [];
+        if(window.MathJax?.typesetClear) window.MathJax.typesetClear([this.labelsLayer]);
+        this.labelsLayer.replaceChildren(); this.labelNodes.clear();
+        this.notes.forEach(note => {
+            const label=document.createElement("div");
+            label.className="graph-node-title";
+            label.textContent=note.title || "Sin titulo";
+            label.style.cssText=`position:absolute;left:0;top:0;width:${this.nodeWidth-28}px;height:28px;overflow:hidden;white-space:nowrap;font:bold 13px sans-serif;transform-origin:0 0`;
+            this.labelsLayer.append(label); this.labelNodes.set(note.id,label);
+        });
+        if(typeof typeset==="function") typeset([...this.labelNodes.values()]);
         this.render();
     }
 
@@ -213,7 +230,8 @@ class TouchGraphView {
         const boundsW = (maxX - minX) + 120;
         const boundsH = (maxY - minY) + 120;
 
-        this.scale = Math.max(this.minScale, Math.min(1.2, Math.min(w / boundsW, h / boundsH)));
+        this.needsFit=false;
+        this.scale = Math.max(0.01, Math.min(1.2, Math.min(w / boundsW, h / boundsH)));
         this.offsetX = (w - boundsW * this.scale) / 2 - minX * this.scale + 60 * this.scale;
         this.offsetY = (h - boundsH * this.scale) / 2 - minY * this.scale + 60 * this.scale;
         this.render();
@@ -429,7 +447,12 @@ class TouchGraphView {
             ctx.fillStyle = theme.text || "#F7F1F8";
             ctx.font = "bold 13px -apple-system, BlinkMacSystemFont, Roboto, sans-serif";
             const title = note.title || "Untitled";
-            this._drawTruncatedText(ctx, title, nx + 14, ny + 24, isDue ? this.nodeWidth - 62 : this.nodeWidth - 28);
+            const label=this.labelNodes.get(note.id);
+            if(label) {
+                label.style.color=theme.text;
+                label.style.width=`${isDue ? this.nodeWidth-62 : this.nodeWidth-28}px`;
+                label.style.transform=`translate(${this.canvas.offsetLeft+this.offsetX+(nx+14)*this.scale}px,${this.canvas.offsetTop+this.offsetY+(ny+8)*this.scale}px) scale(${this.scale})`;
+            }
 
             // Subtitle (Mode + cards count)
             const cardCount = Array.isArray(note.cards) ? note.cards.length : (note.card_count || 1);

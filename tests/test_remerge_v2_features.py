@@ -258,6 +258,7 @@ A: Residues permuted.
             review_controller=rev_ctrl,
             media_vault=self.vault,
             event_bus=bus,
+            allow_legacy=True,
         )
         server.start()
         try:

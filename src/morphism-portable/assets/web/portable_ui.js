@@ -188,7 +188,7 @@ class MorphismApp {
         this.busy=false; $("btn-run-sync").disabled=false;
         document.body.classList.remove("syncing");
         $("sync-status-msg").textContent=result.ok ? "Sincronización completada." : "Error: "+result.error;
-        if(result.ok) { this.queue=[]; this.undo=[]; this.refresh(); this.renderCurrentReviewCard(); this.switchTab("graph"); this.graphView.fitAll(); }
+        if(result.ok) { this.activeCourseId=Number(native("getSetting","active_course_id")) || 0; this.applyTheme(native("getSetting","active_theme_id") || "dark_slate"); this.queue=[]; this.undo=[]; this.refresh(); this.renderCurrentReviewCard(); this.switchTab("graph"); this.graphView.fitAll(); }
     }
     openModal(id) { $(id).classList.add("active"); }
     closeModal(id) { $(id).classList.remove("active"); }
@@ -201,13 +201,14 @@ class MorphismApp {
         $("txt-graph-search").oninput=e=>this.graphView.setSearchQuery(e.target.value);
         $("lbl-active-course").onclick=()=>this.switchTab("courses");
         $("btn-open-sync").onclick=()=>{ $("sync-endpoint-url").value=native("getSetting","sync_last_url"); this.openModal("modal-sync"); };
+        $("btn-scan-qr").onclick=()=>{ if(!this.busy) window.MorphismNative.scanQr(); };
         $("btn-run-sync").onclick=()=>this.performSync(); $("btn-open-guide").onclick=()=>this.openModal("modal-guide");
         $("btn-theme-selector").onclick=()=>this.openModal("modal-theme");
         const grid=document.querySelector(".theme-grid"); grid.replaceChildren();
         this.themes.forEach(theme=>{const b=document.createElement("button");b.className="theme-option-btn";b.textContent=theme.name;
             b.onclick=()=>{this.applyTheme(theme.id);this.closeModal("modal-theme");};grid.append(b);});
         document.querySelectorAll(".modal-overlay").forEach(m=>m.onclick=e=>{if(e.target===m)this.closeModal(m.id);});
-        window.addEventListener("morphism-mathjax-ready",()=>typeset([$("review-front-content"),$("node-content")]));
+        window.addEventListener("morphism-mathjax-ready",()=>typeset([$("review-front-content"),$("node-content"),...this.graphView.labelNodes.values()]));
     }
 }
 window.onPortableSyncResult=result=>window.app.syncFinished(result);
@@ -230,3 +231,8 @@ if (document.readyState === "loading") {
 } else {
     initMorphismApp();
 }
+
+window.onPortableQrResult = result => {
+    if(result.error) $("sync-status-msg").textContent=result.error;
+    if(result.url) { $("sync-endpoint-url").value=result.url; window.app.performSync(); }
+};

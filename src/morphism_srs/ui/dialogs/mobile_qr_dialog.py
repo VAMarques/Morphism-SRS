@@ -64,7 +64,7 @@ class MobileQRDialog(QDialog):
         root.setContentsMargins(18, 18, 18, 18)
         root.setSpacing(12)
 
-        title = QLabel("📱 Mobile APK Full Data Sync", container)
+        title = QLabel("📱 Morphism Mobile ? Sync v3", container)
         set_widget_props(title, role="title")
         root.addWidget(title)
 
@@ -90,15 +90,30 @@ class MobileQRDialog(QDialog):
 
         qr_label = QLabel(card)
         qr_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        qr_pix = render_qr_pixmap(url, module_px=5, border_modules=3)
+        qr_pix = render_qr_pixmap(url, module_px=5, border_modules=4)
         qr_label.setPixmap(qr_pix)
+        profile_edit = QLineEdit(self.server.profile_name, card)
+        profile_edit.setPlaceholderText("Nombre de este perfil / colecci?n")
+        def update_profile():
+            import json
+            name = profile_edit.text().strip()[:80]
+            if not name:
+                return
+            self.server.profile_name = name
+            self.server.conn.execute("INSERT OR REPLACE INTO app_meta VALUES ('sync_profile_name', ?)", (json.dumps(name),))
+            new_url = self.server.url
+            self.url_edit.setText(new_url)
+            qr_label.setPixmap(render_qr_pixmap(new_url, module_px=5, border_modules=4))
+            status_lbl.setText(f"{name} ? {self.server.db_uuid[:8]} ? AES-256-GCM ? sesi?n de 30 min")
+        profile_edit.editingFinished.connect(update_profile)
+        card_layout.addWidget(profile_edit)
         card_layout.addWidget(qr_label, 0, Qt.AlignmentFlag.AlignCenter)
 
         url_row = QHBoxLayout()
         self.url_edit = QLineEdit(url, card)
         self.url_edit.setReadOnly(True)
         copy_btn = QPushButton("Copy URL", card)
-        copy_btn.clicked.connect(lambda: QGuiApplication.clipboard().setText(url))
+        copy_btn.clicked.connect(lambda: QGuiApplication.clipboard().setText(self.url_edit.text()))
         url_row.addWidget(self.url_edit, 1)
         url_row.addWidget(copy_btn)
         card_layout.addLayout(url_row)

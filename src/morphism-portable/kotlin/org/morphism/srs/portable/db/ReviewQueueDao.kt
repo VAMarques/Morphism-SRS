@@ -8,6 +8,7 @@ import java.util.UUID
 
 class ReviewQueueDao(private val store: PortableDatabase, private val graph: CourseGraphDao) {
     fun buildDueQueue(courseId: Int, noteId: Int = 0): JSONArray {
+        store.writableDatabase.execSQL("INSERT OR IGNORE INTO card_schedules(card_id) SELECT id FROM cards")
         val data = graph.getCourseGraphJson(courseId)
         val nodes = data.getJSONArray("nodes")
         val ids = (0 until nodes.length()).map { nodes.getJSONObject(it).getInt("id") }
@@ -52,6 +53,7 @@ class ReviewQueueDao(private val store: PortableDatabase, private val graph: Cou
         for(i in 0 until siblings.length()) { val s=siblings.getJSONObject(i)
             if(s.getInt("id")==cardId) { after=true; continue }
             if(mode=="cloze" || mode=="serial" && !after) conditioning.put(s.put("position",if(after) "after" else "before")) }
+        store.writableDatabase.execSQL("INSERT OR IGNORE INTO card_schedules(card_id) SELECT id FROM cards WHERE id=?",arrayOf(cardId))
         val schedule=store.rows("SELECT * FROM card_schedules WHERE card_id=?",cardId).getJSONObject(0)
         val intervals=JSONObject(); val now=Instant.now(); val engine=scheduler(courseId,note)
         for(rating in 1..4) intervals.put(rating.toString(),"${engine.rate(CourseGraphDao.schedule(schedule),rating,now).days}d")

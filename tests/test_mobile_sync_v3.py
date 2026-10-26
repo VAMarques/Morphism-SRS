@@ -133,4 +133,9 @@ class TestMobileV3(unittest.TestCase):
             return  # Independent decoder is optional; no OpenCV app dependency.
         pixels = np.array(matrix, dtype=np.uint8)
         image = np.pad(255 * (1 - pixels), 4, constant_values=255).repeat(8, 0).repeat(8, 1)
-        self.assertEqual(cv2.QRCodeDetector().detectAndDecode(image)[0], url)
+        detector = cv2.QRCodeDetectorAruco() if hasattr(cv2, "QRCodeDetectorAruco") else cv2.QRCodeDetector()
+        decoded = detector.detectAndDecode(image)[0]
+        if not decoded:
+            image8 = np.pad(255 * (1 - pixels), 8, constant_values=255).repeat(8, 0).repeat(8, 1)
+            decoded = detector.detectAndDecode(image8)[0]
+        self.assertEqual(decoded, url)

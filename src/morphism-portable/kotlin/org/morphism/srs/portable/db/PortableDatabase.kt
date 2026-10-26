@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import org.json.JSONArray
 import org.json.JSONObject
 
-class PortableDatabase(context: Context) : SQLiteOpenHelper(context, "morphism_portable.db", null, 1) {
+class PortableDatabase(private val context: Context, val fileName: String = "morphism_portable.db") : SQLiteOpenHelper(context, fileName, null, 1) {
     private val assets = context.assets
     init { setWriteAheadLoggingEnabled(true) }
     override fun onConfigure(db: SQLiteDatabase) {
@@ -89,6 +89,38 @@ class PortableDatabase(context: Context) : SQLiteOpenHelper(context, "morphism_p
         val args = keys.map { row.get(it).toString() }.toTypedArray()
         if (table == "review_logs") db.delete(table, "uuid=? AND id<>?", arrayOf(row.getString("uuid"), row.get("id").toString()))
         if (db.update(table, values, where, args) == 0) db.insertOrThrow(table, null, values)
+    }
+    @Synchronized fun installSnapshot(compressed: ByteArray, uuid: String, profile: String, fetchMedia: (JSONArray) -> Unit) {
+        val target=context.getDatabasePath(fileName)
+        val temp=java.io.File(target.parentFile,"snapshot-${java.util.UUID.randomUUID()}.db")
+        val preserved=listOf("sync_device_id","active_course_id","active_theme_id").associateWith { meta(it) }
+        try {
+            java.util.zip.GZIPInputStream(compressed.inputStream()).use { input ->
+                java.io.FileOutputStream(temp).use { output ->
+                    val buffer=ByteArray(65536); var total=0L
+                    while(true) { val n=input.read(buffer); if(n<0) break; total+=n
+                        require(total<=256L*1024*1024) { "Snapshot demasiado grande" }; output.write(buffer,0,n) }
+                    output.fd.sync()
+                }
+            }
+            val manifest=SQLiteDatabase.openDatabase(temp.path,null,SQLiteDatabase.OPEN_READONLY).use { db ->
+                db.rawQuery("PRAGMA integrity_check",null).use { check(it.moveToFirst() && it.getString(0)=="ok") { "Snapshot SQLite dañado" } }
+                db.rawQuery("PRAGMA foreign_key_check",null).use { check(!it.moveToFirst()) }
+                fun value(key: String)=db.rawQuery("SELECT value_json FROM app_meta WHERE key=?",arrayOf(key)).use { check(it.moveToFirst()); JSONArray("[${it.getString(0)}]").get(0).toString() }
+                require(value("sync_pc_db_uuid")==uuid && value("sync_profile_id")==profile && value("sync_snapshot_version")=="3") { "Identidad de snapshot inválida" }
+                require(value("sync_last_pc_seq").toLong()>=0)
+                (TABLE_KEYS.keys+listOf("portable_outbox","portable_undo","portable_undone")).forEach { db.rawQuery("SELECT * FROM $it LIMIT 0",null).close() }
+                db.rawQuery("SELECT * FROM media_assets",null).use { c -> JSONArray().also { list ->
+                    while(c.moveToNext()) { val row=JSONObject(); c.columnNames.forEachIndexed { i,key -> row.put(key,if(c.isNull(i)) JSONObject.NULL else c.getString(i)) }; list.put(row) }
+                } }
+            }
+            fetchMedia(manifest)
+            require(rows("SELECT 1 FROM portable_outbox LIMIT 1").length()==0 && rows("SELECT 1 FROM portable_undone LIMIT 1").length()==0) { "Hay repasos pendientes; sincronízalos antes de reemplazar la base" }
+            writableDatabase.rawQuery("PRAGMA wal_checkpoint(TRUNCATE)",null).use { check(it.moveToFirst() && it.getInt(0)==0) }
+            close()
+            java.nio.file.Files.move(temp.toPath(),target.toPath(),java.nio.file.StandardCopyOption.ATOMIC_MOVE,java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+            preserved.filterValues { it.isNotBlank() }.forEach { (key,value) -> setMeta(key,value) }
+        } finally { temp.delete() }
     }
     companion object {
         val TABLE_KEYS = linkedMapOf("course_folders" to listOf("id"), "courses" to listOf("id"), "notes" to listOf("id"),

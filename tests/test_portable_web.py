@@ -63,7 +63,7 @@ class TestPortableWeb(unittest.TestCase):
         page=Page(profile,view); view.setPage(page)
         themes=[json.loads(p.read_text(encoding="utf-8")) for p in (ROOT / "src/morphism_srs/resources/themes").glob("*.json")]
         fixture = r'''
-const note={id:1,title:"Cloze",premise_html:"$\\bm{x}$",review_mode:"cloze",pos_x:0,pos_y:0,due_count:1};
+const note={id:1,title:"$\\mathbb{R}^n$",premise_html:"$\\bm{x}$",review_mode:"cloze",pos_x:-2100,pos_y:-650,due_count:1};
 const cards=[1,2,3].map((id)=>({id,note_id:1,step_order:id-1,title:"Step "+id,front_html:"$x_"+id+"$",back_html:"$\\cancel{x_"+id+"}$"}));
 let undoCard=0;
 const methods={getSetting:()=>"",setSetting:()=>true,themes:()=>THEMES,
@@ -94,6 +94,9 @@ window.MorphismNative=Object.fromEntries(Object.entries(methods).map(([key,fn])=
             self.assertEqual(js("document.querySelectorAll('.theme-option-btn').length"),10)
             self.assertEqual(js("window.getComputedStyle(document.querySelector('#view-graph')).display"), "flex")
             self.assertEqual(js("window.getComputedStyle(document.querySelector('#view-review')).display"), "none")
+            wait_for("document.querySelectorAll('.graph-node-title mjx-container').length===1")
+            self.assertTrue(js("(()=>{const g=app.graphView,n=g.notes[0],r=g.canvas.getBoundingClientRect();const x=g.offsetX+(n.pos_x+g.nodeWidth/2)*g.scale,y=g.offsetY+(n.pos_y+g.nodeHeight/2)*g.scale;return x>0&&x<r.width&&y>0&&y<r.height;})()"))
+            self.assertTrue(js("!!document.querySelector('#btn-scan-qr')"))
             js("app.switchTab('review')")
             self.assertEqual(js("window.getComputedStyle(document.querySelector('#view-review')).display"), "flex")
             self.assertEqual(js("window.getComputedStyle(document.querySelector('#view-graph')).display"), "none")

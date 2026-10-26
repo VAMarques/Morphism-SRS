@@ -107,6 +107,7 @@ class TestMpkgAndMobileServer(unittest.TestCase):
             media_vault=self.vault,
             mathjax_js_bytes=b"// mathjax stub",
             event_bus=bus,
+            allow_legacy=True,
         )
         server.start()
         try:
