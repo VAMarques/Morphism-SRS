@@ -73,3 +73,7 @@ logs/
 
 # Morphism
 *.mdsl
+# Android artifacts and patches
+*.apk
+*.idsig
+*.patch
