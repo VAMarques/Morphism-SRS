@@ -128,11 +128,6 @@ LINK "Definición de Grupo" -> "Unicidad del Elemento Neutro"
 
 Para los desarrolladores, colaboradores o cualquier persona interesada en los detalles técnicos internos (arquitectura en cuatro capas, esquema SQLite v2, motor de sanitización de LaTeX, DOM incremental $O(1)$ o paridad FSRS-5 entre Python y Kotlin), **toda la especificación técnica completa se encuentra en la carpeta [`specZ/`](specZ/)**.
 
-> 💡 **¿Por qué el nombre `specZ`?**  
-> Lejos de ser una abreviatura común de *"specs"* (especificaciones), el nombre es un guiño y homenaje matemático a la **geometría algebraica**:  
-> En la teoría de esquemas de Alexander Grothendieck, **$\operatorname{Spec}(\mathbb{Z})$** (*el espectro primo del anillo de los números enteros*) es el **objeto terminal** de la categoría de esquemas. Todo esquema concebible posee un morfismo único hacia $\operatorname{Spec}(\mathbb{Z})$, constituyendo la base sobre la cual reposa todo el universo algebraico.  
-> De forma análoga, en este proyecto `specZ` constituye la base fundacional única de la que derivan todas las implementaciones, módulos y contratos técnicos de Morphism SRS.
-
 ---
 
 ## 🤝 Créditos y Agradecimientos
