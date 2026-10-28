@@ -133,7 +133,7 @@ Para los desarrolladores, colaboradores o cualquier persona interesada en los de
 ## 🤝 Créditos y Agradecimientos
 
 - **[Anki](https://apps.ankiweb.net/) y [AnkiDroid](https://ankidroid.org/)**: Pioneros indiscutibles del software libre de repetición espaciada. Su ecosistema, sus protocolos de sincronización y su visión abrieron el camino a la memorización computarizada en todo el mundo y son la inspiración original de este proyecto.
-- **SSParzival**: Crédito y agradecimiento especial por el desarrollo del fork **`Morphism-SRS-Plus`**, el cual introdujo la arquitectura móvil completa en `morphism-portable` (la aplicación en Kotlin, el motor de sincronización de deltas/snapshots por QR y el sistema autónomo de empaquetado del APK).
+- **SSParzival**: Crédito y agradecimiento especial por el desarrollo del fork **`Morphism-SRS-Plus`**, el cual introdujo la arquitectura móvil desarrollada en `morphism-portable`.
 - **Comunidad de [Open Spaced Repetition (FSRS)](https://github.com/open-spaced-repetition)**: Por su investigación abierta y su moderno algoritmo de decaimiento de memoria FSRS v5.
 - **MathJax Consortium**: Por posibilitar el renderizado tipográfico offline de LaTeX en aplicaciones modernas.
 
