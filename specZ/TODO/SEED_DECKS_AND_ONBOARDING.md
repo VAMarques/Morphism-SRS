@@ -1,7 +1,7 @@
 # TODO — Especificación de Mazos Semilla Introductorios y Onboarding de Testers
 
 > [!NOTE]
-> Este documento contiene el diseño conceptual y la planificación de los **Mazos Semilla Preinstalados (Starter Decks)** y la estrategia para conseguir usuarios testers (requerimiento #25 de [`specZ/old/Future_version.md`](file:///c:/repos/Morphism%20SRS%20proto2/specZ/old/Future_version.md)).
+> Este documento contiene el diseño conceptual y la planificación de los **Mazos Semilla Preinstalados (Starter Decks)** y la estrategia para conseguir usuarios testers (requerimiento #25 de [`specZ/old/Future_version.md`](../tags_default.csv)).
 > **Estado**: Ubicado en el backlog (`specZ/TODO/`) para ser implementado únicamente cuando el motor principal de **Morphism SRS Prototype 2** esté finalizado y los mazos hayan sido redactados y curados por el autor.
 
 ---
@@ -48,7 +48,7 @@ Demostraciones y equivalencias fundamentales de longitud media (2 a 4 tarjetas p
 ## 3. Protocolo de Distribución "Zero-Setup" para Testers
 
 1. **Ejecutable Autocontenido (`PyInstaller`)**:
-   - Script `scripts/build_release.py` que genera un paquete portable (`MorphismSRS-Windows-x64.zip` y `AppImage` en Linux) con Python, PySide6, SQLite, `tex-svg-full.js`, `chart.umd.min.js`, temas JSON y [`specZ/tags_default.csv`](file:///c:/repos/Morphism%20SRS%20proto2/specZ/tags_default.csv) pre-incluidos.
+   - Script `scripts/build_release.py` que genera un paquete portable (`MorphismSRS-Windows-x64.zip` y `AppImage` en Linux) con Python, PySide6, SQLite, `tex-svg-full.js`, `chart.umd.min.js`, temas JSON y [`specZ/tags_default.csv`](../tags_default.csv) pre-incluidos.
 2. **Asistente de Primer Arranque (First-Run Opt-In)**:
    - Al detectar una base de datos `morphism.db` recién creada, ofrece un diálogo opcional:
      - `[✓] Import Interactive Tutorial & Sample Mathematics Decks`

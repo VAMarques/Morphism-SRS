@@ -95,10 +95,14 @@
             if (payload.show_answer) {
                 dividerEl.style.display = "block";
                 backEl.style.display = "block";
+                backEl.classList.remove("ghost");
+                backEl.style.visibility = "visible";
                 backEl.innerHTML = payload.back_html || "";
             } else {
                 dividerEl.style.display = "none";
                 backEl.style.display = "none";
+                backEl.classList.remove("ghost");
+                backEl.style.visibility = "visible";
                 backEl.innerHTML = "";
             }
 
@@ -108,12 +112,78 @@
         revealAnswer: function (backHtml) {
             var dividerEl = document.getElementById("answer-divider");
             var backEl = document.getElementById("card-back");
-            dividerEl.style.display = "block";
-            backEl.style.display = "block";
-            if (typeof backHtml === "string") {
-                backEl.innerHTML = backHtml;
+            if (dividerEl) dividerEl.style.display = "block";
+            if (backEl) {
+                backEl.style.display = "block";
+                backEl.classList.remove("ghost");
+                backEl.style.visibility = "visible";
+                if (typeof backHtml === "string") {
+                    backEl.innerHTML = backHtml;
+                }
+                typesetElements([backEl]);
             }
-            typesetElements([backEl]);
+        },
+
+        setAnswerGhost: function (isGhost) {
+            var backEl = document.getElementById("card-back");
+            if (backEl) {
+                if (isGhost) {
+                    backEl.classList.add("ghost");
+                    backEl.style.visibility = "hidden";
+                } else {
+                    backEl.classList.remove("ghost");
+                    backEl.style.visibility = "visible";
+                }
+            }
+        },
+
+        hideAnswer: function () {
+            this.setAnswerGhost(true);
+        },
+
+        toggleAnswer: function (backHtml) {
+            var backEl = document.getElementById("card-back");
+            if (backEl && backEl.style.visibility === "hidden") {
+                this.setAnswerGhost(false);
+                return true;
+            } else {
+                this.setAnswerGhost(true);
+                return false;
+            }
         }
     };
+
+    function isHideShortcut(e) {
+        return (
+            e.key === "`" ||
+            e.key === "~" ||
+            e.key === "|" ||
+            e.key === "°" ||
+            e.key === "¬" ||
+            e.keyCode === 192 ||
+            e.keyCode === 220 ||
+            e.which === 192 ||
+            e.which === 220
+        );
+    }
+
+    var _isGhostHeld = false;
+
+    window.addEventListener("keydown", function (e) {
+        if (isHideShortcut(e)) {
+            if (!_isGhostHeld) {
+                _isGhostHeld = true;
+                window.MorphismReview.setAnswerGhost(true);
+            }
+            e.preventDefault();
+        }
+    });
+
+    window.addEventListener("keyup", function (e) {
+        if (isHideShortcut(e)) {
+            _isGhostHeld = false;
+            window.MorphismReview.setAnswerGhost(false);
+            e.preventDefault();
+        }
+    });
 })();

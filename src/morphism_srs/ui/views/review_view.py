@@ -54,6 +54,7 @@ class ReviewView(QWidget):
 
         self._page_ready = False
         self._answer_shown = False
+        self._answer_temp_hidden = False
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
 
         self._build_ui()
@@ -99,17 +100,6 @@ class ReviewView(QWidget):
         set_widget_props(self.undo_btn, variant="ghost")
         self.undo_btn.clicked.connect(self._on_undo)
         top_bar.addWidget(self.undo_btn)
-
-        custom_btn = QPushButton("Custom Study...", container)
-        set_widget_props(custom_btn, variant="ghost")
-        custom_btn.clicked.connect(self._on_open_custom_study)
-        top_bar.addWidget(custom_btn)
-
-        auto_btn = QPushButton("Auto-Study Due", container)
-        set_widget_props(auto_btn, variant="ghost")
-        auto_btn.setToolTip("Secondary mode: queue due cards across courses (Primary workflow is studying nodes in Graph Explorer)")
-        auto_btn.clicked.connect(self._on_start_auto_study)
-        top_bar.addWidget(auto_btn)
 
         root.addLayout(top_bar)
 
@@ -171,10 +161,23 @@ class ReviewView(QWidget):
         scroll = wrap_in_scroll_area(container, self, min_width=640, min_height=420)
         outer.addWidget(scroll)
 
+    def _is_hide_shortcut(self, event: QKeyEvent) -> bool:
+        return (
+            event.nativeVirtualKey() == 0xC0
+            or event.key() in (Qt.Key.Key_QuoteLeft, Qt.Key.Key_AsciiTilde, Qt.Key.Key_Bar)
+            or bool(event.text() and event.text() in ("`", "~", "|", "°", "¬"))
+        )
+
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if (event.modifiers() & Qt.KeyboardModifier.ControlModifier) and event.key() == Qt.Key.Key_Z:
             self._on_undo()
             return
+
+        if self._is_hide_shortcut(event):
+            if not event.isAutoRepeat():
+                self._on_hold_hide_answer(True)
+            return
+
         if event.key() == Qt.Key.Key_Space or event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
             if not self._answer_shown:
                 self._on_reveal_answer()
@@ -221,10 +224,13 @@ class ReviewView(QWidget):
 
     def _on_session_updated(self) -> None:
         self._answer_shown = False
+        self._answer_temp_hidden = False
         self._render_current_card()
 
     def _render_current_card(self) -> None:
         self.undo_btn.setEnabled(self.review_controller.undo_stack.can_undo())
+        if not self._answer_shown:
+            self._answer_temp_hidden = False
         ctx = self.review_controller.current_prompt_context()
 
         if ctx is None:
@@ -299,6 +305,7 @@ class ReviewView(QWidget):
         if ctx is None:
             return
         self._answer_shown = True
+        self._answer_temp_hidden = False
         self.show_answer_btn.setVisible(False)
         self.rating_container.setVisible(True)
         if self._page_ready:
@@ -306,6 +313,29 @@ class ReviewView(QWidget):
                 f"if (window.MorphismReview) {{ window.MorphismReview.revealAnswer({json.dumps(ctx.card.back_html)}); }}"
             )
         self.setFocus()
+
+    def keyReleaseEvent(self, event: QKeyEvent) -> None:
+        if self._is_hide_shortcut(event):
+            if not event.isAutoRepeat():
+                self._on_hold_hide_answer(False)
+            return
+        super().keyReleaseEvent(event)
+
+    def _on_hold_hide_answer(self, hide: bool) -> None:
+        ctx = self.review_controller.current_prompt_context()
+        if ctx is None:
+            return
+        if not self._answer_shown and hide:
+            self._on_reveal_answer()
+
+        self._answer_temp_hidden = hide
+        if self._page_ready:
+            js_code = f"if (window.MorphismReview) {{ window.MorphismReview.setAnswerGhost({json.dumps(hide)}); }}"
+            self.web_view.page().runJavaScript(js_code)
+        self.setFocus()
+
+    def _on_toggle_answer_visibility(self) -> None:
+        self._on_hold_hide_answer(not self._answer_temp_hidden)
 
     def _on_rate(self, rating: RatingEnum) -> None:
         self.review_controller.submit_rating(rating)

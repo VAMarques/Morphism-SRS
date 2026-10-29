@@ -1,0 +1,1921 @@
+{
+  "name": "Electricidad y Magnetismo (I2)",
+  "folder_path": "",
+  "notes": [
+    {
+      "note_id": "em_01",
+      "title": "\u00c1lgebra Vectorial y Operadores Curvil\u00edneos",
+      "x": 80.0,
+      "y": 80.0,
+      "tags": [
+        "EM",
+        "Vectores",
+        "Operadores"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223559698717,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642097,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.098971+00:00",
+            "last_review": null
+          },
+          "title": "Regla BAC-CAB e Identidades de Rotacional",
+          "text": "Triple producto vectorial: $$\\mathbf{A} \\times (\\mathbf{B} \\times \\mathbf{C}) = {{c1::\\mathbf{B}(\\mathbf{A}\\cdot\\mathbf{C}) - \\mathbf{C}(\\mathbf{A}\\cdot\\mathbf{B})}}$$<br>Identidades diferenciales nulas: $\\nabla \\times (\\nabla f) = {{c2::\\mathbf{0}}}$ y $\\nabla \\cdot (\\nabla \\times \\mathbf{A}) = {{c3::0}}$."
+        },
+        {
+          "item_id": 1879963223561258547,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642098,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.100033+00:00",
+            "last_review": null
+          },
+          "title": "Operadores en Coordenadas Cil\u00edndricas y Esf\u00e9ricas",
+          "front": "Escriba la divergencia $\\nabla \\cdot \\mathbf{A}$ en cil\u00edndricas y esf\u00e9ricas.",
+          "back": "1. <b>Cil\u00edndricas $(r, \\theta, z)$:</b> $\\nabla \\cdot \\mathbf{A} = \\frac{1}{r}\\partial_r(r A_r) + \\frac{1}{r}\\partial_\\theta A_\\theta + \\partial_z A_z$.<br>2. <b>Esf\u00e9ricas $(r, \\theta, \\phi)$:</b> $\\nabla \\cdot \\mathbf{A} = \\frac{1}{r^2}\\partial_r(r^2 A_r) + \\frac{1}{r\\sin\\theta}\\partial_\\theta(\\sin\\theta A_\\theta) + \\frac{1}{r\\sin\\theta}\\partial_\\phi A_\\phi$."
+        },
+        {
+          "item_id": 1879963223562976178,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642100,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.101089+00:00",
+            "last_review": null
+          },
+          "title": "Laplaciano Vectorial y Teorema de Stokes",
+          "text": "El laplaciano de un campo vectorial se descompone como: $$\\nabla^2 \\mathbf{A} = {{c1::\\nabla(\\nabla \\cdot \\mathbf{A}) - \\nabla \\times (\\nabla \\times \\mathbf{A})}}$$<br>Teorema de Stokes: $\\oint_{\\partial S} \\mathbf{A} \\cdot d\\boldsymbol{\\ell} = {{c2::\\iint_S (\\nabla \\times \\mathbf{A}) \\cdot d\\mathbf{S}}}$."
+        },
+        {
+          "item_id": 1879963223608532782,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642143,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.144307+00:00",
+            "last_review": null
+          },
+          "title": "Identidades Vectoriales y Regla BAC-CAB",
+          "text": "Identidades fundamentales para campos vectoriales en electrodin\u00e1mica:<br>- Regla BAC-CAB: $$\\mathbf{A} \\times (\\mathbf{B} \\times \\mathbf{C}) = {{c1::\\mathbf{B}(\\mathbf{A}\\cdot\\mathbf{C}) - \\mathbf{C}(\\mathbf{A}\\cdot\\mathbf{B})}}$$<br>- Identidades nulas: $\\nabla \\times (\\nabla f) = {{c2::\\mathbf{0}}}$ y $\\nabla \\cdot (\\nabla \\times \\mathbf{A}) = {{c3::0}}$.<br>- Laplaciano vectorial: $\\nabla^2 \\mathbf{A} = {{c4::\\nabla(\\nabla \\cdot \\mathbf{A}) - \\nabla \\times (\\nabla \\times \\mathbf{A})}}$."
+        },
+        {
+          "item_id": 1879963223609416959,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642144,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.145360+00:00",
+            "last_review": null
+          },
+          "title": "Operadores Diferenciales en Cil\u00edndricas y Esf\u00e9ricas",
+          "front": "Escriba la divergencia $\\nabla \\cdot \\mathbf{A}$ y el rotacional $\\nabla \\times \\mathbf{A}$ en coordenadas cil\u00edndricas $(r, \\theta, z)$.",
+          "back": "1. <b>Divergencia Cil\u00edndrica:</b><br>$$\\nabla \\cdot \\mathbf{A} = \\frac{1}{r}\\frac{\\partial(r A_r)}{\\partial r} + \\frac{1}{r}\\frac{\\partial A_\\theta}{\\partial \\theta} + \\frac{\\partial A_z}{\\partial z}$$<br>2. <b>Rotacional Cil\u00edndrico:</b><br>$$\\nabla \\times \\mathbf{A} = \\left(\\frac{1}{r}\\frac{\\partial A_z}{\\partial \\theta} - \\frac{\\partial A_\\theta}{\\partial z}\\right)\\hat{r} + \\left(\\frac{\\partial A_r}{\\partial z} - \\frac{\\partial A_z}{\\partial r}\\right)\\hat{\\theta} + \\frac{1}{r}\\left(\\frac{\\partial(r A_\\theta)}{\\partial r} - \\frac{\\partial A_r}{\\partial \\theta}\\right)\\hat{z}$$"
+        },
+        {
+          "item_id": 1879963223609955322,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642145,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.146413+00:00",
+            "last_review": null
+          },
+          "title": "Divergencia del Campo Coulombiano y Delta de Dirac",
+          "front": "Demuestre por qu\u00e9 formalmente $\\nabla \\cdot \\left(\\frac{\\hat{r}}{r^2}\\right) = 4\\pi \\delta^3(\\mathbf{r})$ integrando contra una funci\u00f3n de prueba suave $f(\\mathbf{r})$.",
+          "back": "1. <b>Identidad del producto vectorial:</b> $\\nabla \\cdot (f \\mathbf{V}) = f(\\nabla \\cdot \\mathbf{V}) + \\nabla f \\cdot \\mathbf{V}$ con $\\mathbf{V} = \\frac{\\hat{r}}{r^2}$.<br>2. <b>Integral en bola $B_\\varepsilon$ centrada en el origen:</b><br>$$I = \\int_{B_\\varepsilon} f \\left[\\nabla \\cdot \\frac{\\hat{r}}{r^2}\\right] dV = \\int_{B_\\varepsilon} \\nabla \\cdot \\left(f \\frac{\\hat{r}}{r^2}\\right) dV - \\int_{B_\\varepsilon} \\nabla f \\cdot \\frac{\\hat{r}}{r^2} dV$$<br>3. <b>T\u00e9rmino de borde por Gauss:</b> $\\oint_{S_\\varepsilon} f \\frac{\\hat{r}}{\\varepsilon^2} \\cdot (\\hat{r}\\varepsilon^2 d\\Omega) = \\oint_{S_\\varepsilon} f d\\Omega$. Al tomar $\\varepsilon \\to 0$, $f \\to f(\\mathbf{0})$, obteniendo $f(\\mathbf{0})\\oint d\\Omega = 4\\pi f(\\mathbf{0})$.<br>4. <b>T\u00e9rmino volum\u00e9trico del gradiente:</b> En esf\u00e9ricas, $\\int_{B_\\varepsilon} (\\nabla f \\cdot \\hat{r}) dr d\\Omega$. Como $\\nabla f$ es acotada y $r \\in [0, \\varepsilon]$, la integral tiende a $0$ cuando $\\varepsilon \\to 0$.<br>5. <b>Conclusi\u00f3n distributiva:</b> $\\int_{\\mathbb{R}^3} f(\\mathbf{r}) \\left[\\nabla \\cdot \\frac{\\hat{r}}{r^2}\\right] dV = 4\\pi f(\\mathbf{0}) \\implies \\nabla \\cdot \\left(\\frac{\\hat{r}}{r^2}\\right) = 4\\pi \\delta^3(\\mathbf{r})$."
+        },
+        {
+          "item_id": 1879963223611334279,
+          "type": "ProofSequenceCard",
+          "fsrs_card": {
+            "card_id": 1792872642146,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.147467+00:00",
+            "last_review": null
+          },
+          "title": "Teorema de Stokes en Superficies Parametrizadas",
+          "premise": "Demuestre el Teorema de Stokes $\\oint_{\\partial S} \\mathbf{F} \\cdot d\\mathbf{r} = \\iint_S (\\nabla \\times \\mathbf{F}) \\cdot d\\mathbf{S}$ para una superficie suave $S$ parametrizada por $f: D \\subseteq \\mathbb{R}^2 \\to S \\subseteq \\mathbb{R}^3$.",
+          "steps": [
+            "Sea $f(u, v) = (x(u,v), y(u,v), z(u,v))$. El pullback del campo sobre el borde es $(\\mathbf{F} \\circ f) Df \\begin{pmatrix} du \\\\ dv \\end{pmatrix} = A \\, du + B \\, dv$, donde $A = (\\mathbf{F}\\circ f) \\cdot \\frac{\\partial f}{\\partial u}$ y $B = (\\mathbf{F}\\circ f) \\cdot \\frac{\\partial f}{\\partial v}$.",
+            "Por el Teorema de Green en el dominio plano $D$: $\\oint_{\\partial S} \\mathbf{F} \\cdot d\\mathbf{r} = \\oint_{\\partial D} A du + B dv = \\iint_D \\left(\\frac{\\partial B}{\\partial u} - \\frac{\\partial A}{\\partial v}\\right) du \\, dv$.",
+            "Derivando por regla de la cadena: $\\frac{\\partial B}{\\partial u} - \\frac{\\partial A}{\\partial v} = D_2 f^\\top (D\\mathbf{F}) D_1 f - D_1 f^\\top (D\\mathbf{F}) D_2 f$, cancel\u00e1ndose las segundas derivadas cruzadas de $f$ por el Teorema de Schwarz.",
+            "Para cualquier matriz $M$ y vectores $\\mathbf{a}, \\mathbf{b}$, se cumple la identidad $\\mathbf{b}^\\top M \\mathbf{a} - \\mathbf{a}^\\top M \\mathbf{b} = \\text{Axl}(M) \\cdot (\\mathbf{a} \\times \\mathbf{b})$, donde $\\text{Axl}(D\\mathbf{F}) = \\nabla \\times \\mathbf{F}$.",
+            "Sustituyendo $\\mathbf{a} = D_1 f = \\frac{\\partial f}{\\partial u}$ y $\\mathbf{b} = D_2 f = \\frac{\\partial f}{\\partial v}$: el integrando es $(\\nabla \\times \\mathbf{F}) \\cdot \\left(\\frac{\\partial f}{\\partial u} \\times \\frac{\\partial f}{\\partial v}\\right) du \\, dv = (\\nabla \\times \\mathbf{F}) \\cdot d\\mathbf{S} \\quad \\blacksquare$."
+          ]
+        }
+      ]
+    },
+    {
+      "note_id": "em_02",
+      "title": "Polarizaci\u00f3n P y Cargas Ligadas",
+      "x": 380.0,
+      "y": 80.0,
+      "tags": [
+        "EM",
+        "Polarizaci\u00f3n",
+        "Cargas Ligadas"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223564152477,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642101,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.102150+00:00",
+            "last_review": null
+          },
+          "title": "Definici\u00f3n de Cargas Ligadas",
+          "text": "A partir del vector polarizaci\u00f3n $\\mathbf{P}$:<br>- Densidad volum\u00e9trica ligada: $\\rho_b = {{c1::-\\nabla \\cdot \\mathbf{P}}}$<br>- Densidad superficial ligada: $\\sigma_b = {{c2::\\mathbf{P} \\cdot \\hat{n}}}$."
+        },
+        {
+          "item_id": 1879963223565015693,
+          "type": "ProofSequenceCard",
+          "fsrs_card": {
+            "card_id": 1792872642102,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.103206+00:00",
+            "last_review": null
+          },
+          "title": "Carga Ligada Total Nula en Diel\u00e9ctricos Neutros",
+          "premise": "Demostrar que la carga ligada neta de un diel\u00e9ctrico neutro cerrado es id\u00e9nticamente cero.",
+          "steps": [
+            "Carga ligada total: $Q_{b,\\text{tot}} = \\iiint_V \\rho_b \\, dV + \\iint_{\\partial V} \\sigma_b \\, dA$.",
+            "Sustituyendo definiciones: $Q_{b,\\text{tot}} = -\\iiint_V (\\nabla \\cdot \\mathbf{P}) \\, dV + \\iint_{\\partial V} (\\mathbf{P} \\cdot \\hat{n}) \\, dA$.",
+            "Por el Teorema de Gauss: $\\iiint_V (\\nabla \\cdot \\mathbf{P}) \\, dV = \\iint_{\\partial V} (\\mathbf{P} \\cdot \\hat{n}) \\, dA$.",
+            "Restando ambas integrales: $Q_{b,\\text{tot}} = 0$."
+          ]
+        },
+        {
+          "item_id": 1879963223566667674,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642103,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.104260+00:00",
+            "last_review": null
+          },
+          "title": "Potencial Electrost\u00e1tico de un Dipolo Puntual",
+          "front": "\u00bfCu\u00e1l es el potencial $V(\\mathbf{r})$ y campo $\\mathbf{E}(\\mathbf{r})$ de un dipolo puntual $\\mathbf{p}$ en el origen?",
+          "back": "1. <b>Potencial:</b> $V(\\mathbf{r}) = \\frac{1}{4\\pi\\varepsilon_0}\\frac{\\mathbf{p}\\cdot\\hat{r}}{r^2} = \\frac{1}{4\\pi\\varepsilon_0}\\frac{\\mathbf{p}\\cdot\\mathbf{r}}{r^3}$.<br>2. <b>Campo El\u00e9ctrico:</b> $\\mathbf{E}(\\mathbf{r}) = -\\nabla V = \\frac{1}{4\\pi\\varepsilon_0}\\frac{3(\\mathbf{p}\\cdot\\hat{r})\\hat{r} - \\mathbf{p}}{r^3}$."
+        },
+        {
+          "item_id": 1879963223613224667,
+          "type": "ProofSequenceCard",
+          "fsrs_card": {
+            "card_id": 1792872642148,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.149575+00:00",
+            "last_review": null
+          },
+          "title": "Neutralidad Neta de Diel\u00e9ctricos Neutros",
+          "premise": "Demuestre rigurosamente que la carga ligada neta de un diel\u00e9ctrico neutro de volumen $V$ y frontera $\\partial V$ es id\u00e9nticamente cero.",
+          "steps": [
+            "Carga ligada total por definici\u00f3n: $Q_{b,\\text{tot}} = \\iiint_V \\rho_b \\, dV + \\iint_{\\partial V} \\sigma_b \\, dA$.",
+            "Sustituir las relaciones constitutivas: $Q_{b,\\text{tot}} = -\\iiint_V (\\nabla \\cdot \\mathbf{P}) \\, dV + \\iint_{\\partial V} (\\mathbf{P} \\cdot \\hat{n}) \\, dA$.",
+            "Aplicar el Teorema de la Divergencia de Gauss al t\u00e9rmino volum\u00e9trico: $\\iiint_V (\\nabla \\cdot \\mathbf{P}) \\, dV = \\iint_{\\partial V} (\\mathbf{P} \\cdot \\hat{n}) \\, dA$.",
+            "Restando ambas integrales: $Q_{b,\\text{tot}} = -\\iint_{\\partial V} (\\mathbf{P} \\cdot \\hat{n}) \\, dA + \\iint_{\\partial V} (\\mathbf{P} \\cdot \\hat{n}) \\, dA = 0 \\quad \\blacksquare$."
+          ]
+        }
+      ]
+    },
+    {
+      "note_id": "em_03",
+      "title": "Desplazamiento El\u00e9ctrico D y Ley de Gauss",
+      "x": 680.0,
+      "y": 80.0,
+      "tags": [
+        "EM",
+        "Gauss",
+        "Desplazamiento"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223567266089,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642104,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.105316+00:00",
+            "last_review": null
+          },
+          "title": "Ley de Gauss en Diel\u00e9ctricos",
+          "text": "El vector desplazamiento se define como $\\mathbf{D} = {{c1::\\varepsilon_0 \\mathbf{E} + \\mathbf{P}}}$.<br>Ley de Gauss en diel\u00e9ctricos: $\\nabla \\cdot \\mathbf{D} = {{c2::\\rho_f}}$ y $\\oint \\mathbf{D} \\cdot d\\mathbf{A} = {{c3::Q_{f,\\text{enc}}}}$."
+        },
+        {
+          "item_id": 1879963223567899996,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642105,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.106370+00:00",
+            "last_review": null
+          },
+          "title": "Relaciones Constitutivas en Medios LHI",
+          "front": "En un diel\u00e9ctrico Lineal, Homog\u00e9neo e Is\u00f3tropo (LHI), \u00bfcu\u00e1les son las relaciones entre $\\mathbf{P}, \\mathbf{E}, \\mathbf{D}, \\chi_e, \\kappa$ y $\\varepsilon$?",
+          "back": "1. $\\mathbf{P} = \\varepsilon_0 \\chi_e \\mathbf{E} = (\\varepsilon - \\varepsilon_0)\\mathbf{E}$.<br>2. $\\mathbf{D} = \\varepsilon \\mathbf{E} = \\kappa \\varepsilon_0 \\mathbf{E}$.<br>3. $\\kappa = \\varepsilon_r = 1 + \\chi_e$ y $\\varepsilon = \\kappa \\varepsilon_0$."
+        },
+        {
+          "item_id": 1879963223614104721,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642149,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.150630+00:00",
+            "last_review": null
+          },
+          "title": "Ley de Gauss Generalizada",
+          "text": "El vector desplazamiento el\u00e9ctrico se define como: $$\\mathbf{D} = {{c1::\\varepsilon_0 \\mathbf{E} + \\mathbf{P}}}$$<br>La Ley de Gauss en diel\u00e9ctricos depende <b>exclusivamente</b> de las cargas libres:<br>- Forma diferencial: $\\nabla \\cdot \\mathbf{D} = {{c2::\\rho_f}}$<br>- Forma integral: $\\oint_{\\partial V} \\mathbf{D} \\cdot d\\mathbf{A} = {{c3::Q_{f,\\text{enc}}}}$."
+        },
+        {
+          "item_id": 1879963223615734275,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642150,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.151684+00:00",
+            "last_review": null
+          },
+          "title": "C\u00e1lculo de E a partir de D en Medios LHI",
+          "front": "\u00bfC\u00f3mo se relacionan $\\mathbf{D}, \\mathbf{E}, \\mathbf{P}$ en un medio Lineal, Homog\u00e9neo e Is\u00f3tropo (LHI) con susceptibilidad $\\chi_e$ y permitividad relativa $\\kappa$?",
+          "back": "1. $\\mathbf{P} = \\varepsilon_0 \\chi_e \\mathbf{E}$.<br>2. $\\mathbf{D} = \\varepsilon_0 \\mathbf{E} + \\varepsilon_0 \\chi_e \\mathbf{E} = \\varepsilon_0 (1 + \\chi_e)\\mathbf{E} = \\kappa \\varepsilon_0 \\mathbf{E} = \\varepsilon \\mathbf{E}$.<br>3. Constante diel\u00e9ctrica: $\\kappa = \\varepsilon_r = 1 + \\chi_e$, permitividad del medio: $\\varepsilon = \\kappa \\varepsilon_0$.<br>4. Por lo tanto: $\\mathbf{E} = \\frac{\\mathbf{D}}{\\kappa \\varepsilon_0}$, y $\\mathbf{P} = \\frac{\\chi_e}{1+\\chi_e}\\mathbf{D} = \\left(1 - \\frac{1}{\\kappa}\\right)\\mathbf{D}$."
+        }
+      ]
+    },
+    {
+      "note_id": "em_04",
+      "title": "Condiciones de Borde y Refracci\u00f3n de L\u00edneas",
+      "x": 980.0,
+      "y": 80.0,
+      "tags": [
+        "EM",
+        "Condiciones de Borde",
+        "Interfaces"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223569623128,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642106,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.107425+00:00",
+            "last_review": null
+          },
+          "title": "Continuidad y Salto en la Interfaz",
+          "text": "En la interfaz entre dos diel\u00e9ctricos:<br>- Componente tangencial: ${{c1::E_{1t} - E_{2t} = 0}}$ (pues $\\nabla \\times \\mathbf{E} = \\mathbf{0}$).<br>- Componente normal: ${{c2::D_{1n} - D_{2n} = \\sigma_f}}$.<br>Si no hay carga libre ($\\sigma_f = 0$): $D_{1n} = D_{2n} \\iff \\varepsilon_1 E_{1n} = \\varepsilon_2 E_{2n}$."
+        },
+        {
+          "item_id": 1879963223570456248,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642107,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.108479+00:00",
+            "last_review": null
+          },
+          "title": "Ley de Refracci\u00f3n de L\u00edneas de Campo El\u00e9ctrico",
+          "front": "Deduzca la relaci\u00f3n entre los \u00e1ngulos de incidencia y refracci\u00f3n $(\\theta_1, \\theta_2)$ respecto a la normal en una interfaz sin cargas libres.",
+          "back": "Por condiciones de borde:<br>1. $E_{1t} = E_{2t} \\implies E_1 \\sin\\theta_1 = E_2 \\sin\\theta_2$.<br>2. $D_{1n} = D_{2n} \\implies \\varepsilon_1 E_1 \\cos\\theta_1 = \\varepsilon_2 E_2 \\cos\\theta_2$.<br>3. Dividiendo ambas ecuaciones:<br>$$\\frac{\\tan\\theta_1}{\\tan\\theta_2} = \\frac{\\varepsilon_1}{\\varepsilon_2} = \\frac{\\kappa_1}{\\kappa_2}$$"
+        },
+        {
+          "item_id": 1879963223571768582,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642108,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.109535+00:00",
+            "last_review": null
+          },
+          "title": "Interfaz Conductor-Diel\u00e9ctrico",
+          "text": "En la superficie de un conductor ideal en equilibrio en contacto con diel\u00e9ctrico $\\varepsilon$:<br>- Campo tangencial: $E_t = {{c1::0}}$.<br>- Campo normal exterior: $E_n = {{c2::\\frac{\\sigma_f}{\\varepsilon}}}$."
+        },
+        {
+          "item_id": 1879963223616575278,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642151,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.152739+00:00",
+            "last_review": null
+          },
+          "title": "Discontinuidad Normal y Continuidad Tangencial",
+          "text": "En la interfaz entre dos medios diel\u00e9ctricos (medio 1 y medio 2), con normal $\\hat{n}_{1\\to 2}$ apuntando hacia el medio 2:<br>- Componente normal de $\\mathbf{D}$: $$D_{2n} - D_{1n} = {{c1::\\sigma_f}}$$Si la interfaz no tiene carga libre ($\\sigma_f = 0$): $D_{1n} = D_{2n}$ (continuo).<br>- Componente tangencial de $\\mathbf{E}$: $$E_{2t} - E_{1t} = {{c2::0}}$$ (consecuencia de $\\nabla \\times \\mathbf{E} = \\mathbf{0}$).<br>- Ley de refracci\u00f3n de l\u00edneas de campo: $$\\frac{\\tan\\theta_1}{\\tan\\theta_2} = {{c3::\\frac{\\varepsilon_1}{\\varepsilon_2}}}$$ (donde $\\theta$ es el \u00e1ngulo respecto a la normal)."
+        },
+        {
+          "item_id": 1879963223618166035,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642152,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.153784+00:00",
+            "last_review": null
+          },
+          "title": "Deducci\u00f3n de la Ley de Refracci\u00f3n en Interfaces Diel\u00e9ctricas",
+          "front": "\u00bfC\u00f3mo se deduce la ley de refracci\u00f3n $\\frac{\\tan\\theta_1}{\\tan\\theta_2} = \\frac{\\varepsilon_1}{\\varepsilon_2}$ para las l\u00edneas de campo el\u00e9ctrico en la frontera libre de carga ($\\sigma_f = 0$) entre dos diel\u00e9ctricos lineales?",
+          "back": "1. <b>Componentes Tangenciales:</b> Como $\\nabla \\times \\mathbf{E} = \\mathbf{0}$, la circulaci\u00f3n en un lazo rectangular infinitesimal da:<br>$$E_{1t} = E_{2t} \\implies E_1 \\sin\\theta_1 = E_2 \\sin\\theta_2$$<br>2. <b>Componentes Normales:</b> Como $\\nabla \\cdot \\mathbf{D} = 0$ al no haber cargas libres ($\\sigma_f = 0$), el flujo sobre una caja cil\u00edndrica infinitesimal da:<br>$$D_{1n} = D_{2n} \\implies \\varepsilon_1 E_1 \\cos\\theta_1 = \\varepsilon_2 E_2 \\cos\\theta_2$$<br>3. <b>Cociente:</b> Dividiendo miembro a miembro ambas igualdades:<br>$$\\frac{E_1 \\sin\\theta_1}{\\varepsilon_1 E_1 \\cos\\theta_1} = \\frac{E_2 \\sin\\theta_2}{\\varepsilon_2 E_2 \\cos\\theta_2} \\implies \\frac{\\tan\\theta_1}{\\varepsilon_1} = \\frac{\\tan\\theta_2}{\\varepsilon_2} \\iff \\frac{\\tan\\theta_1}{\\tan\\theta_2} = \\frac{\\varepsilon_1}{\\varepsilon_2}$$."
+        }
+      ]
+    },
+    {
+      "note_id": "em_05",
+      "title": "Esferas y Cilindros Diel\u00e9ctricos",
+      "x": 1280.0,
+      "y": 80.0,
+      "tags": [
+        "EM",
+        "Esfera",
+        "Cilindro",
+        "Laplace"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223572775265,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642109,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.110593+00:00",
+            "last_review": null
+          },
+          "title": "Campo Interior y Polarizaci\u00f3n en Esfera Diel\u00e9ctrica",
+          "front": "Para una esfera diel\u00e9ctrica LHI de permitividad $\\varepsilon$ en campo uniforme exterior $\\mathbf{E}_0$, calcule $\\mathbf{E}_{\\text{int}}$ y $\\mathbf{P}$.",
+          "back": "1. <b>Campo Interior Uniforme:</b> $\\mathbf{E}_{\\text{int}} = \\frac{3}{\\kappa + 2} \\mathbf{E}_0 = \\frac{3\\varepsilon_0}{\\varepsilon + 2\\varepsilon_0} \\mathbf{E}_0$.<br>2. <b>Polarizaci\u00f3n Interior:</b> $\\mathbf{P} = 3\\varepsilon_0 \\left(\\frac{\\kappa - 1}{\\kappa + 2}\\right) \\mathbf{E}_0$.<br>3. <b>Cargas Ligadas:</b> $\\rho_b = 0$, y $\\sigma_b = P \\cos\\theta$."
+        },
+        {
+          "item_id": 1879963223573972899,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642110,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.111654+00:00",
+            "last_review": null
+          },
+          "title": "Cilindro Diel\u00e9ctrico en Campo Transversal",
+          "text": "Para un cilindro diel\u00e9ctrico infinito en campo uniforme perpendicular $\\mathbf{E}_0$:<br>- Campo el\u00e9ctrico interior: $\\mathbf{E}_{\\text{int}} = {{c1::\\frac{2}{\\kappa + 1} \\mathbf{E}_0}}$<br>- Polarizaci\u00f3n interior: $\\mathbf{P} = {{c2::2\\varepsilon_0 \\frac{\\kappa - 1}{\\kappa + 1} \\mathbf{E}_0}}$."
+        },
+        {
+          "item_id": 1879963223618461006,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642153,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.154846+00:00",
+            "last_review": null
+          },
+          "title": "Estratificaci\u00f3n Serie vs Paralelo en Placas Planas",
+          "front": "Considere un condensador de placas planas paralelas de \u00e1rea $A$ y separaci\u00f3n $d$. Compare c\u00f3mo modelar la capacitancia equivalente si el diel\u00e9ctrico se divide: a) en rebanadas paralelas a las placas, b) en rebanadas perpendiculares a las placas.",
+          "back": "1. <b>Paralelo a las placas (Serie):</b> Las l\u00edneas de campo cruzan sucesivamente ambos diel\u00e9ctricos. $D$ es continuo. Las diferencias de potencial se suman: $\\Delta V = \\Delta V_1 + \\Delta V_2$.<br>$$\\frac{1}{C_{\\text{eq}}} = \\frac{1}{C_1} + \\frac{1}{C_2} = \\frac{d_1}{\\kappa_1 \\varepsilon_0 A} + \\frac{d_2}{\\kappa_2 \\varepsilon_0 A}$$<br>2. <b>Perpendicular a las placas (Paralelo):</b> Ambas regiones comparten la misma diferencia de potencial $\\Delta V_0$. Las cargas libres se reparten: $Q_{\\text{tot}} = Q_1 + Q_2$.<br>$$C_{\\text{eq}} = C_1 + C_2 = \\frac{\\kappa_1 \\varepsilon_0 A_1}{d} + \\frac{\\kappa_2 \\varepsilon_0 A_2}{d}$$"
+        },
+        {
+          "item_id": 1879963223619867211,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642154,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.155907+00:00",
+            "last_review": null
+          },
+          "title": "Diel\u00e9ctrico Inhomog\u00e9neo Continuo",
+          "text": "Para un condensador plano con permitividad dependiente de la posici\u00f3n $\\kappa(x)$ entre $x = 0$ y $x = d$:<br>Como $D$ es constante en $x$: $E(x) = \\frac{D}{\\varepsilon_0 \\kappa(x)} = \\frac{Q}{\\varepsilon_0 A \\kappa(x)}$.<br>La diferencia de potencial es: $$\\Delta V = \\int_0^d E(x) dx = \\frac{Q}{\\varepsilon_0 A} {{c1::\\int_0^d \\frac{dx}{\\kappa(x)}}}$$<br>Por lo tanto, la capacitancia es: $$C = \\frac{\\varepsilon_0 A}{\\int_0^d \\frac{dx}{\\kappa(x)}}$$."
+        }
+      ]
+    },
+    {
+      "note_id": "em_06",
+      "title": "Capacitancia y Medios Multicapa",
+      "x": 80.0,
+      "y": 340.0,
+      "tags": [
+        "EM",
+        "Capacitancia",
+        "Multicapa"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223575180115,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642111,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.112722+00:00",
+            "last_review": null
+          },
+          "title": "Capas Diel\u00e9ctricas en Serie vs Paralelo",
+          "text": "En capacitores de placas paralelas:<br>- Capas perpendiculares a $\\mathbf{E}$ (apiladas en espesor): suman en {{c1::serie}}, $\\frac{1}{C} = \\sum \\frac{d_i}{\\varepsilon_i A}$.<br>- Capas paralelas a $\\mathbf{E}$ (yuxtapuestas en \u00e1rea): suman en {{c2::paralelo}}, $C = \\sum \\frac{\\varepsilon_i A_i}{d}$."
+        },
+        {
+          "item_id": 1879963223576116918,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642112,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.113778+00:00",
+            "last_review": null
+          },
+          "title": "Capacitancia Cil\u00edndrica y Esf\u00e9rica con Diel\u00e9ctrico",
+          "front": "Escriba la capacitancia de un cable coaxial ($a < b$, largo $L$) y de un capacitor esf\u00e9rico ($a < b$) llenos de diel\u00e9ctrico $\\varepsilon$.",
+          "back": "1. <b>Cil\u00edndrico:</b> $C = \\frac{2\\pi \\varepsilon L}{\\ln(b/a)}$.<br>2. <b>Esf\u00e9rico:</b> $C = 4\\pi \\varepsilon \\frac{ab}{b - a}$."
+        },
+        {
+          "item_id": 1879963223620623846,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642155,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.156973+00:00",
+            "last_review": null
+          },
+          "title": "Fuerza a Carga Constante vs a Voltaje Constante",
+          "text": "C\u00e1lculo de la fuerza mec\u00e1nica sobre una placa diel\u00e9ctrica que penetra una distancia $x$ en un condensador:<br>- Condensador desconectado ($Q = \\text{cte}$): $$F_x = {{c1::-\\left(\\frac{\\partial U}{\\partial x}\\right)_Q}}$$ con $U = \\frac{Q^2}{2 C(x)} \\implies F_x = +\\frac{Q^2}{2 C^2}\\frac{dC}{dx} = +\\frac{1}{2}V^2 \\frac{dC}{dx}$.<br>- Condensador conectado a bater\u00eda ($V = \\text{cte}$): $$F_x = {{c2::+\\left(\\frac{\\partial U}{\\partial x}\\right)_V}} = {{c3::+\\frac{1}{2}V^2 \\frac{dC}{dx}}}$$.<br>\u00a1En ambos casos la fuerza neta es <b>atractiva</b> hacia el interior del condensador!"
+        },
+        {
+          "item_id": 1879963223622048752,
+          "type": "ProofSequenceCard",
+          "fsrs_card": {
+            "card_id": 1792872642156,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.158028+00:00",
+            "last_review": null
+          },
+          "title": "Deducci\u00f3n de la Fuerza a Voltaje Constante con Trabajo de la Fuente",
+          "premise": "Demuestre por balance de trabajo virtual que $F_x = +\\left(\\frac{\\partial U}{\\partial x}\\right)_V = \\frac{1}{2}V^2 \\frac{dC}{dx}$ cuando el condensador est\u00e1 conectado a una bater\u00eda de voltaje $V_0$.",
+          "steps": [
+            "Por el principio de conservaci\u00f3n de energ\u00eda: $d W_{\\text{mec}} + d U = d W_{\\text{bater\u00eda}}$, donde $d W_{\\text{mec}} = -F_x dx$.",
+            "El trabajo entregado por la bater\u00eda al transferir carga $dQ$ es: $d W_{\\text{bater\u00eda}} = V_0 dQ = V_0 (V_0 dC) = V_0^2 dC$.",
+            "La variaci\u00f3n de energ\u00eda electrost\u00e1tica almacenada es: $dU = d\\left(\\frac{1}{2}C V_0^2\\right) = \\frac{1}{2}V_0^2 dC$.",
+            "Sustituyendo: $-F_x dx + \\frac{1}{2}V_0^2 dC = V_0^2 dC \\implies F_x dx = \\frac{1}{2}V_0^2 dC \\implies F_x = +\\frac{1}{2}V_0^2 \\frac{dC}{dx} \\quad \\blacksquare$."
+          ]
+        }
+      ]
+    },
+    {
+      "note_id": "em_07",
+      "title": "Energ\u00eda y Fuerzas sobre Diel\u00e9ctricos",
+      "x": 380.0,
+      "y": 340.0,
+      "tags": [
+        "EM",
+        "Energ\u00eda",
+        "Fuerza Virtual"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223577124930,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642113,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.114783+00:00",
+            "last_review": null
+          },
+          "title": "Fuerza Electrost\u00e1tica: Carga vs Voltaje Constante",
+          "text": "Por el m\u00e9todo del trabajo virtual, la fuerza sobre un diel\u00e9ctrico m\u00f3vil es:<br>- A carga constante $Q$: $F_x = {{c1::-\\left(\\frac{\\partial U}{\\partial x}\\right)_Q}}$<br>- A voltaje constante $V$: $F_x = {{c2::+\\left(\\frac{\\partial U}{\\partial x}\\right)_V = +\\frac{1}{2} V^2 \\frac{dC}{dx}}}$.<br>El diel\u00e9ctrico es siempre {{c3::succionado hacia el interior del capacitor}}."
+        },
+        {
+          "item_id": 1879963223577972959,
+          "type": "ProofSequenceCard",
+          "fsrs_card": {
+            "card_id": 1792872642114,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.115837+00:00",
+            "last_review": null
+          },
+          "title": "Fuerza sobre Placa Diel\u00e9ctrica Parcialmente Insertada",
+          "premise": "Calcular la fuerza $F_x$ sobre una l\u00e1mina diel\u00e9ctrica de ancho $w$ y espesor $d$ insertada distancia $x$ a voltaje fijo $V$.",
+          "steps": [
+            "Capacitancia total: $C(x) = \\frac{\\varepsilon_0 w (L - x)}{d} + \\frac{\\varepsilon w x}{d} = \\frac{w}{d}[\\varepsilon_0 L + (\\varepsilon - \\varepsilon_0)x]$.",
+            "A voltaje constante $V$, $F_x = +\\frac{1}{2} V^2 \\frac{dC}{dx}$.",
+            "Derivando: $\\frac{dC}{dx} = \\frac{w(\\varepsilon - \\varepsilon_0)}{d} = \\frac{\\varepsilon_0 w (\\kappa - 1)}{d}$.",
+            "Resultado: $F_x = \\frac{\\varepsilon_0 w (\\kappa - 1) V^2}{2d} > 0$ (fuerza atractiva hacia el interior)."
+          ]
+        },
+        {
+          "item_id": 1879963223578594561,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642115,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.116890+00:00",
+            "last_review": null
+          },
+          "title": "Presi\u00f3n Electrost\u00e1tica en Conductor",
+          "text": "La fuerza por unidad de \u00e1rea (presi\u00f3n electrost\u00e1tica hacia el exterior) en la superficie de un conductor cargado es:<br>$$P_{\\text{es}} = {{c1::\\frac{\\sigma^2}{2\\varepsilon_0} = \\frac{1}{2} \\varepsilon_0 E^2}}$$<br>Siempre est\u00e1 dirigida hacia {{c2::el exterior del conductor}} independientemente del signo de $\\sigma$."
+        },
+        {
+          "item_id": 1879963223624159365,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642158,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.159085+00:00",
+            "last_review": null
+          },
+          "title": "Ecuaci\u00f3n de Continuidad y Corriente El\u00e9ctrica",
+          "text": "Definici\u00f3n y principios fundamentales de corrientes el\u00e9ctricas:<br>- Corriente total que atraviesa una superficie $S$: $$I = \\iint_S {{c1::\\mathbf{J} \\cdot d\\mathbf{A}}}$$<br>- Densidad microsc\u00f3pica de corriente: $$\\mathbf{J} = {{c2::n q \\mathbf{v}_d}}$$<br>- Ecuaci\u00f3n de continuidad (conservaci\u00f3n local de la carga): $$\\nabla \\cdot \\mathbf{J} = {{c3::-\\frac{\\partial \\rho}{\\partial t}}}$$.<br>En corriente estacionaria ($\\partial\\rho/\\partial t = 0$): $\\nabla \\cdot \\mathbf{J} = 0$."
+        }
+      ]
+    },
+    {
+      "note_id": "em_08",
+      "title": "Corriente y Ecuaci\u00f3n de Continuidad",
+      "x": 680.0,
+      "y": 340.0,
+      "tags": [
+        "EM",
+        "Corriente",
+        "Densidad J",
+        "Continuidad"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223580010126,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642116,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.117944+00:00",
+            "last_review": null
+          },
+          "title": "Ecuaci\u00f3n de Continuidad y Tiempo de Relajaci\u00f3n",
+          "text": "Conservaci\u00f3n de la carga: $\\nabla \\cdot \\mathbf{J} + {{c1::\\frac{\\partial \\rho}{\\partial t}}} = 0$.<br>En un conductor \u00f3hmico homog\u00e9neo: $\\rho(t) = \\rho_0 e^{-t/\\tau_{\\text{rel}}}$ con tiempo de relajaci\u00f3n $\\tau_{\\text{rel}} = {{c2::\\frac{\\varepsilon}{\\sigma}}}$."
+        },
+        {
+          "item_id": 1879963223624519461,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642159,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.160139+00:00",
+            "last_review": null
+          },
+          "title": "Modelo Microsc\u00f3pico de Drude para la Conductividad",
+          "front": "Deduzca la relaci\u00f3n entre conductividad el\u00e9ctrica $\\sigma$, densidad de portadores $n$, masa $m$, carga $q$ y tiempo medio de colisi\u00f3n $\\tau$ en el modelo de Drude.",
+          "back": "1. En estado estacionario, el arrastre el\u00e9ctrico se equilibra con el frenado por colisiones:<br>$$q \\mathbf{E} - \\frac{m \\mathbf{v}_d}{\\tau} = \\mathbf{0} \\implies \\mathbf{v}_d = \\frac{q \\tau}{m}\\mathbf{E}$$<br>2. Sustituyendo en la densidad de corriente $\\mathbf{J} = n q \\mathbf{v}_d$:<br>$$\\mathbf{J} = n q \\left(\\frac{q \\tau}{m}\\mathbf{E}\\right) = \\left(\\frac{n q^2 \\tau}{m}\\right)\\mathbf{E} = \\sigma \\mathbf{E}$$<br>3. Conductividad de Drude: $\\sigma = \\frac{n q^2 \\tau}{m}$, y resistividad: $\\rho = \\frac{1}{\\sigma} = \\frac{m}{n q^2 \\tau}$."
+        },
+        {
+          "item_id": 1879963223626107912,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642160,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.161200+00:00",
+            "last_review": null
+          },
+          "title": "Teorema Dual de Resistencia y Capacitancia (RC = rho * eps)",
+          "text": "Para cualquier estructura conductora con dos electrodos inmersos en un medio con resistividad uniforme $\\rho$ y permitividad diel\u00e9ctrica $\\varepsilon$:<br>- La resistencia $R$ y la capacitancia $C$ satisfacen la relaci\u00f3n universal: $$R \\cdot C = {{c1::\\rho \\varepsilon = \\frac{\\varepsilon}{\\sigma}}}$$<br>Ejemplo: En un cilindro coaxial hueco de longitud $L$ con radios $a$ y $b$ ($b > a$):<br>$$C = \\frac{2\\pi \\varepsilon L}{\\ln(b/a)} \\implies R = {{c2::\\frac{\\rho \\ln(b/a)}{2\\pi L}}}$$."
+        },
+        {
+          "item_id": 1879963223626756805,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642161,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.162261+00:00",
+            "last_review": null
+          },
+          "title": "Vector de Poynting y Disipaci\u00f3n Joule en un Resistor Cil\u00edndrico",
+          "front": "\u00bfC\u00f3mo demuestra el vector de Poynting $\\mathbf{S} = \\frac{1}{\\mu_0}(\\mathbf{E} \\times \\mathbf{B})$ que la energ\u00eda disipada por efecto Joule en un cable cil\u00edndrico de radio $a$, largo $L$ y resistencia $R$ proviene del campo electromagn\u00e9tico circundante?",
+          "back": "1. <b>Campos en la superficie del cilindro ($r = a$):</b><br>- Campo el\u00e9ctrico axial: $\\mathbf{E} = \\frac{V}{L}\\hat{z} = \\frac{I R}{L}\\hat{z}$.<br>- Campo magn\u00e9tico azimutal por Amp\u00e8re: $\\mathbf{B} = \\frac{\\mu_0 I}{2\\pi a}\\hat{\\phi}$.<br>2. <b>Vector de Poynting:</b><br>$$\\mathbf{S} = \\frac{1}{\\mu_0}(\\mathbf{E} \\times \\mathbf{B}) = \\frac{1}{\\mu_0}\\left(\\frac{I R}{L}\\hat{z}\\right)\\times\\left(\\frac{\\mu_0 I}{2\\pi a}\\hat{\\phi}\\right) = -\\frac{I^2 R}{2\\pi a L}\\hat{r}$$<br>El vector $\\mathbf{S}$ apunta radialmente hacia el interior del conductor.<br>3. <b>Flujo total hacia adentro:</b> Con \u00e1rea de la superficie cil\u00edndrica $A_{\\text{sup}} = 2\\pi a L$:<br>$$P_{\\text{ingreso}} = -\\iint \\mathbf{S} \\cdot d\\mathbf{A} = \\left(\\frac{I^2 R}{2\\pi a L}\\right)(2\\pi a L) = I^2 R = V I \\quad \\blacksquare$$."
+        }
+      ]
+    },
+    {
+      "note_id": "em_09",
+      "title": "Modelo de Drude y Teorema Dual RC",
+      "x": 980.0,
+      "y": 340.0,
+      "tags": [
+        "EM",
+        "Drude",
+        "Ohm",
+        "Teorema Dual"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223581107475,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642117,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.118999+00:00",
+            "last_review": null
+          },
+          "title": "Conductividad de Drude y Teorema Dual RC",
+          "text": "Conductividad microsc\u00f3pica seg\u00fan Drude: $\\sigma = {{c1::\\frac{n q^2 \\tau}{m}}}$.<br>Teorema Dual RC entre resistencia y capacitancia para cualquier geometr\u00eda en medio LHI:<br>$$R \\cdot C = {{c2::\\frac{\\varepsilon}{\\sigma} = \\rho_e \\varepsilon}}$$"
+        },
+        {
+          "item_id": 1879963223582769291,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642119,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.120053+00:00",
+            "last_review": null
+          },
+          "title": "Resistencia de Puesta a Tierra Semiesf\u00e9rica",
+          "front": "Calcule la resistencia de puesta a tierra de un electrodo semiesf\u00e9rico de radio $a$ enterrado en suelo con conductividad $\\sigma$.",
+          "back": "1. Por simetr\u00eda radial, la corriente $I$ fluye por la semiesfera de \u00e1rea $2\\pi r^2$: $J(r) = \\frac{I}{2\\pi r^2}$.<br>2. Campo el\u00e9ctrico: $E(r) = \\frac{J}{\\sigma} = \\frac{I}{2\\pi \\sigma r^2}$.<br>3. Diferencia de potencial hasta el infinito: $V = \\int_a^\\infty E(r) dr = \\frac{I}{2\\pi \\sigma a}$.<br>4. Resistencia de tierra: $R = \\frac{V}{I} = \\frac{1}{2\\pi \\sigma a}$."
+        },
+        {
+          "item_id": 1879963223627702537,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642162,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.163322+00:00",
+            "last_review": null
+          },
+          "title": "Carga de un Condensador en Circuito RC",
+          "text": "Considere un circuito con fuente de FEM $\\mathcal{E}$, resistencia $R$ y condensador $C$ inicialmente descargado ($q(0) = 0$):<br>- Ecuaci\u00f3n diferencial por Kirchhoff: $$\\mathcal{E} - R\\frac{dq}{dt} - \\frac{q}{C} = 0$$<br>- Carga en funci\u00f3n del tiempo: $$q(t) = {{c1::C\\mathcal{E}(1 - e^{-t/RC})}}$$<br>- Corriente en funci\u00f3n del tiempo: $$i(t) = \\frac{dq}{dt} = {{c2::\\frac{\\mathcal{E}}{R}e^{-t/RC}}}$$<br>- Constante de tiempo: $\\tau = {{c3::RC}}$."
+        },
+        {
+          "item_id": 1879963223628846131,
+          "type": "ProofSequenceCard",
+          "fsrs_card": {
+            "card_id": 1792872642163,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.164384+00:00",
+            "last_review": null
+          },
+          "title": "Balance Energ\u00e9tico en Carga RC: El Teorema del 50%",
+          "premise": "Demuestre rigurosamente que al cargar completamente un condensador desde una fuente de FEM constante $\\mathcal{E}$, exactamente el 50% de la energ\u00eda entregada por la fuente se disipa en la resistencia, sin importar el valor de $R$.",
+          "steps": [
+            "Carga final acumulada: $Q_{\\text{fin}} = C\\mathcal{E}$. Trabajo entregado por la fuente: $W_{\\text{fem}} = \\int_0^\\infty \\mathcal{E} i(t) dt = \\mathcal{E} Q_{\\text{fin}} = C\\mathcal{E}^2$.",
+            "Energ\u00eda electrost\u00e1tica almacenada en el condensador al final: $U_C = \\frac{1}{2}\\frac{Q_{\\text{fin}}^2}{C} = \\frac{1}{2}C\\mathcal{E}^2$.",
+            "Energ\u00eda total disipada en la resistencia por efecto Joule: $U_R = \\int_0^\\infty i(t)^2 R \\, dt = R \\int_0^\\infty \\left(\\frac{\\mathcal{E}}{R}e^{-t/RC}\\right)^2 dt = \\frac{\\mathcal{E}^2}{R}\\int_0^\\infty e^{-2t/RC}dt$.",
+            "Evaluando la integral: $\\int_0^\\infty e^{-2t/RC}dt = \\left[-\\frac{RC}{2}e^{-2t/RC}\\right]_0^\\infty = \\frac{RC}{2} \\implies U_R = \\frac{\\mathcal{E}^2}{R}\\cdot\\frac{RC}{2} = \\frac{1}{2}C\\mathcal{E}^2$.",
+            "Por lo tanto: $W_{\\text{fem}} = U_C + U_R = \\frac{1}{2}C\\mathcal{E}^2 + \\frac{1}{2}C\\mathcal{E}^2$, disip\u00e1ndose exactamente el 50% en calor $\\blacksquare$."
+          ]
+        }
+      ]
+    },
+    {
+      "note_id": "em_10",
+      "title": "Circuitos DC y Equivalentes de Th\u00e9venin",
+      "x": 1280.0,
+      "y": 340.0,
+      "tags": [
+        "EM",
+        "Circuitos",
+        "Th\u00e9venin",
+        "Norton"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223584237768,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642120,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.121108+00:00",
+            "last_review": null
+          },
+          "title": "Equivalentes de Th\u00e9venin, Norton y M\u00e1xima Potencia",
+          "text": "Equivalentes de red lineal:<br>- Th\u00e9venin: Fuente $V_{th}$ en serie con $R_{th}$.<br>- Norton: Fuente de corriente $I_N = {{c1::\\frac{V_{th}}{R_{th}}}}$ en paralelo con $R_{th}$.<br>- Condici\u00f3n de m\u00e1xima potencia transferida a $R_L$: $R_L = {{c2::R_{th}}}$ con $P_{\\max} = {{c3::\\frac{V_{th}^2}{4 R_{th}}}}$."
+        },
+        {
+          "item_id": 1879963223630555823,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642164,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.165439+00:00",
+            "last_review": null
+          },
+          "title": "Fuerza de Lorentz y Trabajo Nulo",
+          "text": "Fuerza total sobre una carga $q$ con velocidad $\\mathbf{v}$ en presencia de campos $\\mathbf{E}$ y $\\mathbf{B}$:<br>$$\\mathbf{F} = {{c1::q(\\mathbf{E} + \\mathbf{v} \\times \\mathbf{B})}}$$<br>- Trabajo de la fuerza magn\u00e9tica sobre la carga: $$dW_B = \\mathbf{F}_B \\cdot d\\mathbf{r} = q(\\mathbf{v} \\times \\mathbf{B}) \\cdot (\\mathbf{v} dt) = {{c2::0}}$$Por lo tanto, un campo magn\u00e9tico est\u00e1tico <b>nunca</b> altera la energ\u00eda cin\u00e9tica de una part\u00edcula; solo curva su trayectoria."
+        },
+        {
+          "item_id": 1879963223631161721,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642165,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.166492+00:00",
+            "last_review": null
+          },
+          "title": "Dispositivos Electromagn\u00e9ticos Can\u00f3nicos",
+          "front": "Escriba las ecuaciones de operaci\u00f3n para: 1) Selector de velocidades de Wien, 2) Radio de ciclotr\u00f3n y frecuencia angular, 3) Espectr\u00f3metro de masas de Bainbridge.",
+          "back": "1. <b>Selector de Wien ($\\mathbf{E} \\perp \\mathbf{B}$ cruzados):</b> Condici\u00f3n de no desviaci\u00f3n $q E = q v B \\implies v = \\frac{E}{B}$.<br>2. <b>Ciclotr\u00f3n ($\\mathbf{v} \\perp \\mathbf{B}$ uniforme):</b> Fuerza centr\u00edpeta $q v B = \\frac{m v^2}{r} \\implies$ radio $r = \\frac{m v}{q B}$ y frecuencia angular $\\omega_c = \\frac{q B}{m}$ (independiente de la velocidad a r\u00e9gimen no relativista).<br>3. <b>Espectr\u00f3metro de Bainbridge:</b> Tras salir del selector de Wien, la part\u00edcula ingresa a un campo $B'$ puro. Radio $R = \\frac{m v}{q B'} = \\frac{m E}{q B B'} \\implies \\frac{m}{q} = \\frac{q B B' R}{E}$."
+        }
+      ]
+    },
+    {
+      "note_id": "em_11",
+      "title": "Transitorios RC y Balance Energ\u00e9tico",
+      "x": 80.0,
+      "y": 600.0,
+      "tags": [
+        "EM",
+        "RC",
+        "Transitorio",
+        "50%"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223585612571,
+          "type": "ProofSequenceCard",
+          "fsrs_card": {
+            "card_id": 1792872642121,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.122162+00:00",
+            "last_review": null
+          },
+          "title": "Balance de Energ\u00eda del 50% en Carga RC",
+          "premise": "Demostrar que en la carga de un condensador desde 0 hasta $C\\mathcal{E}$, el 50% de la energ\u00eda de la fuente se disipa en calor.",
+          "steps": [
+            "Energ\u00eda entregada por la fuente: $W_{\\text{fuente}} = \\int_0^\\infty \\mathcal{E} i(t) dt = \\mathcal{E} Q_{\\text{final}} = C \\mathcal{E}^2$.",
+            "Energ\u00eda almacenada en el capacitor: $U_C = \\frac{1}{2} C \\mathcal{E}^2$.",
+            "Energ\u00eda disipada por Joule en la resistencia: $E_R = \\int_0^\\infty i(t)^2 R dt = \\frac{\\mathcal{E}^2}{R} \\int_0^\\infty e^{-2t/RC} dt$.",
+            "Evaluando la integral: $\\int_0^\\infty e^{-2t/RC} dt = \\frac{RC}{2} \\implies E_R = \\frac{1}{2} C \\mathcal{E}^2$.",
+            "Se verifica estrictamente: $W_{\\text{fuente}} = U_C + E_R$ con $E_R = 50\\% W_{\\text{fuente}}$."
+          ]
+        },
+        {
+          "item_id": 1879963223585718650,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642122,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.123216+00:00",
+            "last_review": null
+          },
+          "title": "Comportamiento en Transitorios: t=0+ vs t->infinito",
+          "front": "\u00bfC\u00f3mo se modelan los capacitores e inductores en $t=0^+$ y en $t \\to \\infty$?",
+          "back": "1. <b>Capacitor:</b><br>- En $t=0^+$: <b>Cortocircuito</b> ($\\Delta V_C = 0$).<br>- En $t\\to\\infty$: <b>Circuito abierto</b> ($i_C = 0$).<br><br>2. <b>Inductor:</b><br>- En $t=0^+$: <b>Circuito abierto</b> ($i_L = 0$).<br>- En $t\\to\\infty$: <b>Cortocircuito</b> ($\\Delta V_L = 0$)."
+        },
+        {
+          "item_id": 1879963223632417801,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642166,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.167546+00:00",
+            "last_review": null
+          },
+          "title": "Voltaje Hall y Coeficiente Hall",
+          "text": "En una cinta conductora de espesor $t$ y ancho $w$ por la que fluye corriente $I$ inmersa en campo magn\u00e9tico perpendicular $B$:<br>- Campo el\u00e9ctrico transversal de equilibrio (Hall): $E_H = v_d B$.<br>- Voltaje transversal Hall: $$V_H = E_H w = v_d B w = {{c1::\\frac{I B}{n q t}}}$$.<br>- Coeficiente Hall: $$R_H = {{c2::\\frac{1}{n q}}}$$.<br>- Significado f\u00edsico crucial: El signo medido de $V_H$ permite distinguir si los portadores mayoritarios de carga son {{c3::electrones negativos ($q < 0$) o huecos positivos ($q > 0$)}}."
+        }
+      ]
+    },
+    {
+      "note_id": "em_12",
+      "title": "Fuerza de Lorentz y Movimiento Helicoidal",
+      "x": 380.0,
+      "y": 600.0,
+      "tags": [
+        "EM",
+        "Lorentz",
+        "Ciclotr\u00f3n",
+        "Larmor"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223587788828,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642123,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.124271+00:00",
+            "last_review": null
+          },
+          "title": "Fuerza de Lorentz y Radio Ciclotr\u00f3nico",
+          "text": "Fuerza total: $\\mathbf{F} = q(\\mathbf{E} + \\mathbf{v}\\times\\mathbf{B})$.<br>La potencia del campo magn\u00e9tico es $P = \\mathbf{F}_B \\cdot \\mathbf{v} = {{c1::0}}$, por lo que {{c2::nunca altera la energ\u00eda cin\u00e9tica}}.<br>Radio ciclotr\u00f3n: $r_c = {{c3::\\frac{m v_\\perp}{q B}}}$, per\u00edodo: $T = {{c4::\\frac{2\\pi m}{q B}}}$."
+        },
+        {
+          "item_id": 1879963223587916031,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642124,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.125326+00:00",
+            "last_review": null
+          },
+          "title": "Paso de la Trayectoria Helicoidal",
+          "front": "Si una part\u00edcula entra a un campo $\\mathbf{B}$ con \u00e1ngulo $\\alpha$ respecto a las l\u00edneas de campo, \u00bfcu\u00e1l es el paso de avance $p$?",
+          "back": "1. Componente paralela constante: $v_\\parallel = v \\cos\\alpha$.<br>2. Per\u00edodo de giro en el plano transversal: $T = \\frac{2\\pi m}{q B}$.<br>3. Paso helicoidal: $p = v_\\parallel T = \\frac{2\\pi m v \\cos\\alpha}{q B}$."
+        },
+        {
+          "item_id": 1879963223633326362,
+          "type": "ProofSequenceCard",
+          "fsrs_card": {
+            "card_id": 1792872642167,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.168600+00:00",
+            "last_review": null
+          },
+          "title": "Fuerza Magn\u00e9tica Neta Nula en Espira Cerrada en Campo Uniforme",
+          "premise": "Demuestre que la fuerza magn\u00e9tica neta que experimenta cualquier espira conductora cerrada de geometr\u00eda arbitraria en un campo magn\u00e9tico uniforme $\\mathbf{B}_0$ es id\u00e9nticamente cero.",
+          "steps": [
+            "Fuerza sobre un elemento diferencial: $d\\mathbf{F} = I d\\boldsymbol{\\ell} \\times \\mathbf{B}_0$.",
+            "Fuerza total integrando sobre la curva cerrada $C$: $\\mathbf{F}_{\\text{net}} = \\oint_C I d\\boldsymbol{\\ell} \\times \\mathbf{B}_0$.",
+            "Dado que $I$ y $\\mathbf{B}_0$ son constantes espaciales, se extraen del producto: $\\mathbf{F}_{\\text{net}} = I \\left(\\oint_C d\\boldsymbol{\\ell}\\right) \\times \\mathbf{B}_0$.",
+            "La integral de l\u00ednea de un diferencial exacto sobre una curva cerrada es nula: $\\oint_C d\\boldsymbol{\\ell} = \\mathbf{0}$.",
+            "Por lo tanto: $\\mathbf{F}_{\\text{net}} = I \\cdot \\mathbf{0} \\times \\mathbf{B}_0 = \\mathbf{0} \\quad \\blacksquare$."
+          ]
+        },
+        {
+          "item_id": 1879963223634310444,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642168,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.169653+00:00",
+            "last_review": null
+          },
+          "title": "Torque y Momento Dipolar Magn\u00e9tico",
+          "text": "Para una espira conductora de \u00e1rea vectorial $\\mathbf{A} = A \\hat{n}$ y corriente $I$:<br>- Momento dipolar magn\u00e9tico: $$\\mathbf{m} = {{c1::I \\mathbf{A} = I A \\hat{n}}}$$<br>- Torque magn\u00e9tico en campo uniforme $\\mathbf{B}$: $$\\boldsymbol{\\tau} = {{c2::\\mathbf{m} \\times \\mathbf{B}}}$$<br>- Energ\u00eda potencial dipolar: $$U = {{c3::-\\mathbf{m} \\cdot \\mathbf{B}}}$$.<br>- Fuerza sobre un dipolo en campo magn\u00e9tico <b>no uniforme</b>: $$\\mathbf{F} = {{c4::\\nabla(\\mathbf{m} \\cdot \\mathbf{B})}}$$."
+        }
+      ]
+    },
+    {
+      "note_id": "em_13",
+      "title": "Efecto Hall y Selector de Wien",
+      "x": 680.0,
+      "y": 600.0,
+      "tags": [
+        "EM",
+        "Hall",
+        "Wien",
+        "Portadores"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223588971589,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642125,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.126383+00:00",
+            "last_review": null
+          },
+          "title": "F\u00f3rmulas del Efecto Hall y Selector",
+          "text": "- Selector de velocidades con $\\mathbf{E} \\perp \\mathbf{B}$: velocidad filtrada $v = {{c1::\\frac{E}{B}}}$.<br>- Voltaje de Hall en cinta de espesor $t$: $\\Delta V_H = {{c2::\\frac{I B}{n q t} = R_H \\frac{I B}{t}}}$.<br>- Coeficiente de Hall: $R_H = {{c3::\\frac{1}{nq}}}$, cuyo signo revela el tipo de portadores mayoritarios."
+        },
+        {
+          "item_id": 1879963223635701475,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642169,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.170715+00:00",
+            "last_review": null
+          },
+          "title": "F\u00f3rmula Vectorial de Biot-Savart",
+          "text": "Campo magn\u00e9tico generado por un elemento de corriente $I d\\boldsymbol{\\ell}'$ ubicado en $\\mathbf{r}'$ evaluado en el punto $\\mathbf{r}$:<br>$$d\\mathbf{B}(\\mathbf{r}) = \\frac{\\mu_0 I}{4\\pi} {{c1::\\frac{d\\boldsymbol{\\ell}' \\times (\\mathbf{r} - \\mathbf{r}')}{|\\mathbf{r} - \\mathbf{r}'|^3}}}$$<br>En t\u00e9rminos del vector unitario de separaci\u00f3n $\\hat{\\boldsymbol{\\mathcal{R}}} = \\frac{\\mathbf{r}-\\mathbf{r}'}{|\\mathbf{r}-\\mathbf{r}'|}$:<br>$$d\\mathbf{B}(\\mathbf{r}) = \\frac{\\mu_0 I}{4\\pi}\\frac{d\\boldsymbol{\\ell}' \\times \\hat{\\boldsymbol{\\mathcal{R}}}}{\\mathcal{R}^2}$$."
+        },
+        {
+          "item_id": 1879963223636200931,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642170,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.171777+00:00",
+            "last_review": null
+          },
+          "title": "Los 5 Pasos Infalibles para Resolver Biot-Savart en Examen",
+          "front": "Explique la metodolog\u00eda paso a paso para calcular el campo de Biot-Savart sin equivocarse en signos ni factores geom\u00e9tricos.",
+          "back": "1. <b>Parametrizar la fuente:</b> Vector posici\u00f3n $\\mathbf{r}'$ y elemento vectorial tangente $d\\boldsymbol{\\ell}'$.<br>2. <b>Parametrizar el punto de campo:</b> Vector posici\u00f3n $\\mathbf{r}$.<br>3. <b>Construir vector separaci\u00f3n y m\u00f3dulo:</b> $\\boldsymbol{\\mathcal{R}} = \\mathbf{r} - \\mathbf{r}'$, y calcular $|\\boldsymbol{\\mathcal{R}}|^3 = [(\\Delta x)^2 + (\\Delta y)^2 + (\\Delta z)^2]^{3/2}$.<br>4. <b>Producto cruz vectorial:</b> Calcular $d\\boldsymbol{\\ell}' \\times \\boldsymbol{\\mathcal{R}}$ por determinantes; simplificar usando simetr\u00eda de componentes impares.<br>5. <b>Integrar componente por componente:</b> Integrar entre los l\u00edmites de la fuente con la tabla de integrales est\u00e1ndar."
+        }
+      ]
+    },
+    {
+      "note_id": "em_14",
+      "title": "Fuerzas y Torques sobre Espiras y Dipolos",
+      "x": 980.0,
+      "y": 600.0,
+      "tags": [
+        "EM",
+        "Laplace",
+        "Dipolo",
+        "Torque"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223590788125,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642126,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.127437+00:00",
+            "last_review": null
+          },
+          "title": "Fuerza y Torque sobre Espiras",
+          "text": "Fuerza elemental sobre corriente: $d\\mathbf{F} = {{c1::I d\\boldsymbol{\\ell} \\times \\mathbf{B}}}$.<br>Para una espira plana de \u00e1rea vectorial $\\mathbf{A}$ con corriente $I$:<br>- Momento dipolar: $\\boldsymbol{\\mu} = {{c2::I \\mathbf{A}}}$<br>- Torque: $\\boldsymbol{\\tau} = {{c3::\\boldsymbol{\\mu} \\times \\mathbf{B}}}$<br>- Energ\u00eda potencial: $U = {{c4::-\\boldsymbol{\\mu} \\cdot \\mathbf{B}}}$."
+        },
+        {
+          "item_id": 1879963223637260861,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642171,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.172793+00:00",
+            "last_review": null
+          },
+          "title": "Segmento Recto y Cable Infinito",
+          "front": "Escriba el campo magn\u00e9tico $\\mathbf{B}$ generado por un segmento rectil\u00edneo finito a distancia perpendicular $d$, y deduzca el l\u00edmite para un hilo infinito.",
+          "back": "1. <b>Segmento finito entre \u00e1ngulos $\\theta_1$ y $\\theta_2$:</b><br>$$B = \\frac{\\mu_0 I}{4\\pi d}(\\sin\\theta_2 - \\sin\\theta_1)$$ (donde los \u00e1ngulos se miden respecto a la normal al cable).<br>2. <b>Cable rectil\u00edneo infinito:</b> Hacia un extremo $\\theta_1 = -\\pi/2$ ($\\sin\\theta_1 = -1$) y hacia el otro $\\theta_2 = +\\pi/2$ ($\\sin\\theta_2 = +1$):<br>$$B = \\frac{\\mu_0 I}{4\\pi d}(1 - (-1)) = \\frac{\\mu_0 I}{2\\pi d}$$ con direcci\u00f3n azimutal $\\hat{\\phi}$ seg\u00fan la regla de la mano derecha."
+        },
+        {
+          "item_id": 1879963223638197044,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642172,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.173853+00:00",
+            "last_review": null
+          },
+          "title": "Espira Circular en el Eje de Simetr\u00eda",
+          "text": "Para una espira circular de radio $R$ con corriente $I$ centrada en el origen sobre el plano $xy$:<br>- Campo magn\u00e9tico en cualquier punto $z$ sobre su eje de simetr\u00eda: $$\\mathbf{B}(z) = {{c1::\\frac{\\mu_0 I R^2}{2(R^2 + z^2)^{3/2}}\\hat{z}}}$$<br>- En el centro de la espira ($z = 0$): $$\\mathbf{B}(0) = {{c2::\\frac{\\mu_0 I}{2R}\\hat{z}}}$$<br>- Arco circular plano de \u00e1ngulo $\\Delta\\phi$ en su centro de curvatura: $$B = {{c3::\\frac{\\mu_0 I \\Delta\\phi}{4\\pi R}}}$$."
+        }
+      ]
+    },
+    {
+      "note_id": "em_15",
+      "title": "Ley de Biot-Savart y Alambres Conductores",
+      "x": 1280.0,
+      "y": 600.0,
+      "tags": [
+        "EM",
+        "Biot-Savart",
+        "Alambres"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223591918417,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642127,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.128491+00:00",
+            "last_review": null
+          },
+          "title": "F\u00f3rmulas de Biot-Savart para Alambres",
+          "text": "Ley de Biot-Savart: $d\\mathbf{B} = \\frac{\\mu_0 I}{4\\pi}\\frac{d\\boldsymbol{\\ell}\\times\\hat{r}}{r^2}$.<br>- Segmento finito entre $\\theta_1$ y $\\theta_2$: $B = {{c1::\\frac{\\mu_0 I}{4\\pi d}(\\sin\\theta_2 - \\sin\\theta_1)}}$.<br>- Hilo infinito: $B = {{c2::\\frac{\\mu_0 I}{2\\pi d}}}$.<br>- Puntos colineales en la prolongaci\u00f3n del alambre: $B = {{c3::0}}$."
+        },
+        {
+          "item_id": 1879963223640187187,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642173,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.174907+00:00",
+            "last_review": null
+          },
+          "title": "Ley de Amp\u00e8re en Formas Integral y Diferencial",
+          "text": "La Ley de Amp\u00e8re para magnetost\u00e1tica relaciona la circulaci\u00f3n del campo magn\u00e9tico con la corriente libre encerrada:<br>- Forma integral: $$\\oint_C \\mathbf{B} \\cdot d\\boldsymbol{\\ell} = {{c1::\\mu_0 I_{\\text{enc}} = \\mu_0 \\iint_S \\mathbf{J} \\cdot d\\mathbf{A}}}$$<br>- Forma diferencial (rotacional): $$\\nabla \\times \\mathbf{B} = {{c2::\\mu_0 \\mathbf{J}}}$$<br>Para que la ley permita despejar $|\\mathbf{B}|$ algebraicamente, el lazo amperiano $C$ debe satisfacer simetr\u00eda tal que $\\mathbf{B}$ sea {{c3::paralelo y constante a lo largo de $C$}}."
+        },
+        {
+          "item_id": 1879963223641184598,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642174,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.175960+00:00",
+            "last_review": null
+          },
+          "title": "Cilindro con Densidad de Corriente No Uniforme J(r)",
+          "front": "Un conductor cil\u00edndrico de radio $R$ conduce corriente con densidad $\\mathbf{J}(r) = C r^k \\hat{z}$. Calcule el campo $\\mathbf{B}(r)$ en el interior ($r < R$) y en el exterior ($r > R$).",
+          "back": "1. <b>Interior ($r < R$):</b> Lazo circular amperiano de radio $r$.<br>$$I_{\\text{enc}}(r) = \\int_0^{2\\pi}\\int_0^r (C r'^k) r' dr' d\\theta = 2\\pi C \\frac{r^{k+2}}{k+2}$$<br>Por Amp\u00e8re: $B(r)\\cdot 2\\pi r = \\mu_0 I_{\\text{enc}}(r) \\implies B_{\\text{int}}(r) = \\frac{\\mu_0 C}{k+2}r^{k+1} \\hat{\\theta}$.<br>2. <b>Exterior ($r \\ge R$):</b> Encerra la corriente total $I_{\\text{tot}} = 2\\pi C \\frac{R^{k+2}}{k+2}$:<br>$$B_{\\text{ext}}(r)\\cdot 2\\pi r = \\mu_0 I_{\\text{tot}} \\implies B_{\\text{ext}}(r) = \\frac{\\mu_0 I_{\\text{tot}}}{2\\pi r}\\hat{\\theta}$$."
+        }
+      ]
+    },
+    {
+      "note_id": "em_16",
+      "title": "Espiras Circulares y Bobinas de Helmholtz",
+      "x": 80.0,
+      "y": 860.0,
+      "tags": [
+        "EM",
+        "Espira",
+        "Helmholtz",
+        "Biot-Savart"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223592463824,
+          "type": "ProofSequenceCard",
+          "fsrs_card": {
+            "card_id": 1792872642128,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.129546+00:00",
+            "last_review": null
+          },
+          "title": "Campo en el Eje de Espira Circular",
+          "premise": "Calcular el campo axial $B_z(z)$ de una espira circular de radio $R$ con corriente $I$.",
+          "steps": [
+            "Distancia al punto de observaci\u00f3n en el eje: $r = \\sqrt{R^2 + z^2}$.",
+            "M\u00f3dulo del campo diferencial: $dB = \\frac{\\mu_0 I d\\ell}{4\\pi (R^2+z^2)}$.",
+            "Por simetr\u00eda circular, las componentes radiales se anulan: $\\oint dB_\\perp = 0$.",
+            "Componente axial: $dB_z = dB \\cos\\theta = dB \\frac{R}{\\sqrt{R^2+z^2}} = \\frac{\\mu_0 I R}{4\\pi (R^2+z^2)^{3/2}} d\\ell$.",
+            "Integrando sobre la espira ($2\\pi R$): $B_z = \\frac{\\mu_0 I R^2}{2(R^2+z^2)^{3/2}}$. En el centro ($z=0$): $B = \\frac{\\mu_0 I}{2R}$."
+          ]
+        },
+        {
+          "item_id": 1879963223593068446,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642129,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.130599+00:00",
+            "last_review": null
+          },
+          "title": "Bobinas de Helmholtz: Campo \u00d3ptimamente Homog\u00e9neo",
+          "front": "\u00bfPor qu\u00e9 en las bobinas de Helmholtz la separaci\u00f3n \u00f3ptima entre bobinas es $d = R$?",
+          "back": "En el punto medio $z=0$ entre ambas bobinas coaxiales:<br>1. Por simetr\u00eda par, la primera derivada es nula: $\\frac{dB}{dz} = 0$.<br>2. La segunda derivada es proporcional a $(4d^2 - R^2)$. Fijando $d=R$, se anula id\u00e9nticamente: $\\frac{d^2 B}{dz^2} = 0$.<br>3. Las variaciones espaciales son de orden cuatro ($O(z^4)$), logrando la m\u00e1xima uniformidad magn\u00e9tica experimental."
+        },
+        {
+          "item_id": 1879963223594819178,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642130,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.131653+00:00",
+            "last_review": null
+          },
+          "title": "Campo en el Centro de un Arco Circular",
+          "text": "Para un arco circular de radio $R$ que subtiende un \u00e1ngulo $\\alpha$ (en radianes) con corriente $I$:<br>$$B_{\\text{centro}} = {{c1::\\frac{\\mu_0 I \\alpha}{4\\pi R}}}$$<br>Si es una espira completa ($\\alpha = 2\\pi$): $B = \\frac{\\mu_0 I}{2R}$."
+        },
+        {
+          "item_id": 1879963223641445184,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642175,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.177021+00:00",
+            "last_review": null
+          },
+          "title": "Magnetizaci\u00f3n M y Corrientes Ligadas",
+          "text": "En un material magn\u00e9tico con magnetizaci\u00f3n $\\mathbf{M}$ (momento dipolar magn\u00e9tico por volumen):<br>- Densidad volum\u00e9trica de corriente ligada: $$\\mathbf{J}_b = {{c1::\\nabla \\times \\mathbf{M}}}$$<br>- Densidad superficial de corriente ligada: $$\\mathbf{K}_b = {{c2::\\mathbf{M} \\times \\hat{n}}}$$<br>- Campo auxiliar $\\mathbf{H}$ (depende solo de corrientes libres): $$\\mathbf{H} = {{c3::\\frac{\\mathbf{B}}{\\mu_0} - \\mathbf{M}}}$$ y $\\oint_C \\mathbf{H} \\cdot d\\boldsymbol{\\ell} = I_{f,\\text{enc}}$."
+        },
+        {
+          "item_id": 1879963223644325675,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642177,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.178088+00:00",
+            "last_review": null
+          },
+          "title": "Medios Magn\u00e9ticos Lineales: Diamagnetismo, Paramagnetismo y Ferromagnetismo",
+          "front": "Explique las relaciones constitutivas $\\mathbf{M} = \\chi_m \\mathbf{H}$ y $\\mathbf{B} = \\mu \\mathbf{H}$, distinguiendo las tres clases de materiales magn\u00e9ticos.",
+          "back": "1. <b>Relaciones constitutivas:</b> $\\mathbf{B} = \\mu_0(\\mathbf{H} + \\mathbf{M}) = \\mu_0(1 + \\chi_m)\\mathbf{H} = \\mu \\mathbf{H}$, donde $\\chi_m$ es la susceptibilidad y $\\mu = \\mu_0 \\mu_r = \\mu_0(1+\\chi_m)$ es la permeabilidad.<br>2. <b>Diamagnetismo ($\\chi_m < 0$, $\\chi_m \\sim -10^{-5}$):</b> Se opone d\u00e9bilmente a $\\mathbf{B}$. Presente en todos los \u00e1tomos por la ley de Lenz a nivel orbital.<br>3. <b>Paramagnetismo ($\\chi_m > 0$, $\\chi_m \\sim +10^{-4}$):</b> Los dipolos at\u00f3micos permanentes se alinean a favor de $\\mathbf{B}$. Disminuye con la temperatura ($T^{-1}$, Ley de Curie).<br>4. <b>Ferromagnetismo ($\\mu \\gg \\mu_0$, hist\u00e9resis):</b> Dominios magn\u00e9ticos acoplados cu\u00e1nticamente (canje); no lineal."
+        }
+      ]
+    },
+    {
+      "note_id": "em_17",
+      "title": "Fuerzas entre Conductores y Espiras Coplanares",
+      "x": 380.0,
+      "y": 860.0,
+      "tags": [
+        "EM",
+        "Fuerza Magn\u00e9tica",
+        "Espira Coplanar"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223595749651,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642131,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.132707+00:00",
+            "last_review": null
+          },
+          "title": "Fuerza entre Hilos Paralelos",
+          "text": "Fuerza por unidad de longitud entre dos conductores paralelos separados distancia $d$:<br>$$\\frac{F}{L} = {{c1::\\frac{\\mu_0 I_1 I_2}{2\\pi d}}}$$<br>- Corrientes en el mismo sentido: se {{c2::atraen}}.<br>- Corrientes en sentidos opuestos: se {{c3::repelen}}."
+        },
+        {
+          "item_id": 1879963223596560825,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642132,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.133760+00:00",
+            "last_review": null
+          },
+          "title": "Fuerza Neta sobre Espira Coplanar a Hilo Infinito",
+          "front": "Una espira rectangular de lados $a$ (paralelo) y $b$ (perpendicular) con corriente $I_2$ se sit\u00faa a distancia $d$ de un hilo largo con corriente $I_1$. Calcule la fuerza neta.",
+          "back": "1. Los lados perpendiculares sufren fuerzas opuestas que se cancelan vectorialmente.<br>2. Lado cercano (atracci\u00f3n): $F_1 = \\frac{\\mu_0 I_1 I_2 a}{2\\pi d}$.<br>3. Lado lejano (repulsi\u00f3n): $F_2 = \\frac{\\mu_0 I_1 I_2 a}{2\\pi (d+b)}$.<br>4. Fuerza Neta Atractiva:<br>$$F_{\\text{net}} = \\frac{\\mu_0 I_1 I_2 a b}{2\\pi d(d+b)}$$"
+        },
+        {
+          "item_id": 1879963223645295479,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642178,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.179154+00:00",
+            "last_review": null
+          },
+          "title": "Definici\u00f3n y Propiedades del Potencial Vector A",
+          "text": "Como la divergencia del campo magn\u00e9tico es nula ($\\nabla \\cdot \\mathbf{B} = 0$), existe un potencial vector $\\mathbf{A}$ tal que:<br>$$\\mathbf{B} = {{c1::\\nabla \\times \\mathbf{A}}}$$<br>- Gauge de Coulomb (norma est\u00e1ndar en magnetost\u00e1tica): $$\\nabla \\cdot \\mathbf{A} = {{c2::0}}$$<br>- Ecuaci\u00f3n de Poisson para $\\mathbf{A}$: $$\\nabla^2 \\mathbf{A} = {{c3::-\\mu_0 \\mathbf{J}}}$$<br>- Flujo magn\u00e9tico a trav\u00e9s de superficie $S$ con borde $\\partial S$ (por Stokes): $$\\Phi_B = \\iint_S \\mathbf{B} \\cdot d\\mathbf{A} = {{c4::\\oint_{\\partial S} \\mathbf{A} \\cdot d\\boldsymbol{\\ell}}}$$."
+        }
+      ]
+    },
+    {
+      "note_id": "em_18",
+      "title": "Ley de Amp\u00e8re y Medios de Alta Simetr\u00eda",
+      "x": 680.0,
+      "y": 860.0,
+      "tags": [
+        "EM",
+        "Amp\u00e8re",
+        "Solenoide",
+        "Toroide"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223597282420,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642133,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.134783+00:00",
+            "last_review": null
+          },
+          "title": "Formas de la Ley de Amp\u00e8re",
+          "text": "- Integral: $\\oint_{\\mathcal{C}} \\mathbf{B} \\cdot d\\boldsymbol{\\ell} = {{c1::\\mu_0 I_{\\text{enc}}}}$<br>- Diferencial: $\\nabla \\times \\mathbf{B} = {{c2::\\mu_0 \\mathbf{J}}}$.<br>- En solenoide ideal de $n$ espiras/metro: interior $B = {{c3::\\mu_0 n I}}$, exterior $B \\approx 0$.<br>- En toroide de $N$ espiras y radio medio $r$: $B(r) = {{c4::\\frac{\\mu_0 N I}{2\\pi r}}}$."
+        },
+        {
+          "item_id": 1879963223646094612,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642179,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.180215+00:00",
+            "last_review": null
+          },
+          "title": "Ley de Faraday y Ley de Lenz",
+          "text": "Principios fundamentales de la inducci\u00f3n electromagn\u00e9tica:<br>- Ley de Faraday: La fuerza electromotriz inducida en un circuito cerrado es igual al negativo de la tasa de cambio del flujo magn\u00e9tico: $$\\mathcal{E} = {{c1::-\\frac{d\\Phi_B}{dt}}}$$ donde $\\Phi_B = \\iint_S \\mathbf{B} \\cdot d\\mathbf{A}$.<br>- Ley de Lenz: El signo negativo indica que la corriente inducida genera un campo magn\u00e9tico que {{c2::se opone al cambio del flujo magn\u00e9tico original}}.<br>- Forma diferencial de Maxwell-Faraday: $$\\nabla \\times \\mathbf{E} = {{c3::-\\frac{\\partial \\mathbf{B}}{\\partial t}}}$$."
+        },
+        {
+          "item_id": 1879963223647177155,
+          "type": "ProofSequenceCard",
+          "fsrs_card": {
+            "card_id": 1792872642180,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.181283+00:00",
+            "last_review": null
+          },
+          "title": "Mecanismo Dual de Inducci\u00f3n: FEM de Movimiento vs Campo El\u00e9ctrico Inducido",
+          "premise": "Distinga formalmente los dos mecanismos f\u00edsicos que producen FEM en la ley de Faraday.",
+          "steps": [
+            "Variaci\u00f3n total del flujo: $\\frac{d\\Phi_B}{dt} = \\frac{d}{dt}\\iint_S \\mathbf{B} \\cdot d\\mathbf{A}$.",
+            "Por la regla de Leibniz para fronteras m\u00f3viles: $\\frac{d}{dt}\\iint_S \\mathbf{B} \\cdot d\\mathbf{A} = \\iint_S \\frac{\\partial \\mathbf{B}}{\\partial t}\\cdot d\\mathbf{A} - \\oint_{\\partial S} (\\mathbf{v} \\times \\mathbf{B})\\cdot d\\boldsymbol{\\ell}$.",
+            "Mecanismo 1 (FEM de movimiento): Circuito en movimiento en campo est\u00e1tico $\\mathbf{B}$; la fuerza de Lorentz sobre portadores m\u00f3viles produce $\\mathcal{E}_{\\text{mov}} = \\oint (\\mathbf{v} \\times \\mathbf{B})\\cdot d\\boldsymbol{\\ell}$.",
+            "Mecanismo 2 (Campo el\u00e9ctrico inducido): Circuito en reposo en campo variable $\\mathbf{B}(t)$; la variaci\u00f3n temporal de $\\mathbf{B}$ engendra un campo no conservativo $\\mathbf{E}_{\\text{ind}}$ tal que $\\mathcal{E}_{\\text{ind}} = \\oint \\mathbf{E}_{\\text{ind}}\\cdot d\\boldsymbol{\\ell} = -\\iint_S \\frac{\\partial \\mathbf{B}}{\\partial t}\\cdot d\\mathbf{A} \\quad \\blacksquare$."
+          ]
+        },
+        {
+          "item_id": 1879963223648058660,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642181,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.182344+00:00",
+            "last_review": null
+          },
+          "title": "Corrientes Par\u00e1sitas (Foucault) y Frenado Electromagn\u00e9tico",
+          "text": "Cuando un conductor macizo se desplaza a trav\u00e9s de un campo magn\u00e9tico no homog\u00e9neo o variable:<br>1. Se generan lazos de corriente inducida cerrados en la masa del metal llamados {{c1::corrientes de Foucault (eddy currents)}}.<br>2. Seg\u00fan la Ley de Lenz, estas corrientes generan una fuerza magn\u00e9tica neta $\\mathbf{F} = \\int (\\mathbf{J}_{\\text{ind}} \\times \\mathbf{B}) dV$ que {{c2::se opone al movimiento relativo del conductor}} (frenado electromagn\u00e9tico).<br>3. Para mitigar las p\u00e9rdidas por disipaci\u00f3n de calor ($P = \\int \\mathbf{J}^2 / \\sigma \\, dV$) en n\u00facleos ferromagn\u00e9ticos de transformadores, se utiliza hierro {{c3::laminado con placas aisladas el\u00e9ctricamente entre s\u00ed}} en vez de un bloque macizo."
+        }
+      ]
+    },
+    {
+      "note_id": "em_19",
+      "title": "Magnetismo en la Materia y Campo H",
+      "x": 980.0,
+      "y": 860.0,
+      "tags": [
+        "EM",
+        "Magnetizaci\u00f3n",
+        "Campo H",
+        "Materiales"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223599046354,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642134,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.135840+00:00",
+            "last_review": null
+          },
+          "title": "Magnetizaci\u00f3n y Campo Auxiliar H",
+          "text": "A partir del vector magnetizaci\u00f3n $\\mathbf{M}$:<br>- Corriente volum\u00e9trica ligada: $\\mathbf{J}_b = {{c1::\\nabla \\times \\mathbf{M}}}$<br>- Corriente superficial ligada: $\\mathbf{K}_b = {{c2::\\mathbf{M} \\times \\hat{n}}}$<br>- Campo auxiliar: $\\mathbf{H} = {{c3::\\frac{\\mathbf{B}}{\\mu_0} - \\mathbf{M}}}$, con $\\oint \\mathbf{H} \\cdot d\\boldsymbol{\\ell} = I_{f,\\text{enc}}$."
+        },
+        {
+          "item_id": 1879963223599468633,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642135,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.136894+00:00",
+            "last_review": null
+          },
+          "title": "Condiciones de Borde en Interfaces Magn\u00e9ticas",
+          "front": "\u00bfCu\u00e1les son las condiciones de frontera para $\\mathbf{B}$ y $\\mathbf{H}$ en la interfaz entre dos medios magn\u00e9ticos?",
+          "back": "1. <b>Componente normal de $\\mathbf{B}$:</b> Es estrictamente continua:<br>$$B_{1n} - B_{2n} = 0 \\iff B_{1n} = B_{2n}$$<br>(debido a $\\nabla \\cdot \\mathbf{B} = 0$, no existen monopolos magn\u00e9ticos).<br>2. <b>Componente tangencial de $\\mathbf{H}$:</b> Salto determinado por la corriente libre superficial $\\mathbf{K}_f$:<br>$$\\mathbf{H}_{1t} - \\mathbf{H}_{2t} = \\mathbf{K}_f \\times \\hat{n}$$<br>Si no hay corrientes libres superficiales ($\\mathbf{K}_f = \\mathbf{0}$): $H_{1t} = H_{2t}$."
+        },
+        {
+          "item_id": 1879963223648649351,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642182,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.183398+00:00",
+            "last_review": null
+          },
+          "title": "Barra Deslizante en Rieles con Resistencia",
+          "text": "Una barra conductora de masa $m$ y longitud $L$ se desliza a velocidad inicial $v_0$ sobre rieles paralelos sin fricci\u00f3n conectados por una resistencia $R$, en un campo magn\u00e9tico uniforme perpendicular $B \\hat{z}$:<br>- FEM inducida por movimiento: $$\\mathcal{E} = {{c1::B L v}}$$.<br>- Corriente inducida: $$I = \\frac{\\mathcal{E}}{R} = \\frac{B L v}{R}$$.<br>- Fuerza magn\u00e9tica de frenado sobre la barra: $$F_x = -I L B = {{c2::-\\frac{B^2 L^2}{R}v}}$$.<br>- Ecuaci\u00f3n de movimiento: $$m \\frac{dv}{dt} = -\\frac{B^2 L^2}{R}v \\implies v(t) = {{c3::v_0 e^{-t/\\tau_m}}}$$, con tiempo caracter\u00edstico $\\tau_m = \\frac{m R}{B^2 L^2}$."
+        }
+      ]
+    },
+    {
+      "note_id": "em_20",
+      "title": "Inducci\u00f3n Electromagn\u00e9tica y Ley de Faraday",
+      "x": 1280.0,
+      "y": 860.0,
+      "tags": [
+        "EM",
+        "Faraday",
+        "Lenz",
+        "Inducci\u00f3n"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223600919864,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642136,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.137955+00:00",
+            "last_review": null
+          },
+          "title": "Leyes de Faraday y Lenz",
+          "text": "Fuerza electromotriz inducida en circuito cerrado:<br>$$\\mathcal{E} = \\oint \\mathbf{E} \\cdot d\\boldsymbol{\\ell} = {{c1::-\\frac{d\\Phi_B}{dt}}}$$<br>Forma diferencial de Maxwell-Faraday:<br>$$\\nabla \\times \\mathbf{E} = {{c2::-\\frac{\\partial \\mathbf{B}}{\\partial t}}}$$<br>El signo negativo de Lenz impone que la corriente inducida {{c3::se opone al cambio de flujo}}."
+        },
+        {
+          "item_id": 1879963223649955622,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642183,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.184451+00:00",
+            "last_review": null
+          },
+          "title": "Definici\u00f3n de Autoinductancia L e Inductancia Mutua M",
+          "front": "Defina inductancia propia $L$, inductancia mutua $M_{12}$, y exprese la autoinductancia de un solenoide ideal de $n$ vueltas/metro, longitud $\\ell$ y secci\u00f3n $A$.",
+          "back": "1. <b>Autoinductancia:</b> $L = \\frac{N \\Phi_B}{I}$. La FEM autoinducida es $\\mathcal{E}_L = -L \\frac{di}{dt}$.<br>2. <b>Inductancia de solenoide ideal:</b> Con $B = \\mu_0 n I$ y flujo por vuelta $\\Phi_1 = B A = \\mu_0 n I A$:<br>$$L = \\frac{N (B A)}{I} = \\frac{(n \\ell)(\\mu_0 n I A)}{I} = \\mu_0 n^2 A \\ell = \\mu_0 n^2 V$$<br>3. <b>Inductancia Mutua y Reciprocidad:</b> $M_{12} = \\frac{N_2 \\Phi_{21}}{I_1} = M_{21} = M$.<br>4. <b>Densidad de energ\u00eda magn\u00e9tica:</b> $u_B = \\frac{B^2}{2\\mu_0}$, y energ\u00eda total $U_B = \\frac{1}{2} L I^2$."
+        },
+        {
+          "item_id": 1879963223651272424,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642184,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.185512+00:00",
+            "last_review": null
+          },
+          "title": "Transitorio RL Serie",
+          "text": "En un circuito con fuente $\\mathcal{E}$, resistencia $R$ e inductor $L$ cerrado en $t = 0$ con $i(0) = 0$:<br>- Ecuaci\u00f3n diferencial: $$\\mathcal{E} - L\\frac{di}{dt} - R i = 0$$<br>- Crecimiento de corriente: $$i(t) = {{c1::\\frac{\\mathcal{E}}{R}(1 - e^{-t/\\tau_L})}}$$ donde la constante inductiva es $\\tau_L = {{c2::\\frac{L}{R}}}$.<br>- Desconexi\u00f3n de la fuente: $$i(t) = {{c3::I_0 e^{-t/\\tau_L}}}$$."
+        },
+        {
+          "item_id": 1879963223652566635,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642185,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.186580+00:00",
+            "last_review": null
+          },
+          "title": "Inductancia Mutua de Dos Solenoides Coaxiales Largos",
+          "text": "Considere dos solenoides coaxiales largos de longitud $\\ell$: uno interior de radio $r_1$ con $N_1$ vueltas, y uno exterior de radio $r_2 > r_1$ con $N_2$ vueltas:<br>- Haciendo circular corriente $I_1$ en el solenoide interior: produce campo uniforme $B_1 = {{c1::\\mu_0 \\frac{N_1}{\\ell} I_1}}$ confinado en el radio $r_1$.<br>- Flujo a trav\u00e9s de cada espira del solenoide 2: $\\Phi_{21} = B_1 (\\pi r_1^2) = \\mu_0 \\frac{N_1}{\\ell} I_1 (\\pi r_1^2)$ (limitado por el \u00e1rea {{c2::del solenoide interior $r_1$}}).<br>- Inductancia mutua del sistema: $$M = \\frac{N_2 \\Phi_{21}}{I_1} = {{c3::\\mu_0 \\frac{N_1 N_2}{\\ell} \\pi r_1^2}}$$<br>- Por el teorema de reciprocidad: si circulara $I_2$ por el solenoide exterior, se obtiene exactamente {{c4::el mismo valor de $M$}}."
+        }
+      ]
+    },
+    {
+      "note_id": "em_21",
+      "title": "FEM de Movimiento y Rieles Deslizantes",
+      "x": 380.0,
+      "y": 1120.0,
+      "tags": [
+        "EM",
+        "FEM de Movimiento",
+        "Rieles"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223601869487,
+          "type": "ProofSequenceCard",
+          "fsrs_card": {
+            "card_id": 1792872642137,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.139023+00:00",
+            "last_review": null
+          },
+          "title": "Conservaci\u00f3n de Energ\u00eda en Barra Deslizante sobre Rieles",
+          "premise": "Demostrar que la potencia mec\u00e1nica suministrada a una barra deslizante perpendicular a rieles coincide con la disipada por Joule.",
+          "steps": [
+            "<b>FEM inducida de movimiento y corriente:</b><br>$$\\mathcal{E} = v B L \\implies I = \\frac{\\mathcal{E}}{R} = \\frac{v B L}{R}$$",
+            "<b>Fuerza magn\u00e9tica de frenado de Lorentz:</b><br>$$F_m = I L B = \\frac{v B^2 L^2}{R}$$",
+            "<b>Potencia mec\u00e1nica requerida suministrada:</b><br>$$P_{\\text{mec}} = F_m v = \\frac{v^2 B^2 L^2}{R}$$",
+            "<b>Potencia el\u00e9ctrica disipada por Joule en la resistencia:</b><br>$$P_{\\text{dis}} = I^2 R = \\left(\\frac{v B L}{R}\\right)^2 R = \\frac{v^2 B^2 L^2}{R}$$",
+            "<b>Conclusi\u00f3n del balance energ\u00e9tico:</b><br>Se verifica estrictamente que $P_{\\text{mec}} = P_{\\text{dis}} \\quad \\blacksquare$"
+          ]
+        },
+        {
+          "item_id": 1879963223604331348,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642139,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.140076+00:00",
+            "last_review": null
+          },
+          "title": "Disco de Faraday (Generador Homopolar)",
+          "front": "Un disco conductor de radio $R$ gira con velocidad angular constante $\\omega$ en un campo magn\u00e9tico uniforme paralelo a su eje $\\mathbf{B} = B\\hat{z}$. Calcule la FEM inducida entre el centro y el borde.",
+          "back": "1. Cada elemento radial a distancia $r$ se mueve a velocidad $v(r) = \\omega r$.<br>2. Campo el\u00e9ctrico de Lorentz de movimiento: $\\mathbf{E}_m = \\mathbf{v} \\times \\mathbf{B} = (\\omega r \\hat{\\theta}) \\times (B \\hat{z}) = \\omega r B \\hat{r}$.<br>3. La FEM entre el eje y el borde del disco es:<br>$$\\mathcal{E} = \\int_0^R \\mathbf{E}_m \\cdot d\\mathbf{r} = \\int_0^R \\omega B r \\, dr = \\frac{1}{2} B \\omega R^2$$"
+        },
+        {
+          "item_id": 1879963223653381068,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642186,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.187653+00:00",
+            "last_review": null
+          },
+          "title": "Las 3 Integrales Cl\u00e1sicas de Biot-Savart en Examen",
+          "front": "Escriba los resultados de las 3 integrales indefinidas m\u00e1s recurrentes en problemas de electrost\u00e1tica y Biot-Savart.",
+          "back": "1. <b>Integral tipo Biot-Savart transversal:</b><br>$$\\int \\frac{dx}{(x^2 + a^2)^{3/2}} = \\frac{x}{a^2 \\sqrt{x^2 + a^2}} + C$$<br>2. <b>Integral tipo Biot-Savart con numerador $x$:</b><br>$$\\int \\frac{x \\, dx}{(x^2 + a^2)^{3/2}} = -\\frac{1}{\\sqrt{x^2 + a^2}} + C$$<br>3. <b>Integral logar\u00edtmica de alambre:</b><br>$$\\int \\frac{dx}{\\sqrt{x^2 + a^2}} = \\ln\\left(x + \\sqrt{x^2 + a^2}\\right) + C$$"
+        },
+        {
+          "item_id": 1879963223654544232,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642187,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.188714+00:00",
+            "last_review": null
+          },
+          "title": "An\u00e1lisis Dimensional y Unidades SI en Electromagnetismo",
+          "text": "Unidades fundamentales para verificar dimensiones en la I2:<br>- Campo El\u00e9ctrico: $[\\mathbf{E}] = {{c1::\\text{V/m} = \\text{N/C}}}$<br>- Desplazamiento El\u00e9ctrico: $[\\mathbf{D}] = {{c2::\\text{C/m}^2}}$<br>- Campo Magn\u00e9tico: $[\\mathbf{B}] = {{c3::\\text{T} = \\frac{\\text{N}}{\\text{A}\\cdot\\text{m}} = \\frac{\\text{kg}}{\\text{s}^2\\cdot\\text{A}}}}$<br>- Campo Auxiliar H: $[\\mathbf{H}] = {{c4::\\text{A/m}}}$<br>- Inductancia: $[L] = {{c5::\\text{H} = \\Omega \\cdot \\text{s} = \\frac{\\text{T}\\cdot\\text{m}^2}{\\text{A}}}}$."
+        }
+      ]
+    },
+    {
+      "note_id": "em_22",
+      "title": "Inductancia, Reciprocidad y Transitorios RL",
+      "x": 680.0,
+      "y": 1120.0,
+      "tags": [
+        "EM",
+        "Inductancia",
+        "Reciprocidad",
+        "RL"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223604673275,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642140,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.141130+00:00",
+            "last_review": null
+          },
+          "title": "Inductancia y Densidad de Energ\u00eda Magn\u00e9tica",
+          "text": "- Teorema de reciprocidad: ${{c1::M_{12} = M_{21} = M}}$.<br>- Energ\u00eda en un inductor: $U_B = {{c2::\\frac{1}{2} L I^2}}$.<br>- Densidad volum\u00e9trica de energ\u00eda magn\u00e9tica: $u_B = {{c3::\\frac{B^2}{2\\mu_0} = \\frac{1}{2}\\mathbf{B}\\cdot\\mathbf{H}}}$.<br>- Constante de tiempo de circuito RL: $\\tau_L = {{c4::\\frac{L}{R}}}$."
+        }
+      ]
+    },
+    {
+      "note_id": "em_00",
+      "title": "Filosof\u00eda de Correcci\u00f3n FIS1533 y Rescate de Puntos",
+      "x": 80.0,
+      "y": 40.0,
+      "tags": [
+        "EM",
+        "R\u00fabrica",
+        "Estrategia"
+      ],
+      "note_type": "standard",
+      "desired_retention": 0.85,
+      "cards": [
+        {
+          "item_id": 1879963223605723592,
+          "type": "ClozeCard",
+          "fsrs_card": {
+            "card_id": 1792872642141,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.142200+00:00",
+            "last_review": null
+          },
+          "title": "Doctrina Oficial de Arrastre de Error (Error-Carrying)",
+          "text": "En las pautas de correcci\u00f3n de FIS1533:<br>1. Si cometes un error algebraico en la parte (a), pero en la parte (b) utilizas tu resultado err\u00f3neo con {{c1::la metodolog\u00eda y ecuaciones correctas}}, recibes {{c2::el 100% del puntaje metodol\u00f3gico}} de la parte (b).<br>2. <b>Parametrizaci\u00f3n de Emergencia:</b> Si te bloqueas en una integral complicada, define formalmente {{c3::$I_0 = \\int \\dots$}} y contin\u00faa resolviendo las partes siguientes en funci\u00f3n de $I_0$ para salvar hasta el {{c4::80% del puntaje total}}."
+        },
+        {
+          "item_id": 1879963223607261095,
+          "type": "Flashcard",
+          "fsrs_card": {
+            "card_id": 1792872642142,
+            "state": 1,
+            "step": 0,
+            "stability": null,
+            "difficulty": null,
+            "due": "2026-10-24T20:10:42.143253+00:00",
+            "last_review": null
+          },
+          "title": "Protocolo Universal de 4 Pasos para Todo Ejercicio de la I2",
+          "front": "\u00bfCu\u00e1les son los 4 pasos sistem\u00e1ticos indispensables para abordar cualquier problema de FIS1533 asegurando el m\u00e1ximo puntaje?",
+          "back": "1. <b>Diagrama y Sistema de Coordenadas:</b> Dibujar el sistema, elegir el origen, explicitar vectores unitarios ($\\hat{r}, \\hat{\\theta}, \\hat{\\phi}, \\hat{z}$) y sentidos de corriente.<br>2. <b>Ecuaci\u00f3n F\u00edsica Fundamental:</b> Escribir la ley matriz aplicable en forma diferencial o integral (Gauss, Biot-Savart, Amp\u00e8re, Faraday, Ohm, Kirchhoff).<br>3. <b>Condiciones de Borde / Simetr\u00eda / Integraci\u00f3n:</b> Justificar cancelaciones por simetr\u00eda impar o condiciones de interfaz.<br>4. <b>Sanity Checks:</b> Verificaci\u00f3n dimensional y an\u00e1lisis de l\u00edmites asint\u00f3ticos ($r \\to 0$, $r \\to \\infty$, $z \\gg R$)."
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source_id": "em_01",
+      "target_id": "em_02",
+      "label": "Operadores a Polarizaci\u00f3n"
+    },
+    {
+      "source_id": "em_02",
+      "target_id": "em_03",
+      "label": "Polarizaci\u00f3n a Desplazamiento"
+    },
+    {
+      "source_id": "em_03",
+      "target_id": "em_04",
+      "label": "Gauss a Condiciones de Borde"
+    },
+    {
+      "source_id": "em_04",
+      "target_id": "em_05",
+      "label": "Bordes a Esfera Diel\u00e9ctrica"
+    },
+    {
+      "source_id": "em_03",
+      "target_id": "em_06",
+      "label": "D a Capacitancia Multicapa"
+    },
+    {
+      "source_id": "em_06",
+      "target_id": "em_07",
+      "label": "Capacitancia a Fuerzas Virtuales"
+    },
+    {
+      "source_id": "em_02",
+      "target_id": "em_08",
+      "label": "Cargas a Densidad de Corriente"
+    },
+    {
+      "source_id": "em_08",
+      "target_id": "em_09",
+      "label": "Continuidad a Modelo de Drude"
+    },
+    {
+      "source_id": "em_09",
+      "target_id": "em_10",
+      "label": "Resistencia a Th\u00e9venin"
+    },
+    {
+      "source_id": "em_10",
+      "target_id": "em_11",
+      "label": "Th\u00e9venin a Transitorios RC"
+    },
+    {
+      "source_id": "em_01",
+      "target_id": "em_12",
+      "label": "Fuerzas a Din\u00e1mica de Lorentz"
+    },
+    {
+      "source_id": "em_12",
+      "target_id": "em_13",
+      "label": "Lorentz a Efecto Hall"
+    },
+    {
+      "source_id": "em_12",
+      "target_id": "em_14",
+      "label": "Lorentz a Espiras y Torques"
+    },
+    {
+      "source_id": "em_14",
+      "target_id": "em_15",
+      "label": "Corrientes a Biot-Savart"
+    },
+    {
+      "source_id": "em_15",
+      "target_id": "em_16",
+      "label": "Biot-Savart a Espiras y Helmholtz"
+    },
+    {
+      "source_id": "em_15",
+      "target_id": "em_17",
+      "label": "Biot-Savart a Fuerzas entre Hilos"
+    },
+    {
+      "source_id": "em_16",
+      "target_id": "em_18",
+      "label": "Biot-Savart a Ley de Amp\u00e8re"
+    },
+    {
+      "source_id": "em_18",
+      "target_id": "em_19",
+      "label": "Amp\u00e8re libre a Magnetizaci\u00f3n M"
+    },
+    {
+      "source_id": "em_16",
+      "target_id": "em_20",
+      "label": "Flujo Magn\u00e9tico a Faraday-Lenz"
+    },
+    {
+      "source_id": "em_20",
+      "target_id": "em_21",
+      "label": "Faraday a FEM de Movimiento"
+    },
+    {
+      "source_id": "em_20",
+      "target_id": "em_22",
+      "label": "Faraday a Autoinductancia y Energ\u00eda"
+    },
+    {
+      "source_id": "em_00",
+      "target_id": "em_01",
+      "label": ""
+    },
+    {
+      "source_id": "em_03",
+      "target_id": "em_05",
+      "label": ""
+    },
+    {
+      "source_id": "em_05",
+      "target_id": "em_06",
+      "label": ""
+    },
+    {
+      "source_id": "em_01",
+      "target_id": "em_07",
+      "label": ""
+    },
+    {
+      "source_id": "em_07",
+      "target_id": "em_08",
+      "label": ""
+    },
+    {
+      "source_id": "em_06",
+      "target_id": "em_09",
+      "label": ""
+    },
+    {
+      "source_id": "em_01",
+      "target_id": "em_10",
+      "label": ""
+    },
+    {
+      "source_id": "em_10",
+      "target_id": "em_12",
+      "label": ""
+    },
+    {
+      "source_id": "em_13",
+      "target_id": "em_14",
+      "label": ""
+    },
+    {
+      "source_id": "em_01",
+      "target_id": "em_15",
+      "label": ""
+    },
+    {
+      "source_id": "em_16",
+      "target_id": "em_17",
+      "label": ""
+    },
+    {
+      "source_id": "em_13",
+      "target_id": "em_18",
+      "label": ""
+    },
+    {
+      "source_id": "em_18",
+      "target_id": "em_20",
+      "label": ""
+    },
+    {
+      "source_id": "em_14",
+      "target_id": "em_21",
+      "label": ""
+    },
+    {
+      "source_id": "em_17",
+      "target_id": "em_21",
+      "label": ""
+    }
+  ]
+}

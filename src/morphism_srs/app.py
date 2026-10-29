@@ -31,7 +31,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     app = QApplication(argv if argv is not None else sys.argv)
     app.setApplicationName("MorphismSRS")
-    app.setOrganizationName("Morphism")
+    app.setOrganizationName("")
 
     # 2. Initialize AppPaths & AppConfig
     paths = AppPaths.resolve()

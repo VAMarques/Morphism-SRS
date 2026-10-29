@@ -98,14 +98,5 @@
       "{\\mathrm{#1}}",
       1
     ]
-  },
-  "autoload": {
-    "boldsymbol": [],
-    "mhchem": [],
-    "mathtools": [],
-    "cancel": [],
-    "cases": [],
-    "centernot": [],
-    "unicode": []
   }
 }

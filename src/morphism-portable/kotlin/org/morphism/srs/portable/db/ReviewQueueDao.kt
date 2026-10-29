@@ -28,7 +28,15 @@ class ReviewQueueDao(private val store: PortableDatabase, private val graph: Cou
             val n=(0 until nodes.length()).map { nodes.getJSONObject(it) }.first { it.getInt("id")==id }
             val retention=if(n.isNull("desired_retention")) graph.retention(courseId) else n.getDouble("desired_retention")
             for(i in 0 until cards.length()) { val c=cards.getJSONObject(i)
-                if(c.getInt("note_id")==id && CourseGraphDao.isDue(c,retention,now)) result.put(c.getInt("id")) }
+                if(c.getInt("note_id")==id && (CourseGraphDao.isDue(c,retention,now) || (noteId != 0 && c.optInt("state") == 0))) result.put(c.getInt("id")) }
+        }
+        if (result.length() == 0 && noteId != 0) {
+            for (i in 0 until cards.length()) {
+                val c = cards.getJSONObject(i)
+                if (c.getInt("note_id") == noteId && c.optInt("is_suspended", 0) == 0 && c.optInt("is_buried", 0) == 0) {
+                    result.put(c.getInt("id"))
+                }
+            }
         }
         return result
     }

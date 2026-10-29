@@ -14,6 +14,7 @@ from morphism_srs.storage.repositories.card_repo import CardRepository
 from morphism_srs.storage.repositories.course_repo import CourseRepository
 from morphism_srs.storage.repositories.folder_repo import FolderRepository
 from morphism_srs.storage.repositories.note_repo import NoteRepository
+from morphism_srs.storage.repositories.gamification_repo import GamificationRepository
 from morphism_srs.storage.repositories.review_repo import ReviewRepository
 from morphism_srs.storage.unit_of_work import UnitOfWork
 

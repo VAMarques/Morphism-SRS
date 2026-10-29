@@ -234,6 +234,80 @@ A: Residues permuted.
         self.assertIn("UUID note-uuid-12345", decompiled)
         self.assertNotIn("CARD UUID", decompiled)
 
+    def test_card_uuid_recognition_in_mdsl(self) -> None:
+        """Compiler must recognize cards by their unique UUID, not by name or index alone."""
+        compiler = DSLCompiler(self.conn)
+        mdsl = """COURSE "Card UUID Test"
+NEW NOTE "Basis Theorem" UUID basis-note-uuid
+MODE standard
+
+CARD 1 "Dimension Definition" UUID card-uuid-111
+FRONT
+What is dimension?
+BACK
+Cardinality of a basis.
+
+CARD 2 "Spanning Set" UUID card-uuid-222
+FRONT
+What is a spanning set?
+BACK
+A set whose linear span is the space.
+"""
+        res1 = compiler.compile_and_commit(mdsl)
+        self.assertFalse(res1.has_errors)
+        c_id = res1.course_id
+        assert c_id is not None
+
+        notes = self.note_repo.list_by_course(c_id)
+        self.assertEqual(len(notes), 1)
+        cards = notes[0].cards
+        self.assertEqual(len(cards), 2)
+        card_111 = next(c for c in cards if c.uuid == "card-uuid-111")
+        card_222 = next(c for c in cards if c.uuid == "card-uuid-222")
+
+        # Set distinct schedule for card 111
+        self.conn.execute("UPDATE card_schedules SET reps = 10, stability = 45.0 WHERE card_id = ?", (card_111.id,))
+        self.conn.commit()
+
+        # Recompile with swapped order and renamed titles, but preserving UUIDs
+        mdsl_v2 = """COURSE "Card UUID Test"
+NEW NOTE "Basis Theorem" UUID basis-note-uuid
+MODE standard
+
+CARD 1 "Renamed Spanning" UUID card-uuid-222
+FRONT
+Updated spanning question
+BACK
+Updated spanning answer
+
+CARD 2 "Renamed Dimension" UUID card-uuid-111
+FRONT
+Updated dimension question
+BACK
+Updated dimension answer
+"""
+        res2 = compiler.compile_and_commit(mdsl_v2, target_course_id=c_id)
+        self.assertFalse(res2.has_errors)
+
+        notes_after = self.note_repo.list_by_course(c_id)
+        cards_after = notes_after[0].cards
+        self.assertEqual(len(cards_after), 2)
+
+        card_111_after = next(c for c in cards_after if c.uuid == "card-uuid-111")
+        card_222_after = next(c for c in cards_after if c.uuid == "card-uuid-222")
+
+        # Step order was updated to 1 (0-based) for 111, and 0 for 222
+        self.assertEqual(card_111_after.step_order, 1)
+        self.assertEqual(card_222_after.step_order, 0)
+        self.assertEqual(card_111_after.title, "Renamed Dimension")
+        self.assertEqual(card_222_after.title, "Renamed Spanning")
+
+        # The schedule history on 111 MUST remain preserved because it was matched by UUID!
+        sched_111 = self.card_repo.get_by_id(card_111.id or 0).schedule
+        assert sched_111 is not None
+        self.assertEqual(sched_111.reps, 10)
+        self.assertEqual(sched_111.stability, 45.0)
+
     def test_ephemeral_mobile_sync_v2_pull_and_push(self) -> None:
         """Mobile Server V2 must support /api/v2/sync/pull and /api/v2/sync/push."""
         c = self.course_repo.create(CourseModel(name="Mobile Course", desired_retention=0.80))
@@ -332,6 +406,213 @@ A: Residues permuted.
         finally:
             server.stop()
 
+
+    def test_hide_answer_toggle_and_review_ui_cleanup(self) -> None:
+        """Verify ReviewView key handling for backtick/0xC0 and absence of Custom/Auto buttons in header."""
+        import sys
+        from unittest.mock import MagicMock
+        from PySide6.QtWidgets import QApplication, QPushButton
+        from PySide6.QtGui import QKeyEvent
+        from PySide6.QtCore import QEvent, Qt
+        _app = QApplication.instance() or QApplication(sys.argv)
+
+        from morphism_srs.controllers.event_bus import EventBus
+        from morphism_srs.controllers.review_controller import ReviewController
+        from morphism_srs.ui.views.review_view import ReviewView
+
+        event_bus = EventBus()
+        from PySide6.QtWidgets import QWidget
+        from PySide6.QtCore import Signal
+        class MockWebView(QWidget):
+            def __init__(self, parent=None):
+                super().__init__(parent)
+                self.loadFinished = MagicMock()
+                self.setUrl = MagicMock()
+                self._page = MagicMock()
+            def page(self):
+                return self._page
+
+        media_vault = self.vault
+        web_profile = MagicMock()
+        web_profile.create_web_view.side_effect = lambda parent: MockWebView(parent)
+        rev_ctrl = ReviewController(self.conn, event_bus)
+
+        # Seed a course with a card
+        import uuid
+        c_id = self.conn.execute("INSERT INTO courses(uuid, name) VALUES (?, 'Test Review')", (str(uuid.uuid4()),)).lastrowid
+        n_id = self.conn.execute("INSERT INTO notes(uuid, title, premise_html, review_mode) VALUES (?, 'TNote', 'P', 'standard')", (str(uuid.uuid4()),)).lastrowid
+        self.conn.execute("INSERT INTO course_notes(course_id, note_id) VALUES (?, ?)", (c_id, n_id))
+        c1_id = self.conn.execute("INSERT INTO cards(uuid, note_id, step_order, title, front_html, back_html) VALUES (?, ?, 0, 'C1', 'F1', 'B1')", (str(uuid.uuid4()), n_id)).lastrowid
+        self.conn.execute("UPDATE card_schedules SET state = 0, due_at = '2020-01-01T00:00:00Z' WHERE card_id = ?", (c1_id,))
+        self.conn.commit()
+
+        view = ReviewView(self.conn, MagicMock(), media_vault, web_profile, rev_ctrl, event_bus)
+
+        # 1. Verify header does not contain Custom Study or Auto-Study buttons
+        header_texts = [btn.text() for btn in view.findChildren(QPushButton)]
+        self.assertNotIn("Custom Study...", header_texts)
+        self.assertNotIn("Auto-Study Due", header_texts)
+
+        # 2. Start review and test hold-to-hide (ghost) without affecting FSRS
+        rev_ctrl.start_auto_study()
+        view._render_current_card()
+        self.assertFalse(view._answer_shown)
+
+        # Reveal answer first via Space
+        ev_space = QKeyEvent(QEvent.Type.KeyPress, Qt.Key.Key_Space, Qt.KeyboardModifier.NoModifier, " ")
+        view.keyPressEvent(ev_space)
+        self.assertTrue(view._answer_shown)
+        self.assertFalse(view._answer_temp_hidden)
+
+        # Press and hold backtick (KeyPress) -> turns answer into ghost (temp hidden)
+        ev_backtick_press = QKeyEvent(QEvent.Type.KeyPress, Qt.Key.Key_QuoteLeft, Qt.KeyboardModifier.NoModifier, "`")
+        view.keyPressEvent(ev_backtick_press)
+        self.assertTrue(view._answer_temp_hidden)
+
+        # Releasing key (KeyRelease) restores answer visibility
+        ev_backtick_release = QKeyEvent(QEvent.Type.KeyRelease, Qt.Key.Key_QuoteLeft, Qt.KeyboardModifier.NoModifier, "`")
+        view.keyReleaseEvent(ev_backtick_release)
+        self.assertFalse(view._answer_temp_hidden)
+
+        # Verify card schedule was completely unaffected (reps still 0, state still 0)
+        sched_row = self.conn.execute("SELECT reps, state FROM card_schedules WHERE card_id = ?", (c1_id,)).fetchone()
+        self.assertEqual(sched_row[0], 0)
+        self.assertEqual(sched_row[1], 0)
+
+
+    def test_note_browser_course_filtering_and_na_group(self) -> None:
+        """Verify Note Browser course filtering in both Cards and Notes modes, including N/A (unassigned)."""
+        import uuid
+        from morphism_srs.controllers.event_bus import EventBus
+        from morphism_srs.storage.repositories.browser_repo import BrowserRepository
+        from morphism_srs.controllers.browser_controller import BrowserController
+
+        b_repo = BrowserRepository(self.conn)
+        b_ctrl = BrowserController(self.conn, EventBus())
+
+        # Create Course 1
+        c1_id = self.conn.execute("INSERT INTO courses(uuid, name) VALUES (?, 'Analysis I')", (str(uuid.uuid4()),)).lastrowid
+        # Create Course 2
+        c2_id = self.conn.execute("INSERT INTO courses(uuid, name) VALUES (?, 'Algebra I')", (str(uuid.uuid4()),)).lastrowid
+
+        # Note 1: in Course 1
+        n1_id = self.conn.execute(
+            "INSERT INTO notes(uuid, title, premise_html, review_mode, course_id) VALUES (?, 'Analysis Note 1', 'P1', 'standard', ?)",
+            (str(uuid.uuid4()), c1_id),
+        ).lastrowid
+        self.conn.execute("INSERT INTO course_notes(course_id, note_id) VALUES (?, ?)", (c1_id, n1_id))
+        self.conn.execute(
+            "INSERT INTO cards(uuid, note_id, step_order, title, front_html, back_html) VALUES (?, ?, 0, 'Card N1', 'F', 'B')",
+            (str(uuid.uuid4()), n1_id),
+        )
+
+        # Note 2: in Course 2
+        n2_id = self.conn.execute(
+            "INSERT INTO notes(uuid, title, premise_html, review_mode, course_id) VALUES (?, 'Algebra Note 1', 'P2', 'standard', ?)",
+            (str(uuid.uuid4()), c2_id),
+        ).lastrowid
+        self.conn.execute("INSERT INTO course_notes(course_id, note_id) VALUES (?, ?)", (c2_id, n2_id))
+        self.conn.execute(
+            "INSERT INTO cards(uuid, note_id, step_order, title, front_html, back_html) VALUES (?, ?, 0, 'Card N2', 'F', 'B')",
+            (str(uuid.uuid4()), n2_id),
+        )
+
+        # Note 3: Unassigned (N/A) -> course_id is NULL, not in course_notes
+        n3_id = self.conn.execute(
+            "INSERT INTO notes(uuid, title, premise_html, review_mode, course_id) VALUES (?, 'Unassigned Note', 'P3', 'standard', NULL)",
+            (str(uuid.uuid4()),),
+        ).lastrowid
+        self.conn.execute(
+            "INSERT INTO cards(uuid, note_id, step_order, title, front_html, back_html) VALUES (?, ?, 0, 'Card Unassigned', 'F', 'B')",
+            (str(uuid.uuid4()), n3_id),
+        )
+        self.conn.commit()
+
+        # Test search_notes:
+        # 1. Without course filter -> returns all 3 notes
+        all_notes = b_ctrl.search_notes("")
+        all_titles = {n.title for n in all_notes}
+        self.assertIn("Analysis Note 1", all_titles)
+        self.assertIn("Algebra Note 1", all_titles)
+        self.assertIn("Unassigned Note", all_titles)
+
+        # 2. Filter by Course 1 -> only Analysis Note 1
+        c1_notes = b_ctrl.search_notes("", course_id=c1_id)
+        self.assertEqual([n.title for n in c1_notes], ["Analysis Note 1"])
+        self.assertEqual(c1_notes[0].course_name, "Analysis I")
+
+        # 3. Filter by Course 2 -> only Algebra Note 1
+        c2_notes = b_ctrl.search_notes("", course_id=c2_id)
+        self.assertEqual([n.title for n in c2_notes], ["Algebra Note 1"])
+        self.assertEqual(c2_notes[0].course_name, "Algebra I")
+
+        # 4. Filter by N/A (course_id = -1) -> only Unassigned Note
+        na_notes = b_ctrl.search_notes("", course_id=-1)
+        self.assertEqual([n.title for n in na_notes], ["Unassigned Note"])
+        self.assertEqual(na_notes[0].course_name, "N/A")
+
+        # Test search_cards:
+        # 5. Filter cards by Course 1
+        c1_cards = b_ctrl.search_cards("", course_id=c1_id)
+        self.assertEqual([c.card_title for c in c1_cards], ["Card N1"])
+
+        # 6. Filter cards by N/A (course_id = -1)
+        na_cards = b_ctrl.search_cards("", course_id=-1)
+        self.assertEqual([c.card_title for c in na_cards], ["Card Unassigned"])
+        self.assertEqual(na_cards[0].course_name, "N/A")
+
+
+    def test_course_view_moving_and_note_table_headers(self) -> None:
+        """Verify moving courses into folders, folders into folders/root, and NoteBrowserTableModel headers."""
+        import sys
+        from unittest.mock import MagicMock
+        from PySide6.QtWidgets import QApplication
+        _app = QApplication.instance() or QApplication(sys.argv)
+
+        from morphism_srs.controllers.event_bus import EventBus
+        from morphism_srs.controllers.review_controller import ReviewController
+        from morphism_srs.domain.models import CourseFolderModel, CourseModel
+        from morphism_srs.ui.views.browser_view import NoteBrowserTableModel
+        from morphism_srs.ui.views.courses_view import CoursesView
+
+        # 1. Verify NoteBrowserTableModel HEADERS do NOT include Course
+        table_model = NoteBrowserTableModel()
+        self.assertNotIn("Course", table_model.HEADERS)
+        self.assertEqual(table_model.HEADERS, ["Note Title", "Mode", "Cards", "Tags", "UUID", "Created"])
+
+        # 2. Test CoursesView moving logic
+        event_bus = EventBus()
+        rev_ctrl = ReviewController(self.conn, event_bus)
+        courses_view = CoursesView(self.conn, self.vault, rev_ctrl, event_bus)
+
+        # Create folder F1 and F2
+        f1 = courses_view.folder_repo.create(CourseFolderModel(name="Math"))
+        f2 = courses_view.folder_repo.create(CourseFolderModel(name="Algebra", parent_id=f1.id))
+        c1 = self.course_repo.create(CourseModel(name="Linear Algebra", folder_id=None))
+
+        # Initial state: c1 is at root
+        c1_db = self.course_repo.get_by_id(c1.id)
+        self.assertIsNone(c1_db.folder_id)
+
+        # Move c1 into f2
+        courses_view._on_item_moved("course", c1.id, f2.id)
+        c1_db = self.course_repo.get_by_id(c1.id)
+        self.assertEqual(c1_db.folder_id, f2.id)
+
+        # Move c1 back to root (None)
+        courses_view._on_item_moved("course", c1.id, None)
+        c1_db = self.course_repo.get_by_id(c1.id)
+        self.assertIsNone(c1_db.folder_id)
+
+        # Move f2 to root
+        courses_view._on_item_moved("folder", f2.id, None)
+        f2_db = courses_view.folder_repo.get_by_id(f2.id)
+        self.assertIsNone(f2_db.parent_id)
+
+        # Move f2 back into f1
+        courses_view._on_item_moved("folder", f2.id, f1.id)
+        f2_db = courses_view.folder_repo.get_by_id(f2.id)
+        self.assertEqual(f2_db.parent_id, f1.id)
 
 if __name__ == "__main__":
     unittest.main()

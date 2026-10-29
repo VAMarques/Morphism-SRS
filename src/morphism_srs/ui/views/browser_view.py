@@ -372,6 +372,7 @@ class BrowserView(QWidget):
             self.table_view.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
 
         self.table_view.selectionModel().selectionChanged.connect(self._on_row_selected)
+        self._rebuild_facets()
         self.run_search()
 
     def refresh_all(self) -> None:
@@ -420,6 +421,12 @@ class BrowserView(QWidget):
             it.setData(0, self.FILTER_KIND_ROLE, "course")
             it.setData(0, self.FILTER_VAL_ROLE, c.id)
             courses_root.addChild(it)
+
+        na_item = QTreeWidgetItem(["N/A (Unassigned)"])
+        na_item.setData(0, self.FILTER_KIND_ROLE, "course")
+        na_item.setData(0, self.FILTER_VAL_ROLE, -1)
+        courses_root.addChild(na_item)
+
         self.facet_tree.addTopLevelItem(courses_root)
         courses_root.setExpanded(True)
 
@@ -470,6 +477,7 @@ class BrowserView(QWidget):
         if self._is_notes_mode():
             note_rows = self.browser_controller.search_notes(
                 query_text=q,
+                course_id=self._active_course_filter,
                 tag_filter=self._active_tag_filter,
                 review_mode_filter=self._active_mode_filter,
             )

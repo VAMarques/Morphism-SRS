@@ -194,6 +194,10 @@ html, body {
     color: var(--text-primary);
 }
 
+.card-back.ghost {
+    visibility: hidden !important;
+}
+
 /* Tag-Driven Semantic Math Boxes */
 .math-box-theorem, .math-box-definition, .math-box-proof, .math-box-lemma {
     border-radius: 8px;
@@ -217,6 +221,31 @@ img, svg {
     display: block;
     margin: 12px auto;
     max-height: 360px;
+}
+
+/* Contenedor del diagrama monocromático con máscara (specZ/PLAN_SVG_MASK_TINTING.md) */
+.diagram-mask-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1.2em auto;
+    max-width: 100%;
+}
+
+/* Elemento vector tintado */
+.commutative-diagram-mask {
+    display: inline-block;
+    background-color: var(--text-primary, var(--theme-text-color, #cdd6f4));
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    width: 100%;
+    min-height: 120px;
+    max-height: 450px;
+    transition: background-color 0.15s ease-in-out;
 }
 
 mjx-container {

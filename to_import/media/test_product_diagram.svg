@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180">
+  <!-- Commutative diagram for binary product universal property -->
+  <text x="30" y="35" font-family="serif" font-size="18" fill="black">Y</text>
+  <text x="170" y="35" font-family="serif" font-size="18" fill="black">X₁ × X₂</text>
+  <text x="90" y="150" font-family="serif" font-size="18" fill="black">X₁</text>
+  <text x="240" y="150" font-family="serif" font-size="18" fill="black">X₂</text>
+
+  <!-- Dashed universal arrow: Y -> X1 x X2 -->
+  <path d="M 50 30 L 160 30" stroke="black" stroke-width="2" stroke-dasharray="4,4" fill="none" marker-end="url(#arrow)"/>
+  <text x="95" y="22" font-family="serif" font-size="14" fill="black">∃! ⟨f₁, f₂⟩</text>
+
+  <!-- Morphism f1: Y -> X1 -->
+  <path d="M 40 45 L 85 130" stroke="black" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <text x="45" y="95" font-family="serif" font-size="14" fill="black">f₁</text>
+
+  <!-- Morphism f2: Y -> X2 -->
+  <path d="M 50 40 L 230 135" stroke="black" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <text x="145" y="105" font-family="serif" font-size="14" fill="black">f₂</text>
+
+  <!-- Projection pi1: X1 x X2 -> X1 -->
+  <path d="M 180 45 L 105 130" stroke="black" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <text x="130" y="80" font-family="serif" font-size="14" fill="black">π₁</text>
+
+  <!-- Projection pi2: X1 x X2 -> X2 -->
+  <path d="M 200 45 L 245 130" stroke="black" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <text x="230" y="80" font-family="serif" font-size="14" fill="black">π₂</text>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="black" />
+    </marker>
+  </defs>
+</svg>

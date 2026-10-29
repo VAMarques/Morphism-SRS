@@ -163,6 +163,7 @@ class SchedulerEngine:
         r_values: list[float] = []
         due_count = 0
         new_count = 0
+        learning_count = 0
         for s in sched_list:
             if s.state == CardState.NEW or s.last_review_at is None:
                 new_count += 1
@@ -170,6 +171,8 @@ class SchedulerEngine:
             else:
                 r = cls.compute_card_retrievability(s, now_dt)
                 r_values.append(r)
+                if s.state == CardState.LEARNING:
+                    learning_count += 1
                 if parse_utc(s.due_at) <= now_dt or s.state in (CardState.LEARNING, CardState.RELEARNING):
                     due_count += 1
 
@@ -184,6 +187,7 @@ class SchedulerEngine:
             p_joint=p_joint,
             due_count=due_count,
             new_count=new_count,
+            learning_count=learning_count,
         )
 
     def preview_intervals(

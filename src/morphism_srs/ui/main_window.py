@@ -31,6 +31,7 @@ from morphism_srs.ui.views.courses_view import CoursesView
 from morphism_srs.ui.views.explorer_view import ExplorerView
 from morphism_srs.ui.views.review_view import ReviewView
 from morphism_srs.ui.views.stats_view import StatsView
+from morphism_srs.storage.repositories.gamification_repo import GamificationRepository
 from morphism_srs.ui.window_sizing import apply_relative_geometry
 from morphism_srs.web_engine.web_profile import WebEngineProfileManager
 

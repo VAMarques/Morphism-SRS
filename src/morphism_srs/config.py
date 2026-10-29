@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+import shutil
 from typing import Any
 
 try:
@@ -47,6 +48,15 @@ class AppPaths:
                 ).resolve()
             else:
                 self.base_dir = (Path.home() / f".{APP_NAME.lower()}").resolve()
+
+        # Unify user data: ensure no redundant 'Morphism' folder exists alongside 'MorphismSRS'
+        if custom_base_dir is None:
+            legacy_dir = self.base_dir.parent / "Morphism"
+            if legacy_dir.exists() and legacy_dir.is_dir() and legacy_dir != self.base_dir:
+                try:
+                    shutil.rmtree(legacy_dir, ignore_errors=True)
+                except Exception:
+                    pass
 
         res_dir = get_resources_dir()
         self.resources_dir = res_dir
@@ -182,11 +192,13 @@ class AppConfig:
         """Return the complete MathJax `tex` configuration object including packages and macros."""
         cfg = self._load_default_mathjax_config()
         cfg["macros"] = self.load_mathjax_macros()
+        cfg.pop("autoload", None)
         return cfg
 
     def save_mathjax_macros(self, macros: dict[str, Any]) -> None:
         cfg = self._load_default_mathjax_config()
         cfg["macros"] = macros
+        cfg.pop("autoload", None)
         try:
             self.paths.macros_file.parent.mkdir(parents=True, exist_ok=True)
             self.paths.macros_file.write_text(

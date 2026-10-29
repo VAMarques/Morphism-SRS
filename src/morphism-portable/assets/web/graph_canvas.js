@@ -363,8 +363,8 @@ class TouchGraphView {
             nodeMap.set(n.id, n);
         }
 
-        // Draw edges (Curved Bezier with arrowheads)
-        ctx.strokeStyle = theme.edge_color || "#B47AD0";
+        // Draw edges (Cardinal port Bezier splines with aligned arrowheads)
+        ctx.strokeStyle = theme.edge_color || "#38bdf8";
         ctx.lineWidth = 2.4;
         for (const edge of this.edges) {
             const srcId = edge.source_note_id ?? edge.source_id;
@@ -372,24 +372,69 @@ class TouchGraphView {
             const src = nodeMap.get(srcId);
             const tgt = nodeMap.get(tgtId);
             if (src && tgt) {
-                const sx = (src.pos_x ?? src.x ?? 0) + this.nodeWidth;
-                const sy = (src.pos_y ?? src.y ?? 0) + this.nodeHeight / 2;
-                const tx = (tgt.pos_x ?? tgt.x ?? 0);
-                const ty = (tgt.pos_y ?? tgt.y ?? 0) + this.nodeHeight / 2;
-                const dx = Math.max(30, (tx - sx) / 2);
+                const hw1 = this.nodeWidth / 2;
+                const hh1 = this.nodeHeight / 2;
+                const hw2 = this.nodeWidth / 2;
+                const hh2 = this.nodeHeight / 2;
+
+                const p1x = (src.pos_x ?? src.x ?? 0) + hw1;
+                const p1y = (src.pos_y ?? src.y ?? 0) + hh1;
+                const p2x = (tgt.pos_x ?? tgt.x ?? 0) + hw2;
+                const p2y = (tgt.pos_y ?? tgt.y ?? 0) + hh2;
+
+                const dx = p2x - p1x;
+                const dy = p2y - p1y;
+
+                let startX, startY, endX, endY, c1x, c1y, c2x, c2y, tipAngle;
+
+                if (Math.hypot(dx, dy) < 1) continue;
+
+                // Dynamic boundary intersection: closest connection points on perimeter
+                const getBorderPt = (cx, cy, hw, hh, tx, ty) => {
+                    const vx = tx - cx;
+                    const vy = ty - cy;
+                    if (Math.abs(vx) < 1e-4 && Math.abs(vy) < 1e-4) return { x: cx, y: cy };
+                    const sx = Math.abs(vx) > 1e-4 ? hw / Math.abs(vx) : Infinity;
+                    const sy = Math.abs(vy) > 1e-4 ? hh / Math.abs(vy) : Infinity;
+                    const s = Math.min(sx, sy);
+                    return { x: cx + vx * s, y: cy + vy * s };
+                };
+
+                const start = getBorderPt(p1x, p1y, hw1, hh1, p2x, p2y);
+                const end = getBorderPt(p2x, p2y, hw2, hh2, p1x, p1y);
+
+                startX = start.x;
+                startY = start.y;
+                endX = end.x;
+                endY = end.y;
+
+                const edgeDist = Math.hypot(endX - startX, endY - startY);
+                const span = Math.max(25, edgeDist * 0.25);
+                tipAngle = Math.atan2(endY - startY, endX - startX);
+
+                c1x = startX + Math.cos(tipAngle) * span;
+                c1y = startY + Math.sin(tipAngle) * span;
+                c2x = endX - Math.cos(tipAngle) * span;
+                c2y = endY - Math.sin(tipAngle) * span;
 
                 ctx.beginPath();
-                ctx.moveTo(sx, sy);
-                ctx.bezierCurveTo(sx + dx, sy, tx - dx, ty, tx, ty);
+                ctx.moveTo(startX, startY);
+                ctx.bezierCurveTo(c1x, c1y, c2x, c2y, endX, endY);
                 ctx.stroke();
 
-                // Arrowhead
-                const arr = 7;
-                ctx.fillStyle = theme.accent || "#F02A8C";
+                // Arrowhead aligned with tipAngle entering target port
+                const arr = 12.0;
+                const barbAngle = Math.PI / 6;
+                const pLeftX = endX - arr * Math.cos(tipAngle - barbAngle);
+                const pLeftY = endY - arr * Math.sin(tipAngle - barbAngle);
+                const pRightX = endX - arr * Math.cos(tipAngle + barbAngle);
+                const pRightY = endY - arr * Math.sin(tipAngle + barbAngle);
+
+                ctx.fillStyle = theme.accent || "#38bdf8";
                 ctx.beginPath();
-                ctx.moveTo(tx, ty);
-                ctx.lineTo(tx - arr * 1.5, ty - arr);
-                ctx.lineTo(tx - arr * 1.5, ty + arr);
+                ctx.moveTo(endX, endY);
+                ctx.lineTo(pLeftX, pLeftY);
+                ctx.lineTo(pRightX, pRightY);
                 ctx.closePath();
                 ctx.fill();
             }
@@ -419,47 +464,78 @@ class TouchGraphView {
                 ctx.restore();
             }
 
+            const cardCount = Array.isArray(note.cards) ? note.cards.length : (note.card_count || 1);
+            const newCount = typeof note.new_count === "number" ? note.new_count : (isDue ? 0 : cardCount);
+
+            // Morphism Standard Node Color Palette:
+            // Unreviewed / root: slate grey (#334155 / #1e293b, border #94a3b8)
+            // Up-to-date learned: royal blue (#2563eb / #1e3a8a, border #93c5fd)
+            // In learning: cyan (#0284c7 / #0f172a, border #38bdf8)
+            // Due: red (#dc2626 / #7f1d1d, border #fca5a5)
+            let gradTop, gradBot, borderColor, borderWidth, statusLabel;
+            if (isDue) {
+                gradTop = "#dc2626";
+                gradBot = "#7f1d1d";
+                borderColor = "#fca5a5";
+                borderWidth = 3.2;
+                statusLabel = `DUE (${note.due_count || 1})`;
+            } else if (cardCount > 0 && newCount === 0) {
+                gradTop = "#2563eb";
+                gradBot = "#1e3a8a";
+                borderColor = "#93c5fd";
+                borderWidth = 3.0;
+                const rMinPct = Math.round((note.r_min || 1.0) * 100);
+                statusLabel = `R_min ${rMinPct}%`;
+            } else if (cardCount > 0 && newCount < cardCount) {
+                gradTop = "#0284c7";
+                gradBot = "#0f172a";
+                borderColor = "#38bdf8";
+                borderWidth = 2.8;
+                statusLabel = `LEARNING (${cardCount - newCount}/${cardCount})`;
+            } else {
+                gradTop = "#334155";
+                gradBot = "#1e293b";
+                borderColor = "#94a3b8";
+                borderWidth = 2.0;
+                statusLabel = `NEW (${cardCount})`;
+            }
+
             // Background fill
             const grad = ctx.createLinearGradient(nx, ny, nx, ny + this.nodeHeight);
-            if (isDue) {
-                grad.addColorStop(0, "#2c0e18");
-                grad.addColorStop(1, "#15050b");
-            } else {
-                grad.addColorStop(0, theme.card_bg || "#171019");
-                grad.addColorStop(1, theme.surface_bg || "#0B0710");
-            }
+            grad.addColorStop(0, gradTop);
+            grad.addColorStop(1, gradBot);
             ctx.fillStyle = grad;
             this._drawNodeShape(ctx, nx, ny, this.nodeWidth, this.nodeHeight, mode);
             ctx.fill();
 
             // Border
-            ctx.lineWidth = isSelected ? 3.5 : 2;
-            ctx.strokeStyle = isSelected ? (theme.accent || "#F02A8C") : (isDue ? (theme.due_border || "#FF667D") : (theme.node_border || "#80D6A3"));
+            ctx.lineWidth = isSelected ? borderWidth + 1.2 : borderWidth;
+            ctx.strokeStyle = isSelected ? (theme.accent || "#38bdf8") : borderColor;
             if (isSelected) {
                 ctx.setLineDash([6, 3]);
             } else {
                 ctx.setLineDash([]);
             }
+            this._drawNodeShape(ctx, nx, ny, this.nodeWidth, this.nodeHeight, mode);
             ctx.stroke();
             ctx.setLineDash([]);
 
             // Title
-            ctx.fillStyle = theme.text || "#F7F1F8";
+            ctx.fillStyle = "#f8fafc";
             ctx.font = "bold 13px -apple-system, BlinkMacSystemFont, Roboto, sans-serif";
             const title = note.title || "Untitled";
-            const label=this.labelNodes.get(note.id);
-            if(label) {
-                label.style.color=theme.text;
-                label.style.width=`${isDue ? this.nodeWidth-62 : this.nodeWidth-28}px`;
-                label.style.transform=`translate(${this.canvas.offsetLeft+this.offsetX+(nx+14)*this.scale}px,${this.canvas.offsetTop+this.offsetY+(ny+8)*this.scale}px) scale(${this.scale})`;
+            const label = this.labelNodes.get(note.id);
+            if (label) {
+                label.style.color = "#f8fafc";
+                label.style.width = `${isDue ? this.nodeWidth - 62 : this.nodeWidth - 28}px`;
+                label.style.transform = `translate(${this.canvas.offsetLeft + this.offsetX + (nx + 14) * this.scale}px,${this.canvas.offsetTop + this.offsetY + (ny + 8) * this.scale}px) scale(${this.scale})`;
             }
 
-            // Subtitle (Mode + cards count)
-            const cardCount = Array.isArray(note.cards) ? note.cards.length : (note.card_count || 1);
+            // Subtitle (Mode + status label)
             const modeIcon = mode === "serial" ? "⚡ Serial" : (mode === "cloze" ? "✂️ Cloze" : "🧩 Standard");
-            ctx.fillStyle = isDue ? "#FF8B9D" : (theme.text_muted || "#806F86");
+            ctx.fillStyle = isDue ? "#fca5a5" : "#cbd5e1";
             ctx.font = "11px -apple-system, BlinkMacSystemFont, Roboto, sans-serif";
-            ctx.fillText(`${modeIcon} • ${cardCount} card(s)`, nx + 14, ny + 48);
+            ctx.fillText(`${modeIcon} • ${statusLabel}`, nx + 14, ny + 48);
 
             // Due Badge
             if (isDue) {

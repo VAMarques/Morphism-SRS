@@ -29,9 +29,34 @@ class QrScannerActivity: Activity(), SurfaceHolder.Callback {
     @Volatile private var finished=false
     override fun onCreate(state: Bundle?) {
         super.onCreate(state)
-        preview=SurfaceView(this)
-        hint=TextView(this).apply { text="Apunta al QR de Morphism en el PC. Atrás para cancelar."; setTextColor(Color.WHITE); setBackgroundColor(0x99000000.toInt()); setPadding(20,20,20,20) }
-        setContentView(FrameLayout(this).apply { addView(preview); addView(hint) })
+        val root = FrameLayout(this).apply { setBackgroundColor(Color.BLACK) }
+        preview = object : SurfaceView(this) {
+            override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+                val width = MeasureSpec.getSize(widthMeasureSpec)
+                val height = MeasureSpec.getSize(heightMeasureSpec)
+                val squareSize = if (width < height) width else height
+                setMeasuredDimension(squareSize, squareSize)
+            }
+        }
+        hint = TextView(this).apply {
+            text = "Apunta al QR de Morphism en el PC. Atrás para cancelar."
+            setTextColor(Color.WHITE)
+            setBackgroundColor(0x99000000.toInt())
+            setPadding(24, 24, 24, 24)
+        }
+        val previewParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            android.view.Gravity.CENTER
+        )
+        val hintParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            android.view.Gravity.BOTTOM
+        )
+        root.addView(preview, previewParams)
+        root.addView(hint, hintParams)
+        setContentView(root)
         preview.holder.addCallback(this)
         if(checkSelfPermission(Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED) requestPermissions(arrayOf(Manifest.permission.CAMERA),1)
     }
