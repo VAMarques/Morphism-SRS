@@ -197,15 +197,23 @@ class MorphismApp {
         this.renderCurrentReviewCard();
     }
 
+    setAnswerGhost(isGhost) {
+        if (!this.prompt || this.index >= this.queue.length) return;
+        const ans = $("target-answer");
+        if (ans) {
+            ans.style.visibility = isGhost ? "hidden" : "visible";
+        }
+    }
+
     toggleAnswerVisibility() {
         if (!this.prompt || this.index >= this.queue.length) return;
         if (!this.answerShown) {
             this.showAnswer();
-        } else {
-            const ans = $("target-answer");
-            if (ans) {
-                ans.hidden = !ans.hidden;
-            }
+        }
+        const ans = $("target-answer");
+        if (ans) {
+            const isHidden = ans.style.visibility === "hidden";
+            this.setAnswerGhost(!isHidden);
         }
     }
     undoRating() {
@@ -278,10 +286,25 @@ class MorphismApp {
         document.querySelectorAll(".modal-overlay").forEach(m=>m.onclick=e=>{if(e.target===m)this.closeModal(m.id);});
         window.addEventListener("morphism-mathjax-ready",()=>typeset([$("review-front-content"),$("node-content"),...this.graphView.labelNodes.values()]));
 
+        let isGhostHeld = false;
         window.addEventListener("keydown", (e) => {
             if (e.key === "`" || e.key === "|" || e.key === "~" || e.keyCode === 192 || e.keyCode === 220) {
+                if (this.currentTab === "review" && !isGhostHeld) {
+                    isGhostHeld = true;
+                    if (!this.answerShown) {
+                        this.showAnswer();
+                    }
+                    this.setAnswerGhost(true);
+                    e.preventDefault();
+                }
+            }
+        });
+
+        window.addEventListener("keyup", (e) => {
+            if (e.key === "`" || e.key === "|" || e.key === "~" || e.keyCode === 192 || e.keyCode === 220) {
                 if (this.currentTab === "review") {
-                    this.toggleAnswerVisibility();
+                    isGhostHeld = false;
+                    this.setAnswerGhost(false);
                     e.preventDefault();
                 }
             }

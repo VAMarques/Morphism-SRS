@@ -161,18 +161,21 @@ class ReviewView(QWidget):
         scroll = wrap_in_scroll_area(container, self, min_width=640, min_height=420)
         outer.addWidget(scroll)
 
+    def _is_hide_shortcut(self, event: QKeyEvent) -> bool:
+        return (
+            event.nativeVirtualKey() == 0xC0
+            or event.key() in (Qt.Key.Key_QuoteLeft, Qt.Key.Key_AsciiTilde, Qt.Key.Key_Bar)
+            or bool(event.text() and event.text() in ("`", "~", "|", "°", "¬"))
+        )
+
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if (event.modifiers() & Qt.KeyboardModifier.ControlModifier) and event.key() == Qt.Key.Key_Z:
             self._on_undo()
             return
 
-        is_hide_shortcut = (
-            event.nativeVirtualKey() == 0xC0
-            or event.key() in (Qt.Key.Key_QuoteLeft, Qt.Key.Key_AsciiTilde, Qt.Key.Key_Bar)
-            or (event.text() and event.text() in ("`", "~", "|", "°", "¬"))
-        )
-        if is_hide_shortcut:
-            self._on_toggle_answer_visibility()
+        if self._is_hide_shortcut(event):
+            if not event.isAutoRepeat():
+                self._on_hold_hide_answer(True)
             return
 
         if event.key() == Qt.Key.Key_Space or event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
@@ -311,25 +314,28 @@ class ReviewView(QWidget):
             )
         self.setFocus()
 
-    def _on_toggle_answer_visibility(self) -> None:
+    def keyReleaseEvent(self, event: QKeyEvent) -> None:
+        if self._is_hide_shortcut(event):
+            if not event.isAutoRepeat():
+                self._on_hold_hide_answer(False)
+            return
+        super().keyReleaseEvent(event)
+
+    def _on_hold_hide_answer(self, hide: bool) -> None:
         ctx = self.review_controller.current_prompt_context()
         if ctx is None:
             return
-        if not self._answer_shown:
+        if not self._answer_shown and hide:
             self._on_reveal_answer()
-        else:
-            self._answer_temp_hidden = not self._answer_temp_hidden
-            if self._answer_temp_hidden:
-                if self._page_ready:
-                    self.web_view.page().runJavaScript(
-                        "if (window.MorphismReview) { window.MorphismReview.hideAnswer(); }"
-                    )
-            else:
-                if self._page_ready:
-                    self.web_view.page().runJavaScript(
-                        f"if (window.MorphismReview) {{ window.MorphismReview.revealAnswer({json.dumps(ctx.card.back_html)}); }}"
-                    )
+
+        self._answer_temp_hidden = hide
+        if self._page_ready:
+            js_code = f"if (window.MorphismReview) {{ window.MorphismReview.setAnswerGhost({json.dumps(hide)}); }}"
+            self.web_view.page().runJavaScript(js_code)
         self.setFocus()
+
+    def _on_toggle_answer_visibility(self) -> None:
+        self._on_hold_hide_answer(not self._answer_temp_hidden)
 
     def _on_rate(self, rating: RatingEnum) -> None:
         self.review_controller.submit_rating(rating)

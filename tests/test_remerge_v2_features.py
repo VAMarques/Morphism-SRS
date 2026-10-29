@@ -453,29 +453,31 @@ Updated dimension answer
         self.assertNotIn("Custom Study...", header_texts)
         self.assertNotIn("Auto-Study Due", header_texts)
 
-        # 2. Start review and test hide/reveal toggle shortcut without affecting FSRS
+        # 2. Start review and test hold-to-hide (ghost) without affecting FSRS
         rev_ctrl.start_auto_study()
         view._render_current_card()
         self.assertFalse(view._answer_shown)
 
-        # Simulate backtick key press (0xC0 / QuoteLeft)
-        ev_backtick = QKeyEvent(QEvent.Type.KeyPress, Qt.Key.Key_QuoteLeft, Qt.KeyboardModifier.NoModifier, "`")
-        view.keyPressEvent(ev_backtick)
+        # Reveal answer first via Space
+        ev_space = QKeyEvent(QEvent.Type.KeyPress, Qt.Key.Key_Space, Qt.KeyboardModifier.NoModifier, " ")
+        view.keyPressEvent(ev_space)
         self.assertTrue(view._answer_shown)
         self.assertFalse(view._answer_temp_hidden)
 
-        # Pressing again hides the answer (temp hidden) without submitting any rating
-        view.keyPressEvent(ev_backtick)
+        # Press and hold backtick (KeyPress) -> turns answer into ghost (temp hidden)
+        ev_backtick_press = QKeyEvent(QEvent.Type.KeyPress, Qt.Key.Key_QuoteLeft, Qt.KeyboardModifier.NoModifier, "`")
+        view.keyPressEvent(ev_backtick_press)
         self.assertTrue(view._answer_temp_hidden)
+
+        # Releasing key (KeyRelease) restores answer visibility
+        ev_backtick_release = QKeyEvent(QEvent.Type.KeyRelease, Qt.Key.Key_QuoteLeft, Qt.KeyboardModifier.NoModifier, "`")
+        view.keyReleaseEvent(ev_backtick_release)
+        self.assertFalse(view._answer_temp_hidden)
 
         # Verify card schedule was completely unaffected (reps still 0, state still 0)
         sched_row = self.conn.execute("SELECT reps, state FROM card_schedules WHERE card_id = ?", (c1_id,)).fetchone()
         self.assertEqual(sched_row[0], 0)
         self.assertEqual(sched_row[1], 0)
-
-        # Pressing again unhides it
-        view.keyPressEvent(ev_backtick)
-        self.assertFalse(view._answer_temp_hidden)
 
 
     def test_note_browser_course_filtering_and_na_group(self) -> None:

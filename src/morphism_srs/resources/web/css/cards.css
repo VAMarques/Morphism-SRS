@@ -194,6 +194,10 @@ html, body {
     color: var(--text-primary);
 }
 
+.card-back.ghost {
+    visibility: hidden !important;
+}
+
 /* Tag-Driven Semantic Math Boxes */
 .math-box-theorem, .math-box-definition, .math-box-proof, .math-box-lemma {
     border-radius: 8px;

@@ -1,33 +1,21 @@
 # 06 — Compilador DSL de Notas/Cursos (`.mdsl`) y Sistema de Importación/Exportación (`.mpkg`)
 
 > [!IMPORTANT]
-> Este documento especifica la arquitectura completa del **Compilador Declarativo de Notas/Tarjetas/Cursos (`.mdsl`)** y el **Sistema de Importación/Exportación Empaquetada (`.mpkg`)**, cumpliendo los requerimientos #9–17 y #29 de [`specZ/old/Future_version.md`](file:///c:/repos/Morphism%20SRS%20proto2/specZ/old/Future_version.md):
-> ```text
-> Card/Note/Course compiler using a format like
-> NEW NOTE "name"
-> CARD 1 "name1"
-> FRONT
-> xxx
-> BACK
-> aaa
->
-> LINK "name" "othername"
-> ```
-> e integrando las decisiones del esquema v2: eliminación de `KIND` en favor de [`specZ/tags_default.csv`](file:///c:/repos/Morphism%20SRS%20proto2/specZ/tags_default.csv), modos `standard | serial | cloze` ($P(A_i \mid \{A_j : j \ne i\})$), sanitización automática de `<` y `>` a `\lt` y `\gt`, soporte de diagramas vectoriales **SVG** y UUIDs universales.
+> Este documento especifica la arquitectura del **Compilador Declarativo Morphism DSL (`.mdsl`)** y el **Servicio de Importación/Exportación de Paquetes (`.mpkg`)** en **Morphism SRS**, integrando soporte nativo para los tres modos de nota (`standard`, `serial`, `cloze`), sanitización automática de operadores matemáticos a `\lt` y `\gt`, detección y procesamiento de diagramas vectoriales **SVG** e imágenes locales, preservación de UUIDs universales y persistencia relacional en SQLite.
 
 ---
 
-## 1. Motivación: ¿Por qué un Compilador DSL Nativo (`.mdsl`)?
+## 1. Fundamentos del Formato Declarativo Morphism DSL (`.mdsl`)
 
-En el Prototipo 1 (documentado en `to_import/README.md`), la creación masiva de notas de matemáticas en JSON sufría un problema grave:
-- En $\LaTeX$, expresiones como `\frac{1}{2}`, `\mathbb{R}`, `\beta`, `\tau`, `\nabla` comienzan con `\f`, `\b`, `\t`, `\n`, que el parser estándar de JSON interpreta como caracteres de control (*formfeed*, *backspace*, *tab*, *newline*), corrompiendo las fórmulas o lanzando `JSONDecodeError`.
-- Para evitarlo, era necesario escribir scripts intermedios en Python (`scratch/build_...py`) usando raw strings `r"""..."""` solo para generar un archivo `.json` y luego importarlo manualmente desde la pestaña Courses.
+La creación masiva y transcripción de notas matemáticas complejas en formatos de intercambio como JSON presenta limitaciones estructurales severas:
+- En $\LaTeX$, expresiones esenciales como `\frac{1}{2}`, `\mathbb{R}`, `\beta`, `\tau`, `\nabla` inician con `\f`, `\b`, `\t`, `\n`, secuencias que los parsers estándar de JSON interpretan como caracteres de escape de control (*formfeed*, *backspace*, *tab*, *newline*), forzando doble escape (`\\frac`) o corrompiendo fórmulas.
+- La representación de aristas en grafos mediante índices posicionales volátiles resulta frágil frente a inserciones intermedias o reordenamientos.
 
-Con el **Compilador Morphism DSL (`.mdsl`)**:
-1. **Cero Escapes de Barra Invertida (`\`) ni Comillas (`"`)**: Todo el texto debajo de `FRONT` y `BACK` se lee literalmente como un bloque crudo (`RawContentBlock`) hasta la siguiente palabra clave estructural en inicio de línea. Puedes pegar $\LaTeX$ y HTML directamente desde un libro, un PDF o un LLM (Claude/GPT/Gemini) sin escapar absolutamente nada.
-2. **Inmunidad Automática en Desigualdades (`<` y `>`)**: El compilador pasa cada bloque `FRONT` y `BACK` por `sanitize_math_html()` (definido en [`03_THEMING_QSS_AND_CSS_ARCHITECTURE.md`](file:///c:/repos/Morphism%20SRS%20proto2/specZ/03_THEMING_QSS_AND_CSS_ARCHITECTURE.md#L334-L386)), convirtiendo `<` y `>` dentro de fórmulas a macros LaTeX nativas **`\lt`** y **`\gt`** y preservando etiquetas HTML válidas (`<b>`, `<br>`, `<ul>`, `<img>`).
-3. **Prompts de IA 3 Veces Más Cortos e Infalibles**: Un LLM nunca falla al generar bloques `NEW NOTE` / `CARD` / `FRONT` / `BACK` / `LINK`, mientras que en JSON suele fallar al olvidar escapar una comilla o una barra invertida en una demostración de 15 pasos.
-4. **Resolución Simbólica de Enlaces (`LINK "Nota A" "Nota B"`)**: No necesitas conocer IDs numéricos ni índices de arreglo (`"0" -> "1"`). El compilador enlaza notas por su título exacto (tanto entre notas nuevas del mismo script como hacia notas que ya existen en el curso dentro de SQLite).
+El formato **Morphism DSL (`.mdsl`)** resuelve estos inconvenientes:
+1. **Cero Escapes de Barra Invertida (`\`) ni Comillas (`"`)**: Todo el texto bajo las directivas `FRONT` y `BACK` se procesa como un bloque crudo literal (`RawContentBlock`). Es posible transcribir $\LaTeX$ y marcado HTML directamente sin requerir secuencias de escape.
+2. **Inmunidad Automática frente al Parser Web**: Cada bloque se procesa mediante [`sanitize_math_html()`](../src/morphism_srs/services/safe_html.py#L21), transformando `<` y `>` a `\lt ` y `\gt ` dentro de fórmulas matemáticas mientras preserva intactas las etiquetas HTML (`<b>`, `<br>`, `<ul>`, `<img>`).
+3. **Generación Óptima Asistida por IA**: La estructura de bloques `NEW NOTE` / `CARD` / `FRONT` / `BACK` / `LINK` ofrece una sintaxis intuitiva y sin ambigüedades para la generación mediante modelos de lenguaje (LLMs).
+4. **Resolución Simbólica de Enlaces (`LINK "Nota A" -> "Nota B"`)**: Las dependencias epistémicas del grafo se declaran por títulos simbólicos o UUIDs, resueltos de forma unificada por [`DSLCompiler`](../src/morphism_srs/services/dsl_compiler/compiler.py#L36) tanto entre notas del mismo archivo como hacia notas preexistentes en la base de datos.
 
 ---
 
@@ -118,7 +106,7 @@ $(X, d)$ es <strong>completo</strong> (toda sucesión de Cauchy converge en $X$)
 # 4. Enlaces del Grafo (Prerrequisitos y Relaciones)
 # ----------------------------------------------------------------------------
 LINK "Medida Exterior de Lebesgue" -> "Demo: Subaditividad Numerable de la Medida Exterior"
-# También se admite la sintaxis sin flecha especificada en Future_version.md:
+# También se admite la sintaxis sin flecha explícita:
 LINK "Caracterizaciones Equivalentes de Compacidad en Espacios Métricos" "Medida Exterior de Lebesgue" TYPE related
 ```
 
@@ -172,64 +160,77 @@ RawContentBlock ::= (* Todas las líneas de texto literal hasta encontrar una l�
 
 ---
 
-## 3. Arquitectura del Compilador en 2 Pasadas (`services/dsl_compiler/`)
+## 3. Arquitectura del Compilador ([`services/dsl_compiler/`](../src/morphism_srs/services/dsl_compiler/))
 
 ```mermaid
 flowchart LR
     Input["Script .mdsl\n(Archivo o Scratchbook)"]
     Lexer["1. DSLLexer\n(Tokens + Line/Col)"]
     Parser["2. DSLParser\n(Construye AST)"]
-    Validator["3. SemanticValidator\n(Tags CSV, Links & Sanitizer)"]
-    Importer["4. SQLiteBatchImporter\n(UnitOfWork + Auto-Layout)"]
+    Validator["3. DSLValidator\n(Verificación Semántica)"]
+    Compiler["4. DSLCompiler\n(UnitOfWork + Media + Layout)"]
     DB[("SQLite morphism.db")]
 
-    Input --> Lexer --> Parser --> Validator --> Importer --> DB
+    Input --> Lexer --> Parser --> Validator --> Compiler --> DB
 ```
 
-### Pasada 1: Análisis Léxico, Sintáctico, Normalización de Tags y Construcción del AST
-- Si hay un error de sintaxis (por ejemplo, un `CARD` al que le falta su sección `BACK`, o un `RETENTION 1.5` fuera de rango), el `DSLParser` devuelve un objeto `CompilationDiagnostic(line, column, severity, message)` que la UI subraya en rojo en el editor con el número de línea exacto.
-- **Normalización de Tags**: Convierte cada tag a minúsculas con guiones bajos (`snake_case`). Si coincide con una de las 2,000 etiquetas de [`specZ/tags_default.csv`](file:///c:/repos/Morphism%20SRS%20proto2/specZ/tags_default.csv), se enlaza al tag estándar (`is_standard = 1`); si es un tag nuevo del usuario, lo crea con `is_standard = 0` e informa en el resumen de compilación.
+### 3.1 Pasada 1: Análisis Léxico, Sintáctico y Validación Semántica
+- **Tokenización y AST**: [`DSLLexer`](../src/morphism_srs/services/dsl_compiler/lexer.py) escanea el flujo de caracteres y [`DSLParser`](../src/morphism_srs/services/dsl_compiler/parser.py) construye el árbol sintáctico estructurado (`DSLCourseAST`, compuesto por `DSLNoteNode`, `DSLCardNode` y `DSLLinkNode`).
+- **Diagnósticos de Compilación**: Si se detecta un error de sintaxis o rango (e.g. un `CARD` sin bloque `BACK`, o una directiva `RETENTION` inválida), [`DSLValidator`](../src/morphism_srs/services/dsl_compiler/validator.py) genera instancias de `DSLDiagnostic(line, column, severity, message)`, permitiendo al editor subrayar la línea exacta con el problema.
+- **Normalización de Tags**: Los tags se convierten a minúsculas con guiones bajos (`snake_case`) y se cotejan con los tags existentes en la base de datos.
 
-### Pasada 2: Resolución de Nombres (`LINK`) y Auto-Posicionamiento Topológico
-Cuando `SQLiteBatchImporter` ejecuta un AST válido dentro de un curso destino:
-1. Crea un registro en `import_batches` (con `uuid`, `source = 'dsl'` y `source_text = raw_mdsl_text`) para trazabilidad completa.
-2. **Upsert o Creación de Notas**:
-   - Crea las nuevas notas con su `uuid` v4 e inserta las tarjetas atómicas en orden (`position = 0, 1, 2...`).
-   - Si el usuario activa la opción *"Update existing notes with matching title"*, actualiza las tarjetas de la nota existente (guardando una copia previa en `card_revisions`).
-3. **Resolución de `LINK "Source Title" "Target Title"`**:
-   - Busca `"Source Title"` y `"Target Title"` primero en el diccionario de notas recién creadas en este lote, y si no está ahí, lo busca entre las notas ya existentes en el curso dentro de SQLite (`COLLATE NOCASE`).
-   - Si alguno de los dos títulos no existe en el lote ni en el curso, emite una advertencia clara antes de hacer commit: *"Line 74: LINK target 'Teorema de Fubini' not found in script or active course"*.
-4. **Auto-Layout Topológico Inteligente**:
-   - Para las notas nuevas que no especificaron coordenadas `POS x y`, calcula su profundidad en el subgrafo importado y las coloca en columnas limpias a la derecha (o debajo) del *bounding box* actual del grafo del curso, sin encimarlas sobre nodos existentes.
+### 3.2 Pasada 2: Procesamiento Multimedia, Persistencia Relacional y Auto-Layout
+Cuando [`DSLCompiler.compile_and_commit`](../src/morphism_srs/services/dsl_compiler/compiler.py#L139-L368) ejecuta la transacción sobre la base de datos:
+1. **Transacción Segura**: Todo el proceso se ejecuta dentro de un [`UnitOfWork`](../src/morphism_srs/storage/unit_of_work.py#L12).
+2. **Resolución de Curso y Carpetas**:
+   - Identifica el curso por UUID o nombre, o lo crea dentro de la jerarquía de carpetas correspondiente vía [`FolderRepository.ensure_folder_path`](../src/morphism_srs/storage/repositories/folder_repo.py).
+3. **Procesamiento de Medios y Diagramas Vectoriales SVG**:
+   - `_process_media_text` detecta referencias multimedia (`<img src="...">`, `![alt](...)`, `[IMAGE ...]`).
+   - Almacena los archivos en el [`MediaVault`](../src/morphism_srs/storage/media_vault.py), renombrándolos según su hash SHA-256.
+   - Para archivos `.svg`, genera el contenedor con máscara CSS dinámico:
+     `<div class="diagram-mask-container"><div class="commutative-diagram-mask" style="-webkit-mask-image: url('morphism://media/{stored_name}'); mask-image: url('morphism://media/{stored_name}');" role="img" aria-label="{label}"></div></div>`.
+4. **Emparejamiento de Notas y Tarjetas**:
+   - Resuelve notas existentes por `uuid` o `external_key`, actualizando su contenido o insertando nuevas tuplas relacionales preservando los historiales de estudio si los UUIDs coinciden.
+5. **Resolución de Enlaces (`LINK`)**:
+   - Conecta las notas origen y destino buscando en las notas procesadas del lote y en las notas preexistentes del curso, creando las filas en `note_edges`.
+6. **Auto-Layout Topológico Inteligente**:
+   - Si `auto_layout=True`, [`LayoutService.layout_course`](../src/morphism_srs/services/layout_service.py) calcula posiciones ordenadas en el plano del grafo para las notas sin coordenadas `POS x y` explícitas.
 
 ---
 
-## 4. Nuevo Sistema de Importación y Exportación (`.mpkg`, `.mdsl`)
+## 4. Sistema de Empaquetado e Intercambio (`.mpkg`, `.mdsl`)
 
-Morphism SRS implementa una arquitectura 100% SQL puro para el empaquetado de cursos, con deprecación total de formatos JSON intermediarios:
+Morphism SRS implementa un esquema unificado de empaquetado e intercambio basado en SQLite relacional puro y texto declarativo MDSL:
 
-### 4.1 Formato Nativo de Paquete de Curso: `.mpkg` (100% Pure SQLite + Media)
-Un archivo `.mpkg` es un archivo comprimido **ZIP estándar** que contiene exclusivamente una base de datos SQLite pura y la carpeta de medios:
+### 4.1 Paquetes de Curso `.mpkg` ([`MpkgService`](../src/morphism_srs/services/import_export/mpkg_service.py))
+Un archivo `.mpkg` es un archivo comprimido **ZIP estándar** que contiene exclusivamente una base de datos SQLite pura y la carpeta de activos multimedia:
 
 ```text
 Analisis_Real_Stein.mpkg (ZIP Archive)
-├── morphism.db              # Base de datos SQLite pura con esquema v2 (courses, notes, cards con UUID, schedules, edges)
-└── media/                   # Archivos SVG y PNG reales direccionados por SHA-256
+├── morphism.db              # Base de datos SQLite pura con esquema relacional completo (schema_v2.sql)
+└── media/                   # Archivos SVG y PNG direccionados por su hash SHA-256
     ├── a3f89c12...4b.png
     └── f102e48a...9c.svg    # Diagramas conmutativos vectoriales incluidos
 ```
 
-> [!IMPORTANT]
-> **Deprecación Total del 99% de JSON**:
-> - Los archivos `.json` quedan completamente deprecados tanto para exportación como para importación (`json_service.py` ha sido eliminado del sistema).
-> - Cero JSONs internos dentro del archivo `.mpkg`. La base de datos `morphism.db` incluida es directamente una base SQLite relacional completa con triggers y constraints íntegros de `schema_v2.sql`.
+- La base de datos `morphism.db` incluida dentro del paquete es una base SQLite relacional completa con triggers, constraints y tablas maestras (`courses`, `course_folders`, `notes`, `cards`, `note_edges`, `tags`).
+- Puede incluir opcionalmente el historial de repetición espaciada (`card_schedules` y `review_logs`) al exportar con `include_scheduling=True`.
 
-### 4.2 Preservación de Tarjetas por UUID en MDSL y .mpkg
+### 4.2 Preservación de Tarjetas por UUID en MDSL y `.mpkg`
 - Cada tarjeta (`cards`) posee un identificador `uuid` universal único.
-- El compilador MDSL (`DSLCompiler`) reconoce las tarjetas tanto por directiva `CARD n "Título" UUID <uuid>` como por `UUID <uuid>`.
-- Al re-compilar o re-importar un mazo, las tarjetas se emparejan por su `uuid` único, permitiendo reordenar o renombrar títulos sin destruir ni resetear el historial FSRS (`card_schedules`).
+- El compilador MDSL reconoce las tarjetas por directivas explícitas `UUID <uuid>`.
+- Al re-compilar o re-importar un paquete, las tarjetas se emparejan por su `uuid` único, permitiendo reordenar o renombrar títulos sin resetear el estado FSRS (`card_schedules`).
 
 ### 4.3 Importación Unificada
-El diálogo `📥 Import Deck...` acepta:
-- **`.mpkg`**: Abre el archivo ZIP, copia los activos multimedia de `media/` hacia `<USER_DATA_DIR>/media/` registrándolos en `media_assets`, y realiza un upsert SQL directo de la base de datos `morphism.db` preservando UUIDs y horarios.
-- **`.mdsl` / `.txt`**: Compila el archivo declarativo mediante `DSLCompilerService` e inserta/actualiza las notas, tarjetas y enlaces del grafo en la base de datos.
+El diálogo de importación del aplicativo procesa:
+- **`.mpkg`**: [`MpkgService.import_mpkg`](../src/morphism_srs/services/import_export/mpkg_service.py) abre el archivo ZIP, transfiere los activos multimedia hacia el [`MediaVault`](../src/morphism_srs/storage/media_vault.py) registrándolos en `media_assets`, y realiza la fusión SQL en la base de datos principal.
+- **`.mdsl` / `.txt`**: Compila el archivo declarativo mediante [`DSLCompiler.compile_and_commit`](../src/morphism_srs/services/dsl_compiler/compiler.py#L139), importando las notas, tarjetas y aristas del grafo.
+
+---
+
+## 5. Próximos Pasos y Roadmap (Backlog Estratégico)
+
+> [!NOTE]
+> Para la especificación detallada de la arquitectura modular multi-archivo, el precompilador headless (`.mdsl` $\to$ `.mpkg` sin interfaz gráfica) y las herramientas CLI (`morphism-cli`), consultar el documento oficial de backlog:
+> 👉 [`specZ/TODO/MODULAR_MDSL_CLI_PRECOMPILER_ROADMAP.md`](TODO/MODULAR_MDSL_CLI_PRECOMPILER_ROADMAP.md)
+
