@@ -4,7 +4,7 @@ import math
 from pathlib import Path
 import sqlite3
 
-from PySide6.QtCore import QLineF, QPointF, QRectF, Qt
+from PySide6.QtCore import QLineF, QPoint, QPointF, QRectF, Qt
 from PySide6.QtGui import (
     QBrush,
     QColor,
@@ -87,6 +87,8 @@ class GraphEdgeItem(QGraphicsPathItem):
         self._tip_point = QPointF()
         self._tip_angle = 0.0
         self.setZValue(0.5)
+        self.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
+        self.setEnabled(False)
         self.update_position()
 
     def boundingRect(self) -> QRectF:
@@ -229,8 +231,8 @@ class GraphNodeItem(QGraphicsItem):
 
         self.setPos(note.pos_x, note.pos_y)
         self.setFlags(
-            QGraphicsItem.GraphicsItemFlag.ItemIsMovable
-            | QGraphicsItem.GraphicsItemFlag.ItemIsSelectable
+            QGraphicsItem.GraphicsItemFlag.ItemIsSelectable
+            | QGraphicsItem.GraphicsItemFlag.ItemIsMovable
             | QGraphicsItem.GraphicsItemFlag.ItemSendsGeometryChanges
         )
         self.setZValue(1.0)
@@ -251,7 +253,7 @@ class GraphNodeItem(QGraphicsItem):
 
     def boundingRect(self) -> QRectF:
         hw, hh = self.cardinal_extents()
-        pad = 8.0
+        pad = 2.0
         return QRectF(-hw - pad, -hh - pad, (hw + pad) * 2.0, (hh + pad) * 2.0)
 
     def shape(self) -> QPainterPath:
@@ -283,24 +285,23 @@ class GraphNodeItem(QGraphicsItem):
             border = QColor("#fca5a5")
             width = 3.2
             status = f"DUE ({self.metrics.due_count})"
-        elif self.metrics.card_count > 0 and self.metrics.new_count == 0:
+        elif self.metrics.is_incomplete:
+            # Grey node: incomplete initial study (cards in new or learning)
+            top = QColor("#475569")
+            bot = QColor("#334155")
+            border = QColor("#94a3b8")
+            width = 2.5
+            if self.metrics.new_count > 0 and self.metrics.new_count == self.metrics.card_count:
+                status = f"NEW ({self.metrics.card_count})"
+            else:
+                status = f"LEARNING ({self.metrics.card_count - self.metrics.new_count}/{self.metrics.card_count})"
+        else:
+            # Completed initial study (in regular review cycle)
             top = QColor("#2563eb")
             bot = QColor("#1e3a8a")
             border = QColor("#93c5fd")
             width = 3.0
             status = f"R_min {int(self.metrics.r_min * 100)}%"
-        elif self.metrics.card_count > 0 and self.metrics.new_count < self.metrics.card_count:
-            top = QColor("#0284c7")
-            bot = QColor("#0f172a")
-            border = QColor("#38bdf8")
-            width = 2.8
-            status = f"LEARNING ({self.metrics.card_count - self.metrics.new_count}/{self.metrics.card_count})"
-        else:
-            top = QColor("#334155")
-            bot = QColor("#1e293b")
-            border = QColor("#94a3b8")
-            width = 2.5
-            status = f"NEW ({self.metrics.card_count})"
 
         if self.isSelected():
             border = QColor("#facc15")
@@ -402,6 +403,13 @@ class GraphCanvasView(QGraphicsView):
         # Interactive Prerequisite Linking Mode (from Right-Click -> Add Prerequisite)
         self.prereq_target_node: GraphNodeItem | None = None
         self.temp_prereq_line: QGraphicsLineItem | None = None
+
+    def resizeEvent(self, event) -> None:
+        super().resizeEvent(event)
+        if hasattr(self.explorer_view, "floating_bar") and self.explorer_view.floating_bar is not None:
+            fb = self.explorer_view.floating_bar
+            fb.adjustSize()
+            fb.move((self.viewport().width() - fb.width()) // 2, 14)
 
     def _node_at_viewport_pos(self, pos: QPoint) -> GraphNodeItem | None:
         scene_pt = self.mapToScene(pos)
@@ -612,13 +620,12 @@ class ExplorerView(QWidget):
         root.setContentsMargins(14, 12, 14, 12)
         root.setSpacing(8)
 
-        # Clean Top Toolbar
+        # Clean Top Toolbar without redundant course selector or export
         toolbar = QHBoxLayout()
-        toolbar.addWidget(QLabel("<b>Course:</b>", container))
-        self.course_combo = QComboBox(container)
-        self.course_combo.setMinimumWidth(220)
-        self.course_combo.currentIndexChanged.connect(self._on_course_combo_changed)
-        toolbar.addWidget(self.course_combo)
+        self.course_title_lbl = QLabel("No Course Selected", container)
+        set_widget_props(self.course_title_lbl, role="title")
+        toolbar.addWidget(self.course_title_lbl)
+        toolbar.addSpacing(8)
 
         new_node_btn = QPushButton("+ New Note", container)
         set_widget_props(new_node_btn, variant="primary")
@@ -636,26 +643,35 @@ class ExplorerView(QWidget):
         undo_btn.clicked.connect(lambda: self.explorer_controller.undo_last_action())
         toolbar.addWidget(undo_btn)
 
-        export_btn = QPushButton("📤 Export Course...", container)
-        export_btn.setToolTip("Export this course as .mdsl, .mpkg, or .json")
-        export_btn.clicked.connect(self._on_export_current_course)
-        toolbar.addWidget(export_btn)
+        toolbar.addStretch(1)
 
+        # Prominent Filter QLineEdit with secondary styling
         self.quick_search = QLineEdit(container)
-        self.quick_search.setPlaceholderText("🔍 Filter (Ctrl+F)...")
+        self.quick_search.setPlaceholderText("🔍 Filter notes by title or tag (Ctrl+F)...")
         self.quick_search.setClearButtonEnabled(True)
-        self.quick_search.setFixedWidth(170)
+        self.quick_search.setMinimumWidth(260)
+        set_widget_props(self.quick_search, role="filter", variant="secondary")
         self.quick_search.textChanged.connect(self._on_quick_filter_changed)
         toolbar.addWidget(self.quick_search)
 
         find_shortcut = QShortcut(QKeySequence("Ctrl+F"), self)
         find_shortcut.activated.connect(self.quick_search.setFocus)
 
-        toolbar.addStretch(1)
         root.addLayout(toolbar)
 
-        # Floating Bulk Action Bar (shown when >= 2 nodes selected)
-        self.floating_bar = QFrame(container)
+        # Main Center Area: Canvas on Left + Dedicated Vertical Mode Toolbar on Right
+        canvas_row = QHBoxLayout()
+        canvas_row.setSpacing(8)
+
+        self.scene = QGraphicsScene(container)
+        self.scene.selectionChanged.connect(self._on_selection_changed)
+        self.canvas = GraphCanvasView(self.scene, self)
+        self.canvas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.canvas.customContextMenuRequested.connect(self._on_canvas_context_menu)
+        canvas_row.addWidget(self.canvas, 1)
+
+        # Floating Bulk Action Bar (overlay inside canvas so showing/hiding does not shift canvas layout)
+        self.floating_bar = QFrame(self.canvas)
         set_widget_props(self.floating_bar, role="floating_bar")
         fb_layout = QHBoxLayout(self.floating_bar)
         fb_layout.setContentsMargins(12, 6, 12, 6)
@@ -687,18 +703,6 @@ class ExplorerView(QWidget):
         fb_layout.addWidget(del_sub_btn)
 
         self.floating_bar.setVisible(False)
-        root.addWidget(self.floating_bar)
-
-        # Main Center Area: Canvas on Left + Dedicated Vertical Mode Toolbar on Right
-        canvas_row = QHBoxLayout()
-        canvas_row.setSpacing(8)
-
-        self.scene = QGraphicsScene(container)
-        self.scene.selectionChanged.connect(self._on_selection_changed)
-        self.canvas = GraphCanvasView(self.scene, self)
-        self.canvas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.canvas.customContextMenuRequested.connect(self._on_canvas_context_menu)
-        canvas_row.addWidget(self.canvas, 1)
 
         # Right-Side Vertical Toolbar for Snapping (🧲) and Hand/Selection Mode (✋ / 🔲)
         right_bar = QFrame(container)
@@ -772,6 +776,8 @@ class ExplorerView(QWidget):
         else:
             self.mode_btn.setText("🔲 Bulk Select")
             set_widget_props(self.mode_btn, variant="")
+        for it in self._node_items.values():
+            it.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, it.isSelected() and not checked)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key.Key_Escape:
@@ -787,32 +793,19 @@ class ExplorerView(QWidget):
 
     def _reload_course_combo(self) -> None:
         courses = self.course_repo.list_all()
-        self.course_combo.blockSignals(True)
-        self.course_combo.clear()
-        for c in courses:
-            self.course_combo.addItem(c.name, c.id)
-        if self.current_course_id is not None:
-            idx = self.course_combo.findData(self.current_course_id)
-            if idx >= 0:
-                self.course_combo.setCurrentIndex(idx)
-        elif courses and courses[0].id is not None:
+        if self.current_course_id is None and courses and courses[0].id is not None:
             self.current_course_id = courses[0].id
-            self.course_combo.setCurrentIndex(0)
-        self.course_combo.blockSignals(False)
+        if self.current_course_id is not None:
+            c = self.course_repo.get_by_id(self.current_course_id)
+            if c:
+                self.course_title_lbl.setText(f"📘 {c.name}")
         self.rebuild_graph()
 
     def select_course(self, course_id: int) -> None:
         self.current_course_id = course_id
-        idx = self.course_combo.findData(course_id)
-        if idx >= 0:
-            self.course_combo.blockSignals(True)
-            self.course_combo.setCurrentIndex(idx)
-            self.course_combo.blockSignals(False)
-        self.rebuild_graph()
-
-    def _on_course_combo_changed(self) -> None:
-        cid = self.course_combo.currentData()
-        self.current_course_id = int(cid) if cid is not None else None
+        c = self.course_repo.get_by_id(course_id)
+        if c:
+            self.course_title_lbl.setText(f"📘 {c.name}")
         self.rebuild_graph()
 
     def _on_notes_updated(self, course_id: int) -> None:
@@ -852,17 +845,29 @@ class ExplorerView(QWidget):
     def _selected_note_ids(self) -> list[int]:
         ids: list[int] = []
         for it in self.scene.selectedItems():
-            if isinstance(it, GraphNodeItem) and it.note.id is not None:
-                ids.append(it.note.id)
+            try:
+                if isinstance(it, GraphNodeItem) and it.note.id is not None:
+                    ids.append(it.note.id)
+            except RuntimeError:
+                continue
         return ids
 
     def _on_selection_changed(self) -> None:
         sel = self._selected_note_ids()
         if len(sel) >= 2:
             self.sel_count_lbl.setText(f"{len(sel)} nodes selected")
+            self.floating_bar.adjustSize()
+            self.floating_bar.move((self.canvas.viewport().width() - self.floating_bar.width()) // 2, 14)
             self.floating_bar.setVisible(True)
+            self.floating_bar.raise_()
         else:
             self.floating_bar.setVisible(False)
+
+        for it in list(self._node_items.values()):
+            try:
+                it.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
+            except RuntimeError:
+                pass
 
     def _on_create_note_center(self) -> None:
         center_pt = self.canvas.mapToScene(self.canvas.viewport().rect().center())
@@ -1145,6 +1150,7 @@ class ExplorerView(QWidget):
             return
         dlg = DeleteNoteDialog(note_count=len(sel), parent=self)
         if dlg.exec():
+            self.scene.clearSelection()
             if dlg.is_unlink_only:
                 with UnitOfWork(self.conn):
                     for nid in sel:

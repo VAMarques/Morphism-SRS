@@ -10,6 +10,7 @@ from morphism_srs.services.dsl_compiler.lexer import DSLLexer
 class DSLCardNode:
     step_order: int = 0
     title: str = ""
+    uuid: str | None = None
     front: str = ""
     back: str = ""
     hint: str = ""
@@ -34,6 +35,7 @@ class DSLNoteNode:
 @dataclass
 class DSLCourseAST:
     course_name: str = ""
+    course_uuid: str | None = None
     folder_path: str = ""
     color_hex: str = "#89b4fa"
     description: str = ""
@@ -52,6 +54,38 @@ class DSLParser:
         "serial_sequence_single": "serial",
         "cloze": "cloze",
     }
+
+    @classmethod
+    def _parse_folder_path(cls, folder_raw: str) -> str:
+        """Parses folder paths with quotes outside slashes: "Pure Mathematics"/"Algebra"
+        as well as legacy: "Pure Mathematics/Algebra" or unquoted paths."""
+        quoted = re.findall(r'"([^"]*)"|\'([^\']*)\'' , folder_raw)
+        if quoted:
+            parts = [q[0] if q[0] else q[1] for q in quoted if (q[0] or q[1])]
+            return "/".join(p.strip() for p in parts if p.strip())
+        clean = folder_raw.strip().strip('"').strip("'")
+        parts = [p.strip() for p in clean.replace("\\", "/").split("/") if p.strip()]
+        return "/".join(parts)
+
+    @classmethod
+    def _parse_course_directive(cls, val: str) -> tuple[str, str | None, str | None]:
+        """Parses COURSE "Name" [UUID {uuid}] [FOLDER "Part1"/"Part2"/...]"""
+        raw = val.strip()
+        folder_path: str | None = None
+        m_folder = re.search(r'\bFOLDER\s+(.+)$', raw, re.IGNORECASE)
+        if m_folder:
+            folder_raw = m_folder.group(1).strip()
+            raw = raw[:m_folder.start()].strip()
+            folder_path = cls._parse_folder_path(folder_raw)
+
+        course_uuid: str | None = None
+        m_uuid = re.search(r'\bUUID\s+\{?([a-zA-Z0-9_\-]+)\}?\s*$', raw, re.IGNORECASE)
+        if m_uuid:
+            course_uuid = m_uuid.group(1).strip().lower()
+            raw = raw[:m_uuid.start()].strip()
+
+        course_name = cls._unquote(raw)
+        return course_name, course_uuid, folder_path
 
     @classmethod
     def _unquote(cls, text: str) -> str:
@@ -106,12 +140,17 @@ class DSLParser:
                 in_body = False
                 active_field = None
                 if tok.key == "course":
-                    ast.course_name = self._unquote(tok.value)
+                    c_name, c_uuid, c_folder = self._parse_course_directive(tok.value)
+                    ast.course_name = c_name
+                    if c_uuid:
+                        ast.course_uuid = c_uuid
+                    if c_folder:
+                        ast.folder_path = c_folder
                     current_note = None
                 elif tok.key == "folder":
-                    ast.folder_path = self._unquote(tok.value)
+                    ast.folder_path = self._parse_folder_path(tok.value)
                 elif tok.key == "new_note":
-                    m_uuid = re.search(r'^(.*?)\s+UUID\s+([a-fA-F0-9\-]+)\s*$', tok.value, re.IGNORECASE)
+                    m_uuid = re.search(r'^(.*?)\s+UUID\s+([a-zA-Z0-9_\-]+)\s*$', tok.value, re.IGNORECASE)
                     if m_uuid:
                         raw_title = m_uuid.group(1).strip()
                         note_uuid = m_uuid.group(2).strip().lower()
@@ -150,10 +189,19 @@ class DSLParser:
             if tok.kind == "STEP_HEADER" and current_note is not None:
                 _flush_card()
                 card_num = tok.key or str(len(current_note.cards) + 1)
-                raw_title = self._unquote(tok.value) if tok.value else f"Card {card_num}"
+                raw_val = tok.value or ""
+                card_uuid = None
+                m_uuid = re.search(r'^(.*?)\s+UUID\s+([a-zA-Z0-9_\-]+)\s*$', raw_val, re.IGNORECASE)
+                if m_uuid:
+                    raw_title = self._unquote(m_uuid.group(1).strip()) or f"Card {card_num}"
+                    card_uuid = m_uuid.group(2).strip().lower()
+                else:
+                    raw_title = self._unquote(raw_val) if raw_val else f"Card {card_num}"
+
                 current_card = DSLCardNode(
                     step_order=len(current_note.cards),
                     title=raw_title,
+                    uuid=card_uuid,
                     line_num=tok.line_num,
                 )
                 active_field = None
@@ -201,7 +249,11 @@ class DSLParser:
                     active_field = "back"
                 elif not in_body:
                     if k == "uuid":
-                        current_note.uuid = self._unquote(v).strip().lower()
+                        uuid_val = self._unquote(v).strip().lower()
+                        if current_card is not None:
+                            current_card.uuid = uuid_val
+                        elif current_note is not None:
+                            current_note.uuid = uuid_val
                     elif k == "title":
                         current_note.title = self._unquote(v)
                     elif k == "mode":

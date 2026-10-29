@@ -66,7 +66,25 @@ Al escanear el código QR con el navegador del teléfono (Safari en iOS o Chrome
 2. **Modo Estudio en Vivo (LAN / Tailscale)**:
    - Si estás estudiando en el sofá o en la cama dentro de tu red local, simplemente dejas la ventana del QR abierta mientras repasas y cada calificación se escribe al instante en `morphism.db`.
 
-### 1.3 Contrato de Endpoints REST del Servidor Efímero (`services/mobile_server.py`)
+### 1.3 Especificación del Companion Móvil Nativo (`morphism-portable`)
+El cliente móvil táctil (`src/morphism-portable/`) implementa un motor de visualización y estudio offline idéntico al de escritorio:
+
+1. **Sesión de Repaso Táctil (`portable_ui.js` & `CourseGraphDao.kt`)**:
+   - **Garantía de Dominio Completo**: La sesión no se da por concluida mientras permanezcan tarjetas `due` o no dominadas en la cola.
+   - **Comportamiento Serial Estricto**: Para notas en modo `serial`, calificar con `Again (1)` retiene al usuario en el paso actual hasta dominarlo, sin avanzar prematuramente en la cadena causal.
+   - **Reciclado al Paso Más Temprano**: Al finalizar el recorrido de una demostración, si algún paso fue fallado o necesita refuerzo, el sistema cicla automáticamente de regreso al paso no dominado más temprano.
+   - **Atajo "Hide Answer"**: Detección de atajos rápidos (`` ` `` en teclado US / `|` en teclado ES / keyCode `192`/`220`) para ocultar/alternar la respuesta visible al repasar con teclado físico conectado al móvil.
+   - **Corrección de Conteo Due**: `CourseGraphDao.kt` excluye notas nuevas (`state == 0`) del conteo de `isDue`, evitando que conceptos no repasados aparezcan en rojo como vencidos.
+
+2. **Lienzo del Grafo DAG (`graph_canvas.js`)**:
+   - **Splines Cardinales con Flechas Alineadas**: Reemplaza curvas naive por curvas Bézier calculadas entre los puertos cardinales (North, South, East, West) de los nodos origen y destino, con puntas de flecha alineadas al ángulo tangente de entrada del puerto.
+   - **Paleta Cromática Oficial de Estados**:
+     - *Notas No Repasadas / Raíces*: Gris pizarra (`#334155` / `#1e293b`, borde `#94a3b8`).
+     - *Notas Aprendidas al Día*: Azul rey (`#2563eb` / `#1e3a8a`, borde `#93c5fd`).
+     - *Notas en Aprendizaje*: Cian (`#0284c7` / `#0f172a`, borde `#38bdf8`).
+     - *Notas Vencidas (Due)*: Rojo (`#dc2626` / `#7f1d1d`, borde `#fca5a5`).
+
+### 1.4 Contrato de Endpoints REST del Servidor Efímero (`services/mobile_server.py`)
 Todos los endpoints exigen el encabezado `X-Morphism-Token: <ephemeral_session_token>`:
 - `GET /`: Sirve `mobile_study.html` (interfaz táctil responsive con botones grandes `Again`, `Hard`, `Good`, `Easy` y `Undo`).
 - `GET /assets/<path>`: Sirve `tex-svg-full.js`, `cards.css`, `theme_vars.css` y `review_renderer.js`.

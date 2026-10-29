@@ -36,7 +36,7 @@ Crear tarjetas a mano, una por una, haciendo clic en formularios interminables e
 - 📐 **3 Modos de Repaso Epistemológicos**:
   - **Standard (Rectángulos)**: Tarjetas independientes para definiciones, enunciados y contraejemplos.
   - **Serial (Rombos)**: Para **demostraciones encadenadas paso a paso**. Cada paso $A_i$ tiene su propio horario de repaso independiente según el algoritmo FSRS (para no perder tiempo en pasos obvios y enfocarte en los pasos difíciles), y al repasar el paso actual, los pasos anteriores ya demostrados ($A_1, \dots, A_{i-1}$) se muestran arriba como contexto verificado.
-  - **Cloze Holístico (Elipses)**: Para teoremas de equivalencia (*"Las siguientes afirmaciones son equivalentes..."*) o sistemas de axiomas, donde todas las demás afirmaciones se muestran como contexto mutuo.
+  - **Cloze Holístico (Elipses)**: Sirve para desambiguar cartas con fuerte interferencia mutua, donde las demás afirmaciones se muestran como contexto mutuo para aislar el elemento evaluado.
 - ⚡ **MathJax 3 100% Offline**: Renderizado tipográfico ultra-rápido de fórmulas TeX/LaTeX complejas y diagramas conmutativos vectoriales SVG sin requerir conexión a internet.
 - 🧠 **Motor FSRS-5**: Programación de intervalos basada en el algoritmo matemático *Free Spaced Repetition Scheduler* (FSRS v5) para garantizar una retención óptima en el menor tiempo.
 - ↩️ **Deshacer Universal (`Ctrl+Z` / `Ctrl+Y`)**: Deshaz calificaciones de repaso erróneas o ediciones accidentales en el grafo con total tranquilidad.

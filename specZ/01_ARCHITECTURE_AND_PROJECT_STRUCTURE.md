@@ -85,8 +85,7 @@ Morphism SRS proto2/
 │       │   │   └── compiler.py        # Traducción de AST a comandos de UnitOfWork + auto-layout topológico
 │       │   ├── import_export/
 │       │   │   ├── __init__.py
-│       │   │   ├── mpkg_service.py    # Empaquetado/desempaquetado ZIP (.mpkg) con UUIDs e imágenes/SVGs incluidos
-│       │   │   └── json_service.py    # Importación/exportación JSON v2 y compatibilidad con lotes IA
+│       │   │   └── mpkg_service.py    # Empaquetado/desempaquetado ZIP (.mpkg) 100% SQL puro (morphism.db + media/
 │       │   ├── layout_service.py      # Algoritmo Sugiyama / jerárquico topológico para posicionar grafos
 │       │   └── mobile_server.py       # Servidor HTTP efímero (activo sólo mientras el diálogo QR está abierto)
 │       │
@@ -194,9 +193,12 @@ En el Prototipo 2 utilizamos `platformdirs` (o `QStandardPaths.writableLocation(
 
 | Sistema Operativo | Ruta Canónica del Directorio de Datos (`<USER_DATA_DIR>`) | Estándar de la Plataforma |
 | :--- | :--- | :--- |
-| **Windows** | `C:\Users\<username>\AppData\Roaming\MorphismSRS\` | Windows Known Folders (`%APPDATA%`) |
+| **Windows** | `C:\Users\<username>\AppData\Roaming\MorphismSRS\` | Windows Known Folders (`%APPDATA%` unificado, eliminando `%APPDATA%\Morphism`) |
 | **Linux** | `~/.local/share/MorphismSRS/` | Especificación **XDG Base Directory** (`$XDG_DATA_HOME`) |
 | **macOS** | `~/Library/Application Support/MorphismSRS/` | Apple File System Hierarchy Standard |
+
+> [!NOTE]
+> **Unificación de Carpetas Roaming**: Morphism SRS utiliza exclusivamente `%APPDATA%\MorphismSRS\` como directorio único de datos y perfil en Windows. Se configura explícitamente `app.setOrganizationName("")` para evitar la creación de carpetas duplicadas como `%APPDATA%\Morphism\`, y `AppPaths` limpia automáticamente cualquier directorio residual antiguo al iniciar.
 
 *(Nota: También se soporta un **"Portable Mode"**: si existe un archivo vacío `portable.flag` junto al ejecutable o en la raíz del repositorio durante el desarrollo, `<USER_DATA_DIR>` apunta a `./user_data/` relativo al ejecutable para permitir pruebas aisladas o ejecución desde USB sin tocar el sistema).*
 

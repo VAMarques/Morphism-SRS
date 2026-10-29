@@ -275,7 +275,10 @@ class NoteRepository:
         )
         other = self.conn.execute("SELECT course_id FROM course_notes WHERE note_id = ? LIMIT 1;", (note_id,)).fetchone()
         new_cid = int(other["course_id"]) if other else None
-        self.conn.execute("UPDATE notes SET course_id = ? WHERE id = ?;", (new_cid, note_id))
+        try:
+            self.conn.execute("UPDATE notes SET course_id = ? WHERE id = ?;", (new_cid, note_id))
+        except sqlite3.IntegrityError:
+            pass
 
     def inject_into_course(self, course_id: int, note_id: int, pos_x: float = 0.0, pos_y: float = 0.0) -> None:
         """Injects an existing note from anywhere in the database into the specified course."""

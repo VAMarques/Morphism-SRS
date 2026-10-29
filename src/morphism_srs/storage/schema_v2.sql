@@ -202,6 +202,14 @@ CREATE TABLE IF NOT EXISTS scratchbook_pages (
     updated_at          TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 ) STRICT;
 
+CREATE TABLE IF NOT EXISTS gamification_stats (
+    id                  INTEGER PRIMARY KEY CHECK (id = 1),
+    streak_count        INTEGER NOT NULL DEFAULT 0,
+    total_xp            REAL NOT NULL DEFAULT 0.0,
+    last_login_at       TEXT,
+    updated_at          TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+) STRICT;
+
 CREATE TABLE IF NOT EXISTS sync_oplog (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     entity_table        TEXT NOT NULL,

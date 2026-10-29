@@ -151,6 +151,12 @@ class NoteMetrics:
     p_joint: float
     due_count: int
     new_count: int
+    learning_count: int = 0
+
+    @property
+    def is_incomplete(self) -> bool:
+        """A note is considered 'Gris' (incomplete initial study) if it has at least one card in state NEW or LEARNING."""
+        return self.card_count > 0 and (self.new_count > 0 or self.learning_count > 0)
 
 
 @dataclass

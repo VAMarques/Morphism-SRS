@@ -18,6 +18,7 @@ from PySide6.QtWidgets import (
 from morphism_srs.controllers.event_bus import EventBus
 from morphism_srs.storage.repositories.course_repo import CourseRepository
 from morphism_srs.storage.repositories.review_repo import ReviewRepository
+from morphism_srs.storage.repositories.gamification_repo import GamificationRepository
 from morphism_srs.theming.delegates import set_widget_props
 from morphism_srs.ui.window_sizing import configure_splitter, wrap_in_scroll_area
 from morphism_srs.web_engine.web_profile import WebEngineProfileManager
@@ -40,6 +41,7 @@ class StatsView(QWidget):
 
         self.course_repo = CourseRepository(conn)
         self.review_repo = ReviewRepository(conn)
+        self.gamification_repo = GamificationRepository(conn)
 
         self._heatmap_ready = False
         self._barplot_ready = False
@@ -80,9 +82,11 @@ class StatsView(QWidget):
         kpi_row = QHBoxLayout()
         self.kpi_labels: dict[str, QLabel] = {}
         for key, caption in [
+            ("streak", "🔥 Daily Streak"),
+            ("total_xp", "⚡ Total XP"),
             ("total_cards", "Total Cards"),
             ("due_now", "Due Now"),
-            ("total_reviews", "Total Reviews Logged"),
+            ("total_reviews", "Total Reviews"),
             ("avg_stability", "Mean Stability (S)"),
         ]:
             card = QFrame(container)
@@ -191,6 +195,9 @@ class StatsView(QWidget):
                 (course_id,),
             ).fetchone()
 
+        g_stats = self.gamification_repo.get_stats()
+        self.kpi_labels["streak"].setText(f"{g_stats['streak_count']} days")
+        self.kpi_labels["total_xp"].setText(f"{g_stats['total_xp']:.1f} XP")
         self.kpi_labels["total_cards"].setText(str(int(row["total_cards"] or 0)))
         self.kpi_labels["due_now"].setText(str(int(row["due_now"] or 0)))
         self.kpi_labels["total_reviews"].setText(str(int(rev_row["cnt"] or 0)))

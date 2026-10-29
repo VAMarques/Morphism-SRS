@@ -88,6 +88,7 @@ Al cruzar [`specZ/old/morphism_srs_schema.sql`](file:///c:/repos/Morphism%20SRS%
 - **Solución en v2**:
   - Todas las entidades principales (`scheduler_presets`, `import_batches`, `course_folders`, `courses`, `notes`, `cards`, `note_links`, `review_sessions`, `scratch_pages`) incorporan una columna **`uuid TEXT NOT NULL UNIQUE`** (UUID v4 canónico), manteniendo `id INTEGER PRIMARY KEY` para velocidad máxima en JOINs locales y `FTS5`.
   - Se añade la tabla **`sync_oplog`** que registra mutaciones por `entity_uuid` para sincronización diferencial libre de colisiones.
+  - **Paquetes .mpkg como Base de Datos SQL Pura**: El empaquetado y distribución de cursos (`.mpkg`) prescinde de intermediarios JSON y empaqueta directamente la base de datos relacional SQLite `morphism.db` junto a la bóveda `media/`. Los UUIDs universales en `courses`, `notes` y `cards` permiten que el importador realice un upsert directo preservando los horarios de repaso existentes.
 
 #### Problema 10: Nomenclatura Clara (`display_order` en vez de `sort_order`), Prevención de Ciclos en Carpetas y Triggers
 - **En v1**: La columna `sort_order` podía confundirse con la dirección de ordenamiento (`ASC`/`DESC`), faltaba prevención automática de ciclos en `course_folders` y faltaba inicialización automática de `card_schedules`.

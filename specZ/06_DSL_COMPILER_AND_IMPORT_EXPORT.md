@@ -59,7 +59,7 @@ BACK
 Se define como el ínfimo de las sumas de volúmenes de recubrimientos numerables por cubos cerrados $Q_j$:
 $$m_*(E) = \inf \left\{ \sum_{j=1}^{\infty} |Q_j| : E \subset \bigcup_{j=1}^{\infty} Q_j \right\}$$
 
-CARD 2 "Subaditividad Numerable de m*"
+CARD 2 "Subaditividad Numerable de m*" UUID d4b89e1a-5f21-4a88-8cf9-7b102830f9a1
 FRONT
 Enuncie la propiedad de <strong>subaditividad numerable</strong> de la medida exterior $m_*$.
 BACK
@@ -204,34 +204,32 @@ Cuando `SQLiteBatchImporter` ejecuta un AST válido dentro de un curso destino:
 
 ---
 
-## 4. Nuevo Sistema de Importación y Exportación (`.mpkg`, `.mdsl`, `.json`)
+## 4. Nuevo Sistema de Importación y Exportación (`.mpkg`, `.mdsl`)
 
-Para cumplir con los puntos #27 y #29 de [`specZ/old/Future_version.md`](file:///c:/repos/Morphism%20SRS%20proto2/specZ/old/Future_version.md), Morphism SRS Prototype 2 introduce un sistema unificado de paquetes:
+Morphism SRS implementa una arquitectura 100% SQL puro para el empaquetado de cursos, con deprecación total de formatos JSON intermediarios:
 
-### 4.1 Formato Nativo de Paquete de Curso: `.mpkg` (Morphism Package)
-Un archivo `.mpkg` es un archivo comprimido **ZIP estándar** con la siguiente estructura interna:
+### 4.1 Formato Nativo de Paquete de Curso: `.mpkg` (100% Pure SQLite + Media)
+Un archivo `.mpkg` es un archivo comprimido **ZIP estándar** que contiene exclusivamente una base de datos SQLite pura y la carpeta de medios:
 
 ```text
 Analisis_Real_Stein.mpkg (ZIP Archive)
-├── manifest.json            # Versión del esquema, UUID del curso, fecha, conteo de notas/medios
-├── course.json              # Notas (con UUIDs), tarjetas atómicas, tags, coordenadas (x,y) y enlaces
-├── course.mdsl              # Versión legible en DSL generada automáticamente (para inspección humana)
-├── scheduling.json          # (Opcional) Horarios FSRS e historial review_logs si se exporta como Backup
-└── media/                   # Todos los archivos SVG y PNG referenciados en card_media
+├── morphism.db              # Base de datos SQLite pura con esquema v2 (courses, notes, cards con UUID, schedules, edges)
+└── media/                   # Archivos SVG y PNG reales direccionados por SHA-256
     ├── a3f89c12...4b.png
     └── f102e48a...9c.svg    # Diagramas conmutativos vectoriales incluidos
 ```
 
-### 4.2 Dos Modos de Exportación Claramente Diferenciados
-Al exportar un curso (o una carpeta completa de cursos), un diálogo ofrece dos modos:
-1. **📦 Shareable Course Deck (`.mpkg` — Sin Datos Personales de Repaso)**:
-   - Incluye todas las notas (con sus `uuid` universales), tarjetas, etiquetas, posiciones `(x, y)` del grafo, enlaces de prerrequisitos y todos los diagramas `.svg` e imágenes `.png` en `media/`.
-   - **Excluye** `card_schedules` y `review_logs`. Ideal para compartir mazos con otros estudiantes o publicarlos en GitHub: gracias a los `uuid`, si el autor publica una versión actualizada del mazo, los usuarios que lo re-importen recibirán las correcciones de contenido sin perder su propio progreso FSRS.
-2. **💾 Full Personal Backup (`.mpkg` o `.db` — Con Progreso FSRS e Historial)**:
-   - Incluye además el estado exacto de `card_schedules` y todos los `review_logs` para respaldar o transferir el progreso entre dispositivos.
+> [!IMPORTANT]
+> **Deprecación Total del 99% de JSON**:
+> - Los archivos `.json` quedan completamente deprecados tanto para exportación como para importación (`json_service.py` ha sido eliminado del sistema).
+> - Cero JSONs internos dentro del archivo `.mpkg`. La base de datos `morphism.db` incluida es directamente una base SQLite relacional completa con triggers y constraints íntegros de `schema_v2.sql`.
 
-### 4.3 Importación Polimórfica Unificada
-El diálogo `📥 Import...` acepta múltiples formatos mediante detección automática:
-- **`.mpkg`**: Extrae las imágenes y diagramas `.svg` de `media/` hacia `<USER_DATA_DIR>/media/` (verificando su hash `SHA-256`), registra en `media_assets` e importa o fusiona el curso por `uuid` en SQLite.
-- **`.mdsl` / `.txt`**: Ejecuta el compilador `DSLCompilerService` e importa las notas y enlaces al curso seleccionado (o al curso declarado en la directiva `COURSE "..."`).
-- **`.json`**: Soporta tanto el formato JSON v2 como el formato antiguo de lotes de IA del Prototipo 1 (`to_import/*.json`), garantizando **100% de retrocompatibilidad** con los más de 30 archivos JSON ya creados en `New SRS Project/to_import/`.
+### 4.2 Preservación de Tarjetas por UUID en MDSL y .mpkg
+- Cada tarjeta (`cards`) posee un identificador `uuid` universal único.
+- El compilador MDSL (`DSLCompiler`) reconoce las tarjetas tanto por directiva `CARD n "Título" UUID <uuid>` como por `UUID <uuid>`.
+- Al re-compilar o re-importar un mazo, las tarjetas se emparejan por su `uuid` único, permitiendo reordenar o renombrar títulos sin destruir ni resetear el historial FSRS (`card_schedules`).
+
+### 4.3 Importación Unificada
+El diálogo `📥 Import Deck...` acepta:
+- **`.mpkg`**: Abre el archivo ZIP, copia los activos multimedia de `media/` hacia `<USER_DATA_DIR>/media/` registrándolos en `media_assets`, y realiza un upsert SQL directo de la base de datos `morphism.db` preservando UUIDs y horarios.
+- **`.mdsl` / `.txt`**: Compila el archivo declarativo mediante `DSLCompilerService` e inserta/actualiza las notas, tarjetas y enlaces del grafo en la base de datos.

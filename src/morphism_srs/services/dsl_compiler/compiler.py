@@ -91,6 +91,9 @@ class DSLCompiler:
             found = self._find_media_file(src, source_dir)
             if found:
                 _, stored_name = vault.store_file(found)
+                if stored_name.lower().endswith(".svg"):
+                    label = alt or "Diagrama conmutativo"
+                    return f'<div class="diagram-mask-container"><div class="commutative-diagram-mask" style="-webkit-mask-image: url(\'morphism://media/{stored_name}\'); mask-image: url(\'morphism://media/{stored_name}\');" role="img" aria-label="{label}"></div></div>'
                 return f'<img src="morphism://media/{stored_name}" alt="{alt}" class="commutative-diagram">'
             return match.group(0)
 
@@ -101,6 +104,8 @@ class DSLCompiler:
             path_cand = self._find_media_file(m.group(1), source_dir)
             if path_cand:
                 _, stored_name = vault.store_file(path_cand)
+                if stored_name.lower().endswith(".svg"):
+                    return f'<div class="diagram-mask-container"><div class="commutative-diagram-mask" style="-webkit-mask-image: url(\'morphism://media/{stored_name}\'); mask-image: url(\'morphism://media/{stored_name}\');" role="img" aria-label="Diagrama conmutativo"></div></div>'
                 return f'<img src="morphism://media/{stored_name}" class="commutative-diagram">'
             return m.group(0)
 
@@ -110,7 +115,20 @@ class DSLCompiler:
             t2,
             flags=re.IGNORECASE,
         )
-        return t3
+
+        def _sub_mask_div(match: re.Match[str]) -> str:
+            full = match.group(0)
+            url_target = match.group(1).strip()
+            if url_target.startswith(("morphism://", "http://", "https://", "data:")):
+                return full
+            found = self._find_media_file(url_target, source_dir)
+            if found:
+                _, stored_name = vault.store_file(found)
+                return full.replace(url_target, f"morphism://media/{stored_name}")
+            return full
+
+        t4 = re.sub(r'mask-image:\s*url\(["\']?([^"\'\)]+)["\']?\)', _sub_mask_div, t3, flags=re.IGNORECASE)
+        return t4
 
     def check_only(self, source: str) -> DSLCompilationResult:
         ast = self.parser.parse(source)
@@ -138,6 +156,8 @@ class DSLCompiler:
             course: CourseModel | None = None
             if target_course_id is not None:
                 course = self.course_repo.get_by_id(target_course_id)
+            if course is None and ast.course_uuid:
+                course = self.course_repo.get_by_uuid(ast.course_uuid)
             if course is None and ast.course_name:
                 course = self.course_repo.get_by_name(ast.course_name)
             if course is None:
@@ -147,6 +167,7 @@ class DSLCompiler:
                     folder_id = self.folder_repo.ensure_folder_path(parts)
                 course = self.course_repo.create(
                     CourseModel(
+                        uuid=ast.course_uuid or generate_uuid(),
                         name=ast.course_name or "Compiled DSL Course",
                         folder_id=folder_id,
                         color_hex=ast.color_hex or "#89b4fa",
@@ -173,6 +194,7 @@ class DSLCompiler:
                 if existing is None:
                     cards = [
                         CardModel(
+                            uuid=c.uuid or generate_uuid(),
                             step_order=idx,
                             title=c.title,
                             front_html=sanitize_math_html(self._process_media_text(c.front, src_path, vault)),
@@ -214,22 +236,35 @@ class DSLCompiler:
                     if dsl_note.pos is not None:
                         existing.pos_x, existing.pos_y = dsl_note.pos
 
+                    existing_by_uuid: dict[str, CardModel] = {c.uuid: c for c in existing.cards if c.uuid}
+                    used_uuids: set[str] = set()
                     new_cards: list[CardModel] = []
                     for idx, dc in enumerate(dsl_note.cards):
                         f_c = sanitize_math_html(self._process_media_text(dc.front, src_path, vault))
                         b_c = sanitize_math_html(self._process_media_text(dc.back, src_path, vault))
                         h_c = sanitize_math_html(self._process_media_text(dc.hint, src_path, vault))
-                        if idx < len(existing.cards):
-                            ec = existing.cards[idx]
-                            ec.step_order = idx
-                            ec.title = dc.title
-                            ec.front_html = f_c
-                            ec.back_html = b_c
-                            ec.hint_html = h_c
-                            new_cards.append(ec)
+                        matched_card: CardModel | None = None
+                        if dc.uuid and dc.uuid in existing_by_uuid:
+                            matched_card = existing_by_uuid[dc.uuid]
+                        elif not dc.uuid and idx < len(existing.cards):
+                            cand = existing.cards[idx]
+                            if cand.uuid not in used_uuids:
+                                matched_card = cand
+
+                        if matched_card is not None:
+                            matched_card.step_order = idx
+                            matched_card.title = dc.title
+                            matched_card.front_html = f_c
+                            matched_card.back_html = b_c
+                            matched_card.hint_html = h_c
+                            new_cards.append(matched_card)
+                            if matched_card.uuid:
+                                used_uuids.add(matched_card.uuid)
                         else:
+                            card_uuid = dc.uuid or generate_uuid()
                             new_cards.append(
                                 CardModel(
+                                    uuid=card_uuid,
                                     note_id=existing.id,
                                     step_order=idx,
                                     title=dc.title,
@@ -238,6 +273,8 @@ class DSLCompiler:
                                     hint_html=h_c,
                                 )
                             )
+                            used_uuids.add(card_uuid)
+
                     existing.cards = new_cards
                     self.note_repo.update(existing, sync_cards=True)
                     self.note_repo.inject_into_course(course.id, existing.id, existing.pos_x, existing.pos_y)
@@ -253,28 +290,29 @@ class DSLCompiler:
                 dst_id = key_to_note_id.get(dsl_note.external_key) or key_to_note_id.get(dsl_note.title)
                 if dst_id is None:
                     continue
-                for dep_key in dsl_note.deps:
-                    src_id = key_to_note_id.get(dep_key)
-                    if src_id is None:
-                        ext_existing = self.note_repo.get_by_external_key(course.id, dep_key)
-                        if ext_existing and ext_existing.id is not None:
-                            src_id = ext_existing.id
+                for dep in dsl_note.deps:
+                    src_id = key_to_note_id.get(dep)
                     if src_id is not None and src_id != dst_id:
                         edge = self.note_repo.create_edge(
-                            EdgeModel(course_id=course.id, source_note_id=src_id, target_note_id=dst_id)
+                            EdgeModel(
+                                course_id=course.id,
+                                source_note_id=src_id,
+                                target_note_id=dst_id,
+                                label="prerequisite",
+                            )
                         )
                         if edge is not None:
                             res.edges_created += 1
 
             if auto_layout and unpositioned_ids:
-                all_notes = self.note_repo.list_by_course(course.id, include_children=False)
+                all_notes = self.note_repo.list_by_course(course.id)
                 all_edges = self.note_repo.list_edges_by_course(course.id)
-                computed = LayoutService.compute_layered_layout(
-                    note_ids=[n.id for n in all_notes if n.id is not None],
-                    edges=[(e.source_note_id, e.target_note_id) for e in all_edges],
-                )
-                filtered = {nid: xy for nid, xy in computed.items() if nid in unpositioned_ids}
-                self.note_repo.update_positions_bulk(filtered, course_id=course.id)
+                note_ids = [n.id for n in all_notes if n.id is not None]
+                edge_tuples = [(e.source_note_id, e.target_note_id) for e in all_edges]
+                new_positions = LayoutService.compute_layered_layout(note_ids, edge_tuples)
+                for nid, (nx, ny) in new_positions.items():
+                    if nid in unpositioned_ids:
+                        self.note_repo.update_position(nid, nx, ny, course_id=course.id)
 
         return res
 
@@ -286,10 +324,13 @@ class DSLCompiler:
         folder_path: str = "",
     ) -> str:
         """Decompiles a CourseModel and its notes/edges into the canonical .mdsl format."""
-        lines: list[str] = [f'COURSE "{course.name}"']
+        header_parts = [f'COURSE "{course.name}"']
+        if course.uuid:
+            header_parts.append(f"UUID {{{course.uuid}}}")
         if folder_path:
-            lines.append(f'FOLDER "{folder_path}"')
-        lines.append("")
+            parts = [f'"{p}"' for p in folder_path.replace("\\", "/").split("/") if p.strip()]
+            header_parts.append(f"FOLDER {'/'.join(parts)}")
+        lines: list[str] = [" ".join(header_parts), ""]
 
         id_to_title: dict[int, str] = {}
         for n in notes:
@@ -307,7 +348,8 @@ class DSLCompiler:
             lines.append("")
             for c_idx, c in enumerate(n.cards, start=1):
                 c_title = c.title or f"Card {c_idx}"
-                lines.append(f'CARD {c_idx} "{c_title}"')
+                card_uuid_part = f" UUID {c.uuid}" if c.uuid else ""
+                lines.append(f'CARD {c_idx} "{c_title}"{card_uuid_part}')
                 lines.append("FRONT")
                 lines.append(c.front_html)
                 lines.append("BACK")

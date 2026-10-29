@@ -16,6 +16,8 @@ class BrowserNoteRowItem:
     desired_retention: float | None
     created_at: str
     tags_csv: str
+    course_id: int | None = None
+    course_name: str = "N/A" 
 
 
 @dataclass
@@ -108,8 +110,11 @@ class BrowserRepository:
         free_text = self.TOKEN_RE.sub("", free_text).strip()
 
         if course_id is not None:
-            clauses.append("n.course_id = ?")
-            params.append(course_id)
+            if course_id == -1:
+                clauses.append("(n.course_id IS NULL AND NOT EXISTS (SELECT 1 FROM course_notes cn WHERE cn.note_id = n.id))")
+            else:
+                clauses.append("(n.course_id = ? OR EXISTS (SELECT 1 FROM course_notes cn WHERE cn.note_id = n.id AND cn.course_id = ?))")
+                params.extend([course_id, course_id])
 
         if folder_id is not None:
             clauses.append(
@@ -176,8 +181,8 @@ class BrowserRepository:
             SELECT
                 c.id AS card_id,
                 n.id AS note_id,
-                COALESCE(co.id, 0) AS course_id,
-                COALESCE(co.name, '—') AS course_name,
+                COALESCE(co.id, (SELECT c2.id FROM courses c2 JOIN course_notes cn ON cn.course_id = c2.id WHERE cn.note_id = n.id LIMIT 1), 0) AS course_id,
+                COALESCE(co.name, (SELECT c2.name FROM courses c2 JOIN course_notes cn ON cn.course_id = c2.id WHERE cn.note_id = n.id LIMIT 1), 'N/A') AS course_name,
                 n.title AS note_title,
                 n.review_mode AS review_mode,
                 c.step_order AS step_order,
@@ -235,6 +240,7 @@ class BrowserRepository:
     def search_notes(
         self,
         query_text: str = "",
+        course_id: int | None = None,
         tag_filter: str | None = None,
         review_mode_filter: str | None = None,
         limit: int = 2000,
@@ -243,6 +249,13 @@ class BrowserRepository:
         params: list[Any] = []
 
         q = query_text.strip()
+        if course_id is not None:
+            if course_id == -1:
+                clauses.append("(n.course_id IS NULL AND NOT EXISTS (SELECT 1 FROM course_notes cn WHERE cn.note_id = n.id))")
+            else:
+                clauses.append("(n.course_id = ? OR EXISTS (SELECT 1 FROM course_notes cn WHERE cn.note_id = n.id AND cn.course_id = ?))")
+                params.extend([course_id, course_id])
+
         if tag_filter:
             clauses.append(
                 """
@@ -282,8 +295,11 @@ class BrowserRepository:
                     FROM note_tags nt
                     JOIN tags tg ON tg.id = nt.tag_id
                     WHERE nt.note_id = n.id
-                ), '') AS tags_csv
+                ), '') AS tags_csv,
+                COALESCE(co.id, (SELECT c2.id FROM courses c2 JOIN course_notes cn ON cn.course_id = c2.id WHERE cn.note_id = n.id LIMIT 1)) AS course_id,
+                COALESCE(co.name, (SELECT c2.name FROM courses c2 JOIN course_notes cn ON cn.course_id = c2.id WHERE cn.note_id = n.id LIMIT 1), 'N/A') AS course_name
             FROM notes n
+            LEFT JOIN courses co ON co.id = n.course_id
             WHERE {where_sql}
             ORDER BY n.title ASC
             LIMIT ?;
@@ -301,6 +317,8 @@ class BrowserRepository:
                 desired_retention=float(r["desired_retention"]) if r["desired_retention"] is not None else None,
                 created_at=str(r["created_at"])[:10],
                 tags_csv=str(r["tags_csv"]),
+                course_id=int(r["course_id"]) if r["course_id"] is not None else None,
+                course_name=str(r["course_name"]),
             )
             for r in rows
         ]

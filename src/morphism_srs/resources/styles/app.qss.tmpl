@@ -196,6 +196,18 @@ QLineEdit, QTextEdit, QPlainTextEdit, QSpinBox, QDoubleSpinBox, QComboBox {
     selection-color: {{bg_canvas}};
 }
 
+QLineEdit[variant='secondary'], QLineEdit[role='filter'] {
+    background-color: {{bg_surface_0}};
+    border: 2px solid {{accent_secondary}};
+    border-radius: {{radius_sm}};
+    font-weight: 600;
+}
+
+QLineEdit[variant='secondary']:focus, QLineEdit[role='filter']:focus {
+    border: 2px solid {{accent_primary}};
+    background-color: {{bg_surface_1}};
+}
+
 QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus {
     border: 1px solid {{border_focus}};
 }
@@ -211,6 +223,18 @@ QComboBox QAbstractItemView {
     border: 1px solid {{border_subtle}};
     selection-background-color: {{accent_primary}};
     selection-color: {{bg_canvas}};
+}
+
+QLineEdit[variant='secondary'], QLineEdit[role='filter'] {
+    background-color: {{bg_surface_0}};
+    border: 2px solid {{accent_secondary}};
+    border-radius: {{radius_sm}};
+    font-weight: 600;
+}
+
+QLineEdit[variant='secondary']:focus, QLineEdit[role='filter']:focus {
+    border: 2px solid {{accent_primary}};
+    background-color: {{bg_surface_1}};
 }
 
 /* --- Trees, Tables & Lists --- */

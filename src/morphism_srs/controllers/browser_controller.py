@@ -39,14 +39,18 @@ class BrowserController:
             suspended_filter=suspended_filter,
         )
 
+    search_cards = search
+
     def search_notes(
         self,
         query_text: str = "",
+        course_id: int | None = None,
         tag_filter: str | None = None,
         review_mode_filter: str | None = None,
     ) -> list[BrowserNoteRowItem]:
         return self.browser_repo.search_notes(
             query_text=query_text,
+            course_id=course_id,
             tag_filter=tag_filter,
             review_mode_filter=review_mode_filter,
         )

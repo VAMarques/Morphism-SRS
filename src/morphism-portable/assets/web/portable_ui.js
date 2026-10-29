@@ -103,11 +103,46 @@ class MorphismApp {
         $("btn-node-review").onclick = () => { this.closeModal("modal-node"); this.startDueReview(node.id); };
         this.openModal("modal-node"); typeset([$("node-content")]);
     }
+    checkPrerequisitesLocked(noteId) {
+        if (!noteId || !this.data || !this.data.nodes || !this.data.edges) return [];
+        const node = this.data.nodes.find(n => n.id === noteId);
+        if (!node || !node.is_incomplete) return []; // Mastered/due notes never lock
+
+        const locked = [];
+        const parentEdges = this.data.edges.filter(e => (e.target_note_id ?? e.target_id) === noteId);
+        for (const edge of parentEdges) {
+            const pId = edge.source_note_id ?? edge.source_id;
+            const parent = this.data.nodes.find(n => n.id === pId);
+            if (parent && parent.is_incomplete) {
+                locked.push(parent.title || `Nota #${pId}`);
+            }
+        }
+        return locked;
+    }
     startDueReview(noteId=0) {
+        if (noteId) {
+            const locked = this.checkPrerequisitesLocked(noteId);
+            if (locked.length > 0) {
+                if (!confirm(`Advertencia: Esta nota tiene prerrequisitos pendientes de estudio inicial:\n\n• ${locked.join("\n• ")}\n\n¿Deseas estudiarla de todos modos?`)) {
+                    return;
+                }
+            }
+        }
+        this.activeReviewNoteId = noteId;
+        this.failedCardIds = new Set();
         this.queue = native("buildDueQueue",this.activeCourseId,noteId); this.index=0; this.undo=[];
         this.switchTab("review"); this.renderCurrentReviewCard();
     }
     renderCurrentReviewCard() {
+        if (this.index >= this.queue.length) {
+            // Do not finish review session while due or unmastered cards remain
+            const remaining = native("buildDueQueue", this.activeCourseId, this.activeReviewNoteId || 0);
+            if (remaining && remaining.length > 0) {
+                // Cycle back to earliest unmastered card / step
+                this.queue = remaining;
+                this.index = 0;
+            }
+        }
         const finished = this.index >= this.queue.length;
         $("review-empty-state").style.display = finished ? "block" : "none";
         $("review-card-container").style.display = finished ? "none" : "block";
@@ -142,8 +177,36 @@ class MorphismApp {
     }
     rateCurrentCard(rating) {
         if(this.busy || !this.answerShown) return;
-        native("submitRating",this.queue[this.index],this.activeCourseId,rating,Math.round(performance.now()-this.startedAt));
-        this.undo.push(this.index); this.index++; this.renderCurrentReviewCard();
+        const currentCardId = this.queue[this.index];
+        const isSerial = this.prompt && this.prompt.review_mode === "serial";
+        native("submitRating", currentCardId, this.activeCourseId, rating, Math.round(performance.now()-this.startedAt));
+        this.undo.push(this.index);
+
+        if (rating === 1) {
+            if (!this.failedCardIds) this.failedCardIds = new Set();
+            this.failedCardIds.add(currentCardId);
+            if (isSerial) {
+                // For serial notes: stay on current step until mastered
+                this.answerShown = false;
+                this.renderCurrentReviewCard();
+                return;
+            }
+        }
+
+        this.index++;
+        this.renderCurrentReviewCard();
+    }
+
+    toggleAnswerVisibility() {
+        if (!this.prompt || this.index >= this.queue.length) return;
+        if (!this.answerShown) {
+            this.showAnswer();
+        } else {
+            const ans = $("target-answer");
+            if (ans) {
+                ans.hidden = !ans.hidden;
+            }
+        }
     }
     undoRating() {
         if(this.busy) return;
@@ -166,6 +229,8 @@ class MorphismApp {
         $("stat-notes-count").textContent=this.data.nodes.length;
         $("stat-retention").textContent=Math.round(stats.retention*100)+"%";
         $("stat-due-today").textContent=stats.due_today || 0;
+        if ($("stat-streak")) $("stat-streak").textContent=stats.streak_count || 0;
+        if ($("stat-xp")) $("stat-xp").textContent=(stats.total_xp || 0.0).toFixed(1);
         const names=["Nuevas","Aprendizaje","Repaso","Reaprendizaje"];
         $("stat-states").textContent=stats.states.map(s=>`${names[s.state]}: ${s.count}`).join(" · ");
         const counts=new Map(stats.heatmap.map(d=>[d.day,d.count]));
@@ -194,7 +259,10 @@ class MorphismApp {
     closeModal(id) { $(id).classList.remove("active"); }
     bind() {
         document.querySelectorAll(".nav-tab").forEach(b=>b.onclick=()=>this.switchTab(b.dataset.tab));
-        $("btn-review-due").onclick=()=>this.startDueReview(); $("btn-show-answer").onclick=()=>this.showAnswer();
+        $("btn-review-due").onclick=()=>{
+            const sel = this.graphView?.selectedNote;
+            this.startDueReview(sel ? sel.id : 0);
+        }; $("btn-show-answer").onclick=()=>this.showAnswer();
         ["again","hard","good","easy"].forEach((key,i)=>$("btn-"+key).onclick=()=>this.rateCurrentCard(i+1));
         $("btn-undo").onclick=()=>this.undoRating(); $("btn-fit-graph").onclick=()=>this.graphView.fitAll();
         $("btn-auto-layout").onclick=()=>{this.graphView.autoArrange();this.savePositions();};
@@ -209,6 +277,15 @@ class MorphismApp {
             b.onclick=()=>{this.applyTheme(theme.id);this.closeModal("modal-theme");};grid.append(b);});
         document.querySelectorAll(".modal-overlay").forEach(m=>m.onclick=e=>{if(e.target===m)this.closeModal(m.id);});
         window.addEventListener("morphism-mathjax-ready",()=>typeset([$("review-front-content"),$("node-content"),...this.graphView.labelNodes.values()]));
+
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "`" || e.key === "|" || e.key === "~" || e.keyCode === 192 || e.keyCode === 220) {
+                if (this.currentTab === "review") {
+                    this.toggleAnswerVisibility();
+                    e.preventDefault();
+                }
+            }
+        });
     }
 }
 window.onPortableSyncResult=result=>window.app.syncFinished(result);

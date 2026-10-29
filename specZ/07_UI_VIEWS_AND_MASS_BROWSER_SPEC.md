@@ -128,7 +128,12 @@ Cuando el usuario selecciona $N > 1$ nodos en el grafo:
   `[ 8 Notes Selected ]  [ 🎯 Study Selected ]  [ ⚡ Auto-Layout Subgraph ]  [ 🏷️ Tag ]  [ ✂️ Clear Links ]  [ 🗑️ Delete (8) ]`
 - Presionar la tecla **`Delete` / `Backspace`** con varios nodos seleccionados invoca directamente el borrado en masa de esos nodos (reversible con `Ctrl+Z`).
 
-### 3.4 Tipos de Aristas Semánticas y Level-of-Detail (LOD)
+### 3.4 Interfaz Limpia y Selección Estable en `GraphExplorerView`
+- **Barra Superior Focalizada**: Se eliminan el selector de cursos y botones de exportación (trasladados al panel lateral de `CoursesView`), mostrando directamente una etiqueta destacada con el curso activo (`📘 {course.name}`).
+- **Filtro Prominente**: El campo de búsqueda/filtro de notas incorpora estilo secundario de alto contraste (`role="filter"`, `variant="secondary"`, con borde `accent_secondary` y foco `accent_primary`), con atajo `Ctrl+F`.
+- **Selección en Masa Estable (Bulk Select)**: La selección Marquee (`RubberBandDrag`) restringe el flag `ItemIsMovable` exclusivamente a los nodos ya seleccionados y fuera del modo de paneo manual, con un padding de tolerancia reducido a 2.0px. Esto elimina por completo desplazamientos indeseados de nodos o de la cámara al tocar sus contornos. La barra de acciones en masa (`floating_bar`) opera como overlay flotante interno sin forzar reflow del canvas.
+
+### 3.5 Tipos de Aristas Semánticas y Level-of-Detail (LOD)
 - **Estilos de Aristas por `relation_type`**:
   - `prerequisite`: Línea curva Bézier sólida con punta de flecha rellena (`--edge-prereq`) calculando la intersección exacta con el contorno del rectángulo, rombo o elipse destino.
   - `uses` / `related` / `generalizes`: Línea punteada/discontinua (`Qt.DashLine`) con color `--edge-related`.
@@ -146,10 +151,13 @@ Como se especificó en [`01_ARCHITECTURE_AND_PROJECT_STRUCTURE.md`](file:///c:/r
 - Todos los contenedores de botones usan `FlowLayout` envolvente y todos los paneles de inspección usan `QScrollArea(widgetResizable=True)`.
 
 ### 4.2 `CoursesView v2` (`📚 Courses`)
+- **Arquitectura de Barra y Panel Lateral (Sidebar)**:
+  - **Barra Superior Limpia**: Conserva únicamente el título de la vista y los accesos rápidos de estudio: **`Custom Study...`** y **`Auto-Study Due`**, eliminando sobrecargas visuales y el botón redundante de "Open in Graph Explorer".
+  - **Panel Lateral Izquierdo (Sidebar)**: Agrupa verticalmente las acciones estructurales: **`+ New Folder`**, **`+ New Course`**, **`📥 Import Deck...`** y **`📤 Export Course...`**.
 - Árbol jerárquico ilimitado de carpetas anidadas (`course_folders` con `parent_id`) y cursos (`courses`), soportando reordenamiento por Drag-and-Drop (`display_order`).
 - Columnas en vivo en el árbol: **`Total Notes`**, **`Total Cards`**, **`🔴 Due Today`**, **`🆕 New`** y **`Preset FSRS`**.
 - Configuración y optimización de **Presets FSRS a nivel Global o de Carpeta**: clic derecho sobre cualquier carpeta permite asignar o entrenar un `scheduler_preset` que heredan todos los subcursos de esa carpeta.
-- Botón directo **`▶️ Study Entire Folder`** y botones de importación/exportación (`.mpkg`, `.mdsl`, `.json`, migrador de Prototipo 1).
+- Botón directo **`▶️ Study Entire Folder`** e importación/exportación nativa en formato `.mpkg` (100% SQL puro) y `.mdsl` (con deprecación total de JSON).
 
 ### 4.3 `NodeEditorDialog v2`
 - Ventana no-modal maximizable con divisor ajustable (`QSplitter`) entre la lista de tarjetas (izquierda), los editores de código HTML/LaTeX con barra de botones `FlowLayout` y selector de tags autocompletable desde `tags_default.csv` (centro), y la vista previa en vivo de MathJax (derecha).
@@ -173,3 +181,10 @@ Como se especificó en [`01_ARCHITECTURE_AND_PROJECT_STRUCTURE.md`](file:///c:/r
     3. **Curva de Retención Conjunta $P(\bigcap A_i)(t) = \prod_i R_i(t)$** (línea punteada estadística, activable/desactivable con una casilla).
     4. **Curvas individuales $R_i(t)$** para cada paso/componente $A_i$.
   - Mantiene las escalas de zoom (`24h`, `48h`, `7d`, `30d`, `90d`, `1y`) con cálculo continuo de días fraccionarios (`elapsed_seconds / 86400.0`).
+
+
+### 4.6 `ReviewView` — Interfaz Limpia y Atajo "Hide Answer"
+- **Encabezado Optimizado**: Se eliminan del encabezado superior de la sesión de repaso los botones de `Custom Study` y `Auto-Study` (que pertenecen a `CoursesView`), manteniendo únicamente la navegación hacia el grafo, insignia del curso, contador de progreso, métricas de retención, edición rápida (`E`) y deshacer (`Ctrl+Z`).
+- **Atajo "Hide Answer" (`` ` `` / `|` / Virtual Key `0xC0`)**:
+  - Permite ocultar y volver a mostrar la respuesta en cualquier momento con un solo toque de teclado.
+  - Diseñado para repaso activo sin recalcular intervalos ni alterar calificaciones FSRS.

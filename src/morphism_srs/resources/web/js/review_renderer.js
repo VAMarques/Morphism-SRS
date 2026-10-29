@@ -108,12 +108,32 @@
         revealAnswer: function (backHtml) {
             var dividerEl = document.getElementById("answer-divider");
             var backEl = document.getElementById("card-back");
-            dividerEl.style.display = "block";
-            backEl.style.display = "block";
-            if (typeof backHtml === "string") {
-                backEl.innerHTML = backHtml;
+            if (dividerEl) dividerEl.style.display = "block";
+            if (backEl) {
+                backEl.style.display = "block";
+                if (typeof backHtml === "string") {
+                    backEl.innerHTML = backHtml;
+                }
+                typesetElements([backEl]);
             }
-            typesetElements([backEl]);
+        },
+
+        hideAnswer: function () {
+            var dividerEl = document.getElementById("answer-divider");
+            var backEl = document.getElementById("card-back");
+            if (dividerEl) dividerEl.style.display = "none";
+            if (backEl) backEl.style.display = "none";
+        },
+
+        toggleAnswer: function (backHtml) {
+            var backEl = document.getElementById("card-back");
+            if (backEl && backEl.style.display !== "none") {
+                this.hideAnswer();
+                return false;
+            } else {
+                this.revealAnswer(backHtml);
+                return true;
+            }
         }
     };
 })();

@@ -59,6 +59,63 @@ class DatabaseManager:
         except Exception:
             pass
 
+        # Ensure notes.course_id is nullable (migrating legacy databases)
+        try:
+            cursor = conn.execute("PRAGMA table_info(notes);")
+            cols = {row["name"]: row for row in cursor.fetchall()}
+            if "course_id" in cols and cols["course_id"]["notnull"] == 1:
+                conn.execute("PRAGMA foreign_keys = OFF;")
+                conn.execute("BEGIN;")
+                conn.execute("""
+                    CREATE TABLE notes_nullable_cid (
+                        id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+                        uuid                TEXT NOT NULL UNIQUE,
+                        course_id           INTEGER REFERENCES courses(id) ON DELETE SET NULL,
+                        external_key        TEXT,
+                        title               TEXT NOT NULL CHECK (length(trim(title)) > 0),
+                        premise_html        TEXT NOT NULL DEFAULT '',
+                        pos_x               REAL NOT NULL DEFAULT 0.0,
+                        pos_y               REAL NOT NULL DEFAULT 0.0,
+                        review_mode         TEXT NOT NULL DEFAULT 'standard' CHECK (review_mode IN ('standard', 'serial', 'cloze')),
+                        desired_retention   REAL CHECK (desired_retention IS NULL OR (desired_retention >= 0.70 AND desired_retention <= 0.99)),
+                        is_pinned           INTEGER NOT NULL DEFAULT 0 CHECK (is_pinned IN (0, 1)),
+                        created_at          TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+                        updated_at          TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+                        UNIQUE (course_id, external_key)
+                    ) STRICT;
+                """)
+                conn.execute("""
+                    INSERT INTO notes_nullable_cid
+                    SELECT id, uuid, course_id, external_key, title, premise_html, pos_x, pos_y, review_mode, desired_retention, is_pinned, created_at, updated_at
+                    FROM notes;
+                """)
+                conn.execute("DROP TABLE notes;")
+                conn.execute("ALTER TABLE notes_nullable_cid RENAME TO notes;")
+                conn.execute("CREATE INDEX IF NOT EXISTS idx_notes_course ON notes(course_id);")
+                conn.execute("CREATE INDEX IF NOT EXISTS idx_notes_mode ON notes(review_mode);")
+                conn.execute("COMMIT;")
+                conn.execute("PRAGMA foreign_keys = ON;")
+        except Exception:
+            try:
+                conn.execute("ROLLBACK;")
+            except Exception:
+                pass
+
+        # Ensure gamification_stats table and initial singleton row exist
+        try:
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS gamification_stats (
+                    id                  INTEGER PRIMARY KEY CHECK (id = 1),
+                    streak_count        INTEGER NOT NULL DEFAULT 0,
+                    total_xp            REAL NOT NULL DEFAULT 0.0,
+                    last_login_at       TEXT,
+                    updated_at          TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+                ) STRICT;
+            """)
+            conn.execute("INSERT OR IGNORE INTO gamification_stats (id, streak_count, total_xp, last_login_at) VALUES (1, 0, 0.0, NULL);")
+        except Exception:
+            pass
+
         if self.tags_csv_path and self.tags_csv_path.exists():
             self._seed_default_tags(conn, self.tags_csv_path)
 

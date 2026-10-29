@@ -87,7 +87,7 @@ flowchart TD
 | :--- | :---: | :--- | :--- | :--- |
 | **`standard`** | **Rectángulo** | $$P(A_i)$$ | **Ninguno** ($\varnothing$). Solo se muestra el frente de $A_i$. | Colección de definiciones, fórmulas o lemas independientes de una sección. |
 | **`serial`** | **Rombo** | $$P(A_i \mid A_1, \dots, A_{i-1})$$ | **Prefijo causal $\{A_j : j < i\}$**: Se despliegan arriba en `#past-steps-list` todos los pasos anteriores a $A_i$. | Demostraciones constructivas o derivaciones largas paso a paso ($A_1 \to A_2 \to \dots \to A_n$). |
-| **`cloze`** | **Círculo / Elipse** | $$P(A_i \mid \{A_j : j \ne i\})$$ | **Complemento completo $\{A_j : j \ne i\}$**: Se muestran resueltas tanto las tarjetas anteriores ($j < i$) como las posteriores ($j > i$). | Teoremas de equivalencia múltiple ($A_1 \iff A_2 \iff A_3 \iff A_4$), axiomas de una estructura algebraica o propiedades simétricas donde cada pieza se deduce del resto. |
+| **`cloze`** | **Círculo / Elipse** | $$P(A_i \mid \{A_j : j \ne i\})$$ | **Complemento completo $\{A_j : j \ne i\}$**: Se muestran resueltas tanto las tarjetas anteriores ($j < i$) como las posteriores ($j > i$). | Sirve para desambiguar cartas con fuerte interferencia mutua. Cada componente se evalúa con el resto visible para aislar el elemento evaluado. |
 
 ---
 
@@ -143,7 +143,7 @@ Supongamos una demostración de 6 pasos ($A_1 \dots A_6$) donde $A_1, A_2, A_3$ 
    - *(Nota: Si el usuario desea recitar voluntariamente los 6 pasos desde $A_1$ hasta $A_6$ aunque no estén todos vencidos, puede elegir la acción secundaria **"🔄 Review Full Proof Chain"** en el menú contextual de la nota o en Custom Study).*
 
 ### 4.3 Detalle Operativo del Modo `cloze` ($P(A_i \mid \{A_j : j \ne i\})$)
-A diferencia de Anki (donde un "cloze" es un simple reemplazo de subcadenas `{{c1::...}}` dentro de un único texto plano), en Morphism SRS una nota **`cloze`** modela un sistema de $n$ proposiciones o componentes $\{A_1, \dots, A_n\}$ mutuamente acoplados:
+Sirve para desambiguar cartas con fuerte interferencia mutua. A diferencia de Anki (donde un "cloze" es un simple reemplazo de subcadenas `{{c1::...}}` dentro de un único texto plano), en Morphism SRS una nota **`cloze`** modela un sistema de $n$ proposiciones o componentes $\{A_1, \dots, A_n\}$ mutuamente acoplados donde la presencia de las demás componentes como contexto evita interferencia asociativa:
 
 ```text
 +--------------------------------------------------------------------------------------------------+

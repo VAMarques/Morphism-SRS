@@ -129,6 +129,7 @@ def prepare_assets():
     ]:
         shutil.copytree(source, destination, dirs_exist_ok=True)
     tex = json.loads((resources / "defaults/mathjax_macros.json").read_text(encoding="utf-8"))
+    tex.pop("autoload", None)
     (assets / "web/mathjax_macros.json").write_text(json.dumps(tex, ensure_ascii=False), encoding="utf-8")
     init = "window.MathJax=" + json.dumps({"tex": tex, "svg": {"fontCache": "local"}, "startup": {"typeset": False}}) + ";\n"
     init += """MathJax.startup.ready=function(){MathJax.startup.defaultReady();
