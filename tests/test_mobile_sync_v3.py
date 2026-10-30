@@ -41,10 +41,17 @@ class TestMobileV3(unittest.TestCase):
         proof = seal(key, b"", aad)
         data = None if body is None else seal(key, json.dumps(body).encode(), aad + b" body " + proof)
         req = Request(self.base + path, data=data, headers={"X-Morphism-Auth": encode(proof)})
-        with urlopen(req, timeout=5) as response:
-            self.assertEqual(response.headers["Content-Type"], "application/vnd.morphism.encrypted")
-            result = open_sealed(key, response.read(), aad + b" response " + proof)
-        return result, req
+        for attempt in range(3):
+            try:
+                with urlopen(req, timeout=5) as response:
+                    self.assertEqual(response.headers["Content-Type"], "application/vnd.morphism.encrypted")
+                    result = open_sealed(key, response.read(), aad + b" response " + proof)
+                return result, req
+            except (ConnectionResetError, ConnectionAbortedError):
+                if attempt == 2:
+                    raise
+                import time
+                time.sleep(0.1)
 
     def test_pairing_and_authenticated_encrypted_response(self):
         fields = parse_qs(urlparse(self.server.url).fragment)

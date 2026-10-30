@@ -77,3 +77,6 @@ logs/
 *.apk
 *.idsig
 *.patch
+# Content to import
+to_import/content/*
+!to_import/content/.gitkeep

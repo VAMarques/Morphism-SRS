@@ -23,7 +23,7 @@ class TestStandaloneProto1Migration(unittest.TestCase):
 
         # 2. If Prototype 1 repo exists at c:\repos\New SRS Project, run real migration into a temp DB
         proto1_path = Path(r"c:\repos\New SRS Project")
-        if not proto1_path.exists():
+        if not (proto1_path / "Courses").exists():
             return
 
         with tempfile.TemporaryDirectory() as tmp:

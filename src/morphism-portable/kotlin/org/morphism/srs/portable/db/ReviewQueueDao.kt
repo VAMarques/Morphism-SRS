@@ -85,6 +85,40 @@ class ReviewQueueDao(private val store: PortableDatabase, private val graph: Cou
         store.upsert(db,"card_schedules",next,listOf("card_id")); store.upsert(db,"review_logs",log,listOf("id"))
         db.execSQL("INSERT INTO portable_outbox(log_uuid) VALUES (?)",arrayOf(uuid))
         db.execSQL("INSERT INTO portable_undo VALUES (?,?,?)",arrayOf(uuid,previous.toString(),card.getString("uuid")))
+
+        // Gamification stats update (Streak and XP decoupled from review logs)
+        db.execSQL("CREATE TABLE IF NOT EXISTS gamification_stats (id INTEGER PRIMARY KEY CHECK (id = 1), streak_count INTEGER NOT NULL DEFAULT 0, total_xp REAL NOT NULL DEFAULT 0.0, last_login_at TEXT, updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')))")
+        db.execSQL("INSERT OR IGNORE INTO gamification_stats (id, streak_count, total_xp, last_login_at) VALUES (1, 0, 0.0, NULL)")
+        val gRow = store.rows("SELECT streak_count, total_xp, last_login_at FROM gamification_stats WHERE id = 1").optJSONObject(0)
+        val curStreak = gRow?.optInt("streak_count", 0) ?: 0
+        val lastLoginRaw = gRow?.optString("last_login_at", "")?.takeIf { it.isNotBlank() && it != "null" }
+        val nowStr = now.toString()
+        var newStreak = 1
+        var newLoginAt = nowStr
+        if (lastLoginRaw == null) {
+            newStreak = 1
+            newLoginAt = nowStr
+        } else {
+            val elapsedHours = try {
+                val lastInstant = Instant.parse(lastLoginRaw)
+                java.time.Duration.between(lastInstant, now).toMillis() / 3600000.0
+            } catch (_: Exception) { 999.0 }
+            if (elapsedHours < 18.0) {
+                newStreak = maxOf(1, curStreak)
+                newLoginAt = lastLoginRaw
+            } else if (elapsedHours <= 32.0) {
+                newStreak = curStreak + 1
+                newLoginAt = nowStr
+            } else {
+                newStreak = 1
+                newLoginAt = nowStr
+            }
+        }
+        db.execSQL(
+            "UPDATE gamification_stats SET streak_count = ?, total_xp = total_xp + 1.0, last_login_at = ?, updated_at = ? WHERE id = 1",
+            arrayOf(newStreak, newLoginAt, nowStr)
+        )
+
         next
     }
     fun undoLastRating(): Boolean = store.transaction { db ->
@@ -139,7 +173,10 @@ class ReviewQueueDao(private val store: PortableDatabase, private val graph: Cou
         val result=store.rows("""SELECT count(*) total_cards,
             sum(CASE WHEN s.is_suspended=0 AND s.is_buried=0 AND (s.state=0 OR julianday(s.due_at)<=julianday('now')) THEN 1 ELSE 0 END) due_today
             FROM cards c JOIN course_notes cn ON cn.note_id=c.note_id JOIN card_schedules s ON s.card_id=c.id WHERE cn.course_id=?""",courseId).getJSONObject(0)
-        return result.put("retention",graph.retention(courseId)).put("states",store.rows("""SELECT s.state,count(*) count FROM card_schedules s JOIN cards c ON c.id=s.card_id
+        val gRow = store.rows("SELECT streak_count, total_xp FROM gamification_stats WHERE id = 1").optJSONObject(0)
+        val streak = gRow?.optInt("streak_count", 0) ?: 0
+        val xp = gRow?.optDouble("total_xp", 0.0) ?: 0.0
+        return result.put("retention",graph.retention(courseId)).put("streak_count",streak).put("total_xp",xp).put("states",store.rows("""SELECT s.state,count(*) count FROM card_schedules s JOIN cards c ON c.id=s.card_id
             JOIN course_notes cn ON cn.note_id=c.note_id WHERE cn.course_id=? GROUP BY s.state""",courseId))
             .put("heatmap",store.rows("""SELECT date(l.reviewed_at) day,count(*) count FROM review_logs l JOIN cards c ON c.id=l.card_id
             JOIN course_notes cn ON cn.note_id=c.note_id WHERE cn.course_id=? AND julianday(l.reviewed_at)>=julianday('now','-28 days') GROUP BY day""",courseId))

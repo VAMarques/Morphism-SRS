@@ -42,6 +42,8 @@ class PortableDatabase(private val context: Context, val fileName: String = "mor
         db.execSQL("CREATE TABLE portable_outbox(seq INTEGER PRIMARY KEY AUTOINCREMENT, log_uuid TEXT UNIQUE NOT NULL)")
         db.execSQL("CREATE TABLE portable_undo(uuid TEXT PRIMARY KEY, schedule_json TEXT NOT NULL, card_uuid TEXT NOT NULL)")
         db.execSQL("CREATE TABLE portable_undone(uuid TEXT PRIMARY KEY)")
+        db.execSQL("CREATE TABLE IF NOT EXISTS gamification_stats (id INTEGER PRIMARY KEY CHECK (id = 1), streak_count INTEGER NOT NULL DEFAULT 0, total_xp REAL NOT NULL DEFAULT 0.0, last_login_at TEXT, updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')))")
+        db.execSQL("INSERT OR IGNORE INTO gamification_stats (id, streak_count, total_xp, last_login_at) VALUES (1, 0, 0.0, NULL)")
     }
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) { error("Unsupported database upgrade") }
     @Synchronized fun <T> transaction(block: (SQLiteDatabase) -> T): T {

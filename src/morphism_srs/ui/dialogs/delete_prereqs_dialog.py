@@ -38,19 +38,16 @@ class DeleteNoteDialog(QDialog):
         lbl.setWordWrap(True)
         layout.addWidget(lbl)
 
-        self.unlink_rb = QRadioButton(
-            "🔗 <b>Unlink from this Course (Soft-Delete)</b><br>"
-            "<span style='color:#a6adc8;'>Removes the node(s) from this course DAG, but keeps notes, cards, "
-            "and review schedules intact in the database and accessible via the Note Browser.</span>",
-            self,
+        self.unlink_rb = QRadioButton("🔗 Unlink from Course (Soft-Delete)", self)
+        self.unlink_rb.setToolTip(
+            "Removes node(s) from this course DAG, but keeps notes, cards, and review schedules intact in the database."
         )
         self.unlink_rb.setChecked(True)
         layout.addWidget(self.unlink_rb)
 
-        self.hard_del_rb = QRadioButton(
-            "🗑️ <b>Delete Permanently from Database (Hard-Delete)</b><br>"
-            "<span style='color:#f38ba8;'>Completely deletes the note(s), all their cards, and review history from the database.</span>",
-            self,
+        self.hard_del_rb = QRadioButton("🗑️ Delete Permanently from Database (Hard-Delete)", self)
+        self.hard_del_rb.setToolTip(
+            "Completely deletes node(s), all their cards, and review history from the database."
         )
         layout.addWidget(self.hard_del_rb)
 

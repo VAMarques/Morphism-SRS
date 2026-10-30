@@ -467,37 +467,45 @@ class TouchGraphView {
             const cardCount = Array.isArray(note.cards) ? note.cards.length : (note.card_count || 1);
             const newCount = typeof note.new_count === "number" ? note.new_count : (isDue ? 0 : cardCount);
 
-            // Morphism Standard Node Color Palette:
-            // Unreviewed / root: slate grey (#334155 / #1e293b, border #94a3b8)
-            // Up-to-date learned: royal blue (#2563eb / #1e3a8a, border #93c5fd)
-            // In learning: cyan (#0284c7 / #0f172a, border #38bdf8)
-            // Due: red (#dc2626 / #7f1d1d, border #fca5a5)
+            // Epistemic Hierarchy:
+            // GRIS: Al menos una carta está NEW o LEARNING (is_incomplete, sobreescribe a ROJO)
+            // ROJO: Al menos una carta está DUE o RELEARNING (isDue)
+            // AZUL: Todas las cartas están al día (mastered)
             let gradTop, gradBot, borderColor, borderWidth, statusLabel;
-            if (isDue) {
+            const isIncomplete = Boolean(note.is_incomplete || newCount > 0 || (note.learning_count && note.learning_count > 0));
+            if (isIncomplete) {
+                if (cardCount > 0 && newCount < cardCount && newCount > 0) {
+                    gradTop = "#0284c7";
+                    gradBot = "#0f172a";
+                    borderColor = "#38bdf8";
+                    borderWidth = 2.8;
+                    statusLabel = `LEARNING (${cardCount - newCount}/${cardCount})`;
+                } else if (cardCount > 0 && newCount === 0) {
+                    gradTop = "#475569";
+                    gradBot = "#334155";
+                    borderColor = "#94a3b8";
+                    borderWidth = 2.5;
+                    statusLabel = `LEARNING (${note.learning_count || 1})`;
+                } else {
+                    gradTop = "#334155";
+                    gradBot = "#1e293b";
+                    borderColor = "#94a3b8";
+                    borderWidth = 2.0;
+                    statusLabel = `NEW (${cardCount})`;
+                }
+            } else if (isDue) {
                 gradTop = "#dc2626";
                 gradBot = "#7f1d1d";
                 borderColor = "#fca5a5";
                 borderWidth = 3.2;
                 statusLabel = `DUE (${note.due_count || 1})`;
-            } else if (cardCount > 0 && newCount === 0) {
+            } else {
                 gradTop = "#2563eb";
                 gradBot = "#1e3a8a";
                 borderColor = "#93c5fd";
                 borderWidth = 3.0;
                 const rMinPct = Math.round((note.r_min || 1.0) * 100);
                 statusLabel = `R_min ${rMinPct}%`;
-            } else if (cardCount > 0 && newCount < cardCount) {
-                gradTop = "#0284c7";
-                gradBot = "#0f172a";
-                borderColor = "#38bdf8";
-                borderWidth = 2.8;
-                statusLabel = `LEARNING (${cardCount - newCount}/${cardCount})`;
-            } else {
-                gradTop = "#334155";
-                gradBot = "#1e293b";
-                borderColor = "#94a3b8";
-                borderWidth = 2.0;
-                statusLabel = `NEW (${cardCount})`;
             }
 
             // Background fill

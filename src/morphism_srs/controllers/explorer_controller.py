@@ -68,6 +68,24 @@ class ExplorerController:
             note_ids=target_ids,
             edges=[(e.source_note_id, e.target_note_id) for e in edges],
         )
+        if note_ids_subset is not None and old_pos and computed:
+            xs = [x for x, y in old_pos.values()]
+            ys = [y for x, y in old_pos.values()]
+            orig_cx = sum(xs) / len(xs)
+            orig_cy = sum(ys) / len(ys)
+
+            c_xs = [x for x, y in computed.values()]
+            c_ys = [y for x, y in computed.values()]
+            comp_cx = sum(c_xs) / len(c_xs)
+            comp_cy = sum(c_ys) / len(c_ys)
+
+            dx = orig_cx - comp_cx
+            dy = orig_cy - comp_cy
+
+            computed = {
+                nid: (round((x + dx) / 20.0) * 20.0, round((y + dy) / 20.0) * 20.0)
+                for nid, (x, y) in computed.items()
+            }
         self.record_nodes_moved(course_id, old_pos, computed)
         self.event_bus.notes_updated.emit(course_id)
 

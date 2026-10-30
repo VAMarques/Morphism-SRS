@@ -45,6 +45,7 @@ class ReviewController:
         self.note_repo = NoteRepository(conn)
         self.card_repo = CardRepository(conn)
         self.review_repo = ReviewRepository(conn)
+        self.gamification_repo = GamificationRepository(conn)
         self.undo_stack = CommandStack()
 
         self._queue: list[CardModel] = []
@@ -65,6 +66,15 @@ class ReviewController:
 
     def current_Index_1based(self) -> int:
         return min(len(self._queue), self._current_index + 1)
+
+    def remaining_note_cards(self, note: NoteModel) -> int:
+        if not note or not note.cards:
+            return 1
+        unmastered = sum(
+            1 for c in note.cards
+            if c.id is not None and not self._session_card_mastered.get(c.id, False)
+        )
+        return max(1, unmastered)
 
     def start_auto_study(
         self,
@@ -295,6 +305,13 @@ class ReviewController:
         prev_queue_len = len(self._queue)
         prev_sched = card.schedule
         prev_mastered = self._session_card_mastered.get(card.id, False)
+
+        # Gamification: decoupled streak and XP tracking triggered on each review rating
+        try:
+            self.gamification_repo.record_entry()
+            self.gamification_repo.add_review_xp(1.0)
+        except Exception:
+            pass
 
         # In a serial note:
         # - Again: do NOT advance; stay on the current step so the user dominates it before advancing.
