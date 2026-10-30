@@ -1,6 +1,5 @@
 # Morphism SRS — Example Import File (test.mdsl)
-COURSE "Group Theory & Homomorphisms"
-FOLDER "Pure Mathematics/Algebra"
+COURSE "Group Theory & Homomorphisms" UUID 00000000-0000-0000-0000-000000000000 FOLDER "Pure Mathematics"/"Algebra"
 
 NEW NOTE "Definition of a Group"
 MODE standard
@@ -62,6 +61,22 @@ FRONT
 How is injectivity of $\ph : G \to H$ characterized via $\ker(\ph)$?
 BACK
 $$\ph \text{ is injective} \liff \ker(\ph) = \{e_G\}$$
+
+NEW NOTE "Propiedad Universal del Producto"
+MODE standard
+TAGS test, svg, categories
+
+CARD 1 "Diagrama Conmutativo del Producto"
+FRONT
+Dado dos objetos $X_1, X_2$, sea $P = X_1 \times X_2$ con proyecciones $\pi_1, \pi_2$.
+Para cualquier objeto $Y$ con morfismos $f_1: Y \to X_1$ y $f_2: Y \to X_2$:
+
+[DIAGRAM "test_product_diagram.svg"]
+
+¿Qué propiedad garantiza la existencia y unicidad del morfismo punteado?
+BACK
+Garantiza la existencia y unicidad de un único morfismo $\langle f_1, f_2 \rangle: Y \to X_1 \times X_2$ tal que:
+$$\pi_1 \circ \langle f_1, f_2 \rangle = f_1 \quad \text{y} \quad \pi_2 \circ \langle f_1, f_2 \rangle = f_2$$
 
 # Dependency Links
 LINK "Definition of a Group" -> "Uniqueness of Identity and Inverses"

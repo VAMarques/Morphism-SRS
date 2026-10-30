@@ -266,13 +266,9 @@ class NoteRepository:
             )
 
     def unlink_from_course(self, course_id: int, note_id: int) -> None:
-        """Soft-delete: removes note from course DAG and removes its edges in this course,
-        but keeps note, cards, and schedules intact in the database and note browser."""
+        """Soft-delete: removes note from course DAG (course_notes), preserving the note,
+        its flashcards, review schedules, and epistemic edges between notes in the database."""
         self.conn.execute("DELETE FROM course_notes WHERE course_id = ? AND note_id = ?;", (course_id, note_id))
-        self.conn.execute(
-            "DELETE FROM edges WHERE course_id = ? AND (source_note_id = ? OR target_note_id = ?);",
-            (course_id, note_id, note_id),
-        )
         other = self.conn.execute("SELECT course_id FROM course_notes WHERE note_id = ? LIMIT 1;", (note_id,)).fetchone()
         new_cid = int(other["course_id"]) if other else None
         try:
@@ -444,8 +440,13 @@ class NoteRepository:
 
     def list_edges_by_course(self, course_id: int) -> list[EdgeModel]:
         rows = self.conn.execute(
-            "SELECT * FROM edges WHERE course_id = ? ORDER BY id ASC;",
-            (course_id,),
+            """
+            SELECT e.* FROM edges e
+            JOIN course_notes cn_src ON cn_src.note_id = e.source_note_id AND cn_src.course_id = ?
+            JOIN course_notes cn_dst ON cn_dst.note_id = e.target_note_id AND cn_dst.course_id = ?
+            ORDER BY e.id ASC;
+            """,
+            (course_id, course_id),
         ).fetchall()
         return [self._row_to_edge(r) for r in rows]
 
@@ -477,6 +478,13 @@ class NoteRepository:
         )
         edge.id = int(cur.lastrowid)
         return edge
+
+    def get_edge_between(self, source_note_id: int, target_note_id: int) -> EdgeModel | None:
+        row = self.conn.execute(
+            "SELECT * FROM edges WHERE source_note_id = ? AND target_note_id = ?;",
+            (source_note_id, target_note_id),
+        ).fetchone()
+        return self._row_to_edge(row) if row else None
 
     def delete_edge(self, source_note_id: int, target_note_id: int) -> None:
         self.conn.execute(

@@ -66,7 +66,7 @@ class TestSvgMaskRendering(unittest.TestCase):
         deck_path = (
             Path(__file__).resolve().parent.parent
             / "to_import"
-            / "svg_mask_test_deck.mdsl"
+            / "test.mdsl"
         )
         self.assertTrue(deck_path.exists(), "Sample test deck must exist")
         source = deck_path.read_text(encoding="utf-8")
@@ -80,20 +80,50 @@ class TestSvgMaskRendering(unittest.TestCase):
 
         self.assertFalse(result.has_errors, f"Compilation errors: {result.diagnostics}")
         self.assertIsNotNone(result.course_id)
-        self.assertEqual(result.notes_created, 1)
+        self.assertEqual(result.notes_created, 4)
 
         # Verify parsed AST
-        self.assertEqual(result.ast.course_name, "Pruebas de Renderizado Vectorial")
-        self.assertEqual(result.ast.course_uuid, "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d")
-        self.assertEqual(result.ast.folder_path, "Categorías/Diagramas")
+        self.assertEqual(result.ast.course_name, "Group Theory & Homomorphisms")
+        self.assertEqual(result.ast.course_uuid, "00000000-0000-0000-0000-000000000000")
+        self.assertEqual(result.ast.folder_path, "Pure Mathematics/Algebra")
 
-        # Verify generated card front_html has mask markup
-        row = self.conn.execute("SELECT front_html FROM cards LIMIT 1;").fetchone()
+        # Verify generated card front_html has mask markup for commutative diagram
+        row = self.conn.execute(
+            "SELECT front_html FROM cards WHERE title = 'Diagrama Conmutativo del Producto';"
+        ).fetchone()
         self.assertIsNotNone(row)
         front_html = row["front_html"]
         self.assertIn("diagram-mask-container", front_html)
         self.assertIn("commutative-diagram-mask", front_html)
         self.assertIn("morphism://media/", front_html)
+
+    def test_bracket_media_directives(self) -> None:
+        (self.tmp / "test_img.png").write_bytes(b"\x89PNG\r\n\x1a\nfake")
+        (self.tmp / "test_vec.svg").write_bytes(b'<svg><circle/></svg>')
+        (self.tmp / "test_diag.svg").write_bytes(b'<svg><line/></svg>')
+
+        sample_source = """
+COURSE "Media Directives Test" UUID c0ffee00-1111-2222-3333-444455556666
+NEW NOTE "Note Directives"
+MODE standard
+CARD 1 "Three Media Directives"
+FRONT
+[IMAGE "test_img.png"]
+[VECTOR "test_vec.svg"]
+[DIAGRAM "test_diag.svg"]
+BACK
+Done
+"""
+        compiler = DSLCompiler(self.conn, media_vault=self.vault)
+        res = compiler.compile_and_commit(sample_source, source_dir=self.tmp, media_vault=self.vault)
+        self.assertFalse(res.has_errors, f"Errors: {res.diagnostics}")
+
+        row = self.conn.execute("SELECT front_html FROM cards WHERE title = 'Three Media Directives';").fetchone()
+        self.assertIsNotNone(row)
+        front = row["front_html"]
+        self.assertIn('class="morphism-image"', front)
+        self.assertIn('class="vector-image"', front)
+        self.assertIn('class="commutative-diagram-mask"', front)
 
 
 if __name__ == "__main__":

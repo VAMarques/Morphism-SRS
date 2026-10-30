@@ -72,9 +72,9 @@ graph TD
 La directiva `COURSE` moderna permite fijar el nombre, UUID universal y la jerarquía de carpetas en una única declaración:
 
 ```text
-COURSE "Nombre del Curso" UUID {a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d} FOLDER "Categoría"/"Subcategoría"
+COURSE "Nombre del Curso" UUID a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d FOLDER "Categoría"/"Subcategoría"
 ```
-- **`UUID {uuid}`** *(opcional)*: Identificador UUIDv4 persistente para sincronización y reimportaciones.
+- **`UUID uuid`** *(opcional)*: Identificador UUIDv4 persistente para sincronización y reimportaciones.
 - **`FOLDER "Cat1"/"Cat2"`** *(opcional)*: Ruta jerárquica entre comillas separada por barras.
 - Ambas directivas son opcionales si se importa el archivo directamente dentro de un curso activo.
 
@@ -87,16 +87,16 @@ COURSE "Nombre del Curso" UUID {a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d} FOLDER "Ca
 - `FRONT`: Pregunta, enunciado o planteamiento del paso.
 - `BACK`: Respuesta o deducción del paso.
 - `LINK "Nota Origen" -> "Nota Destino"`: Arista dirigida en el DAG.
+  *(**Ubicación flexible**: Puede ubicarse en cualquier parte del archivo `.mdsl` — por ejemplo inmediatamente después de definir la nota dependiente, entre notas, o al final del archivo en un bloque `# Aristas`; el compilador resuelve todas las dependencias globalmente).*
 
-### 3.3 Imágenes y Diagramas Conmutativos Vectoriales
-Para incluir diagramas o imágenes locales, la directiva canónica recomendada es:
+### 3.3 Imágenes y Diagramas (Sintaxis Explicita)
+Para evitar ambigüedad en el tratamiento de gráficos vectoriales e imágenes, Morphism DSL distingue 3 directivas explícitas:
 
-```text
-[IMAGE "diagrama_conmutativo.svg"]
-```
+1. **`[IMAGE "imagen.png"]`** — Incluye una imagen convencional (PNG, JPG, WebP) o SVG sin teñido.
+2. **`[VECTOR "vectorial_image.svg"]`** — Incluye un gráfico vectorial simple que preserva íntegramente sus propios trazos y colores originales.
+3. **`[DIAGRAM "commutative_diagram.svg"]`** — Incluye un diagrama conmutativo vectorial adaptativo. El compilador lo envuelve automáticamente en una máscara CSS dinámica (`commutative-diagram-mask`) teñida con el color del texto de la tarjeta, adaptando los trazos tanto al tema oscuro como al claro.
+
 *(También se admiten etiquetas `<img src="media/imagen.png">` o sintaxis Markdown `![alt](media/imagen.png)`).*
-
-- **Tratamiento Automático de SVG**: Cuando el archivo referenciado es un vector `.svg`, el compilador de Morphism lo envuelve automáticamente en una máscara CSS dinámica (`commutative-diagram-mask`), adaptando los trazos y colores tanto al tema oscuro como al tema claro sin distorsión.
 
 ### 3.4 Tipografía Matemática ($\LaTeX$) y Macros Offline
 - Delimitar fórmulas con `$...$` (inline) o `$$...$$` (display).
@@ -108,7 +108,7 @@ Para incluir diagramas o imágenes locales, la directiva canónica recomendada e
 ## 4. Plantilla de Ejemplo `.mdsl`
 
 ```text
-COURSE "Teoría de la Medida y Análisis Real" UUID {f47ac10b-58cc-4372-a567-0e02b2c3d479} FOLDER "Matemáticas"/"Análisis"
+COURSE "Teoría de la Medida y Análisis Real" UUID f47ac10b-58cc-4372-a567-0e02b2c3d479 FOLDER "Matemáticas"/"Análisis"
 
 # ------------------------------------------------------------------------------
 # 1. Definiciones en Bloque (Conceptos independientes en una sola nota)

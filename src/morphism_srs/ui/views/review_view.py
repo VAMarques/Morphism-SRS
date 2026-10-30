@@ -260,9 +260,11 @@ class ReviewView(QWidget):
 
         sandbox_tag = " [CRAM SANDBOX]" if self.review_controller.is_cram_sandbox else ""
         self.course_badge.setText(f"{ctx.course_name}{sandbox_tag}")
+        note_card_count = len(ctx.note.cards) if (ctx.note and ctx.note.cards) else 1
+        card_step = (ctx.card.step_order + 1) if ctx.card else 1
+        cards_left = self.review_controller.remaining_note_cards(ctx.note)
         self.progress_label.setText(
-            f"Card {self.review_controller.current_Index_1based()} of {self.review_controller.total_count()} "
-            f"({self.review_controller.remaining_count()} left)"
+            f"Card {card_step} of {note_card_count} ({cards_left} left)"
         )
 
         iv = ctx.intervals_preview

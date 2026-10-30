@@ -278,15 +278,14 @@ class GraphNodeItem(QGraphicsItem):
         return path
 
     def _resolve_colors(self) -> tuple[QColor, QColor, QColor, float, str]:
-        """Returns (grad_top, grad_bottom, border_color, border_width, status_label)."""
-        if self.metrics.due_count > 0:
-            top = QColor("#dc2626")
-            bot = QColor("#7f1d1d")
-            border = QColor("#fca5a5")
-            width = 3.2
-            status = f"DUE ({self.metrics.due_count})"
-        elif self.metrics.is_incomplete:
-            # Grey node: incomplete initial study (cards in new or learning)
+        """Returns (grad_top, grad_bottom, border_color, border_width, status_label).
+        Epistemic hierarchy:
+          - GRIS: Al menos una carta está NEW o LEARNING (is_incomplete, sobreescribe a ROJO)
+          - ROJO: Al menos una carta está DUE o RELEARNING (due_count > 0)
+          - AZUL: Todas las cartas están al día (mastered)
+        """
+        if self.metrics.is_incomplete:
+            # Grey node: incomplete initial study (cards in new or learning) - overrides RED
             top = QColor("#475569")
             bot = QColor("#334155")
             border = QColor("#94a3b8")
@@ -295,8 +294,15 @@ class GraphNodeItem(QGraphicsItem):
                 status = f"NEW ({self.metrics.card_count})"
             else:
                 status = f"LEARNING ({self.metrics.card_count - self.metrics.new_count}/{self.metrics.card_count})"
+        elif self.metrics.due_count > 0:
+            # Red node: review due or in relearning
+            top = QColor("#dc2626")
+            bot = QColor("#7f1d1d")
+            border = QColor("#fca5a5")
+            width = 3.2
+            status = f"DUE ({self.metrics.due_count})"
         else:
-            # Completed initial study (in regular review cycle)
+            # Completed initial study (in regular review cycle) - Blue node
             top = QColor("#2563eb")
             bot = QColor("#1e3a8a")
             border = QColor("#93c5fd")
@@ -352,9 +358,6 @@ class GraphNodeItem(QGraphicsItem):
     def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value):
         if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange and self.scene() is not None:
             if self.explorer_view.snapping_enabled:
-                sel = [it for it in self.scene().selectedItems() if isinstance(it, GraphNodeItem)]
-                if len(sel) > 1:
-                    return value
                 new_pos: QPointF = value
                 snapped_x = round(new_pos.x() / self.GRID_X) * self.GRID_X
                 snapped_y = round(new_pos.y() / self.GRID_Y) * self.GRID_Y
@@ -670,39 +673,8 @@ class ExplorerView(QWidget):
         self.canvas.customContextMenuRequested.connect(self._on_canvas_context_menu)
         canvas_row.addWidget(self.canvas, 1)
 
-        # Floating Bulk Action Bar (overlay inside canvas so showing/hiding does not shift canvas layout)
-        self.floating_bar = QFrame(self.canvas)
-        set_widget_props(self.floating_bar, role="floating_bar")
-        fb_layout = QHBoxLayout(self.floating_bar)
-        fb_layout.setContentsMargins(12, 6, 12, 6)
-        self.sel_count_lbl = QLabel("0 nodes selected", self.floating_bar)
-        set_widget_props(self.sel_count_lbl, role="subtitle")
-        fb_layout.addWidget(self.sel_count_lbl)
-        fb_layout.addStretch(1)
-
-        study_sub_btn = QPushButton("▶️ Study Selected Subgraph", self.floating_bar)
-        set_widget_props(study_sub_btn, variant="primary")
-        study_sub_btn.clicked.connect(self._on_bulk_study_subgraph)
-        fb_layout.addWidget(study_sub_btn)
-
-        tag_sub_btn = QPushButton("+ Bulk Tag", self.floating_bar)
-        tag_sub_btn.clicked.connect(self._on_bulk_add_tag)
-        fb_layout.addWidget(tag_sub_btn)
-
-        layout_sub_btn = QPushButton("Auto-Layout Selected", self.floating_bar)
-        layout_sub_btn.clicked.connect(self._on_bulk_layout)
-        fb_layout.addWidget(layout_sub_btn)
-
-        susp_sub_btn = QPushButton("Suspend Selected", self.floating_bar)
-        fb_layout.addWidget(susp_sub_btn)
-        susp_sub_btn.clicked.connect(lambda: self._on_bulk_suspend(True))
-
-        del_sub_btn = QPushButton("🗑️ Delete Selected", self.floating_bar)
-        set_widget_props(del_sub_btn, variant="danger")
-        del_sub_btn.clicked.connect(self._on_bulk_delete)
-        fb_layout.addWidget(del_sub_btn)
-
-        self.floating_bar.setVisible(False)
+        # Deprecated floating bar: bulk actions now accessed via right-click multi-selection menu
+        self.floating_bar = None
 
         # Right-Side Vertical Toolbar for Snapping (🧲) and Hand/Selection Mode (✋ / 🔲)
         right_bar = QFrame(container)
@@ -853,16 +825,6 @@ class ExplorerView(QWidget):
         return ids
 
     def _on_selection_changed(self) -> None:
-        sel = self._selected_note_ids()
-        if len(sel) >= 2:
-            self.sel_count_lbl.setText(f"{len(sel)} nodes selected")
-            self.floating_bar.adjustSize()
-            self.floating_bar.move((self.canvas.viewport().width() - self.floating_bar.width()) // 2, 14)
-            self.floating_bar.setVisible(True)
-            self.floating_bar.raise_()
-        else:
-            self.floating_bar.setVisible(False)
-
         for it in list(self._node_items.values()):
             try:
                 it.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
@@ -915,10 +877,17 @@ class ExplorerView(QWidget):
 
     def _get_locked_prerequisite_titles(self, note_id: int) -> list[str]:
         """
-        Checks direct incoming prerequisite notes (parent -> note_id).
-        A prerequisite is considered not unlocked if it still has unreviewed (NEW) cards
-        or currently overdue (DUE) cards.
+        Returns list of prerequisite node titles that block access to note_id.
+        La advertencia de prerrequisitos bloqueados salta únicamente si la nota actual es gris
+        (incompleta: new_count > 0 o learning_count > 0) y tiene al menos un prerrequisito que
+        también sea gris (incompleto).
+        Si la nota actual está completada (azul), due o en relearning tras 'again', no hay bloqueo.
+        Asimismo, si el prerrequisito está due o en relearning, no previene avanzar en el grafo.
         """
+        curr_metrics = self._metrics_map.get(note_id)
+        if not curr_metrics or not curr_metrics.is_incomplete:
+            return []
+
         locked_titles: list[str] = []
         for e in self._edges:
             if e.target_note_id == note_id:
@@ -926,9 +895,7 @@ class ExplorerView(QWidget):
                 parent_item = self._node_items.get(parent_id)
                 parent_metrics = self._metrics_map.get(parent_id)
                 if parent_item and parent_metrics:
-                    if parent_metrics.card_count > 0 and (
-                        parent_metrics.new_count > 0 or parent_metrics.due_count > 0
-                    ):
+                    if parent_metrics.is_incomplete:
                         locked_titles.append(parent_item.note.title)
         return locked_titles
 
@@ -1167,9 +1134,42 @@ class ExplorerView(QWidget):
 
     def _on_canvas_context_menu(self, pos) -> None:
         item = self.canvas._node_at_viewport_pos(pos)
-        menu = QMenu(self)
+        sel = self._selected_note_ids()
+
         if isinstance(item, GraphNodeItem) and item.note.id is not None:
+            if item.isSelected() and len(sel) > 1:
+                menu = QMenu(self)
+                study_sub_act = menu.addAction(f"▶️ Estudiar subgrafo ({len(sel)} notas)")
+                menu.addSeparator()
+                susp_act = menu.addAction("⏸️ Suspend")
+                unsusp_act = menu.addAction("▶️ Unsuspend")
+                menu.addSeparator()
+                tag_act = menu.addAction("🏷️ Bulk Tag...")
+                layout_act = menu.addAction("🪄 Auto-Layout Selection (In-Place)")
+                menu.addSeparator()
+                del_act = menu.addAction("🗑️ Deletion Actions...")
+
+                chosen = menu.exec(self.canvas.viewport().mapToGlobal(pos))
+                if chosen == study_sub_act:
+                    self._on_bulk_study_subgraph()
+                elif chosen == susp_act:
+                    self._on_bulk_suspend(True)
+                elif chosen == unsusp_act:
+                    self._on_bulk_suspend(False)
+                elif chosen == tag_act:
+                    self._on_bulk_add_tag()
+                elif chosen == layout_act:
+                    self._on_bulk_layout()
+                elif chosen == del_act:
+                    self._on_bulk_delete()
+                return
+
+            if len(sel) > 1 or not item.isSelected():
+                self.scene.clearSelection()
+                item.setSelected(True)
+
             nid = item.note.id
+            menu = QMenu(self)
             study_act = menu.addAction("▶️ Study Note")
             force_study_act = menu.addAction("⚡ Force Study (Ignore Prerequisites)")
             menu.addSeparator()
@@ -1209,9 +1209,21 @@ class ExplorerView(QWidget):
                         4000,
                     )
             elif chosen == del_act:
-                self.scene.clearSelection()
-                item.setSelected(True)
-                self._on_bulk_delete()
+                if self.current_course_id is not None:
+                    confirm = QMessageBox.warning(
+                        self,
+                        "Delete Note Permanently",
+                        f"Are you sure you want to permanently delete '{item.note.title}' and all its cards from the database?\n\nThis action cannot be undone.",
+                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                        QMessageBox.StandardButton.No,
+                    )
+                    if confirm == QMessageBox.StandardButton.Yes:
+                        self.explorer_controller.bulk_delete_notes(self.current_course_id, [nid], bridge_edges=True)
+                        self.event_bus.courses_updated.emit()
+                        self.event_bus.status_message.emit(
+                            f"Deleted '{item.note.title}' permanently from database.",
+                            4000,
+                        )
         else:
             scene_pt = self.canvas.mapToScene(pos)
             new_act = menu.addAction("➕ Create Note Here...")

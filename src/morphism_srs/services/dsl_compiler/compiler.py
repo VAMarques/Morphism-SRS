@@ -104,15 +104,39 @@ class DSLCompiler:
             path_cand = self._find_media_file(m.group(1), source_dir)
             if path_cand:
                 _, stored_name = vault.store_file(path_cand)
-                if stored_name.lower().endswith(".svg"):
-                    return f'<div class="diagram-mask-container"><div class="commutative-diagram-mask" style="-webkit-mask-image: url(\'morphism://media/{stored_name}\'); mask-image: url(\'morphism://media/{stored_name}\');" role="img" aria-label="Diagrama conmutativo"></div></div>'
-                return f'<img src="morphism://media/{stored_name}" class="commutative-diagram">'
+                return f'<img src="morphism://media/{stored_name}" class="morphism-image">'
             return m.group(0)
 
-        t3 = re.sub(
+        def _sub_vector_bracket(m: re.Match[str]) -> str:
+            path_cand = self._find_media_file(m.group(1), source_dir)
+            if path_cand:
+                _, stored_name = vault.store_file(path_cand)
+                return f'<img src="morphism://media/{stored_name}" class="vector-image">'
+            return m.group(0)
+
+        def _sub_diagram_bracket(m: re.Match[str]) -> str:
+            path_cand = self._find_media_file(m.group(1), source_dir)
+            if path_cand:
+                _, stored_name = vault.store_file(path_cand)
+                return f'<div class="diagram-mask-container"><div class="commutative-diagram-mask" style="-webkit-mask-image: url(\'morphism://media/{stored_name}\'); mask-image: url(\'morphism://media/{stored_name}\');" role="img" aria-label="Diagrama conmutativo"></div></div>'
+            return m.group(0)
+
+        t2_img = re.sub(
             r'\[IMAGE\s+["\']?([^"\'\]]+)["\']?\]',
             _sub_image_bracket,
             t2,
+            flags=re.IGNORECASE,
+        )
+        t2_vec = re.sub(
+            r'\[VECTOR\s+["\']?([^"\'\]]+)["\']?\]',
+            _sub_vector_bracket,
+            t2_img,
+            flags=re.IGNORECASE,
+        )
+        t3 = re.sub(
+            r'\[DIAGRAM\s+["\']?([^"\'\]]+)["\']?\]',
+            _sub_diagram_bracket,
+            t2_vec,
             flags=re.IGNORECASE,
         )
 
@@ -326,7 +350,7 @@ class DSLCompiler:
         """Decompiles a CourseModel and its notes/edges into the canonical .mdsl format."""
         header_parts = [f'COURSE "{course.name}"']
         if course.uuid:
-            header_parts.append(f"UUID {{{course.uuid}}}")
+            header_parts.append(f"UUID {course.uuid}")
         if folder_path:
             parts = [f'"{p}"' for p in folder_path.replace("\\", "/").split("/") if p.strip()]
             header_parts.append(f"FOLDER {'/'.join(parts)}")

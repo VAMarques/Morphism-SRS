@@ -18,7 +18,7 @@ if str(SRC_DIR) not in sys.path:
 from morphism_srs.controllers.event_bus import EventBus
 from morphism_srs.controllers.review_controller import ReviewController
 from morphism_srs.domain.enums import CardState, NoteReviewMode
-from morphism_srs.domain.models import CardModel, CourseModel, NoteModel
+from morphism_srs.domain.models import CardModel, CourseModel, EdgeModel, NoteModel
 from morphism_srs.domain.scheduler_engine import SchedulerEngine
 from morphism_srs.services.dsl_compiler.compiler import DSLCompiler
 from morphism_srs.services.mobile_server import EphemeralMobileServer
@@ -107,14 +107,35 @@ class TestRemergeV2Features(unittest.TestCase):
         self.assertEqual(c1_notes[0].id, n1.id)
         self.assertEqual(c2_notes[0].id, n1.id)
 
-        # Soft-delete (unlink from Course 1)
+        n2 = self.note_repo.create(
+            NoteModel(course_id=c1.id, title="Subspaces", premise_html="Subspace definition", review_mode=NoteReviewMode.STANDARD)
+        )
+        assert n2.id is not None
+        edge = self.note_repo.create_edge(EdgeModel(course_id=c1.id, source_note_id=n1.id, target_note_id=n2.id))
+        self.assertIsNotNone(edge)
+        self.assertEqual(len(self.note_repo.list_edges_by_course(c1.id)), 1)
+
+        # Soft-delete (unlink from Course 1) should NOT delete edges between notes
         self.note_repo.unlink_from_course(c1.id, n1.id)
 
-        self.assertEqual(len(self.note_repo.list_by_course(c1.id)), 0)
+        self.assertEqual(len(self.note_repo.list_by_course(c1.id)), 1) # n2 is still there
         self.assertEqual(len(self.note_repo.list_by_course(c2.id)), 1)
         # Note still exists in DB
         fetched = self.note_repo.get_by_id(n1.id)
         self.assertIsNotNone(fetched)
+
+        # Edge still exists globally in DB and links the notes
+        edge_check = self.note_repo.get_edge_between(n1.id, n2.id)
+        self.assertIsNotNone(edge_check, "Unlinking from a course must NOT delete the edge between notes")
+        ancestors = self.note_repo.get_ancestors_recursive([n2.id])
+        self.assertIn(n1.id, ancestors)
+
+
+
+        # In course 1, edge is hidden while n1 is absent, but reappears when n1 is reinjected
+        self.assertEqual(len(self.note_repo.list_edges_by_course(c1.id)), 0)
+        self.note_repo.inject_into_course(c1.id, n1.id)
+        self.assertEqual(len(self.note_repo.list_edges_by_course(c1.id)), 1)
 
     def test_browser_note_and_card_queries(self) -> None:
         """BrowserRepository queries notes and cards correctly (with LEFT JOIN so missing schedules are included)."""

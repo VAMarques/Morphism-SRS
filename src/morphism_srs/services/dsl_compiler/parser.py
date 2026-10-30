@@ -150,7 +150,7 @@ class DSLParser:
                 elif tok.key == "folder":
                     ast.folder_path = self._parse_folder_path(tok.value)
                 elif tok.key == "new_note":
-                    m_uuid = re.search(r'^(.*?)\s+UUID\s+([a-zA-Z0-9_\-]+)\s*$', tok.value, re.IGNORECASE)
+                    m_uuid = re.search(r'^(.*?)\s+UUID\s+\{?([a-zA-Z0-9_\-]+)\}?\s*$', tok.value, re.IGNORECASE)
                     if m_uuid:
                         raw_title = m_uuid.group(1).strip()
                         note_uuid = m_uuid.group(2).strip().lower()
@@ -292,6 +292,8 @@ class DSLParser:
         for n in ast.notes:
             title_or_key_map[n.external_key] = n
             title_or_key_map[n.title] = n
+            if n.uuid:
+                title_or_key_map[n.uuid] = n
 
         for src_name, dst_name, _ in explicit_links:
             dst_note = title_or_key_map.get(dst_name)

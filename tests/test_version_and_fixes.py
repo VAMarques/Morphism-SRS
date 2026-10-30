@@ -123,7 +123,7 @@ class TestV020Fixes(unittest.TestCase):
                 self.assertIsNotNone(result.ast)
                 self.assertEqual(result.ast.course_name, "Group Theory & Homomorphisms")
                 self.assertEqual(result.ast.folder_path, "Pure Mathematics/Algebra")
-                self.assertEqual(len(result.ast.notes), 3)
+                self.assertEqual(len(result.ast.notes), 4)
 
                 comp_res = compiler.compile_and_commit(source)
                 self.assertFalse(comp_res.has_errors)
